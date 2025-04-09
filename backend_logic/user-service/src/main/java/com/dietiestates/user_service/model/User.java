@@ -4,9 +4,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 
 @Entity
+@Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,7 +17,6 @@ public class User {
     public String email;
     public String password;
     public String phone;
-    public String address;
     public String role;
 
     public String getId() {
@@ -49,12 +50,7 @@ public class User {
     public void setPhone(String phone) {
         this.phone = phone;
     }
-    public String getAddress() {
-        return address;
-    }
-    public void setAddress(String address) {
-        this.address = address;
-    }
+    
     public String getRole() {
         return role;
     }
@@ -62,13 +58,12 @@ public class User {
         this.role = role;
     }
 
-    public User(String id, String name, String email, String password, String phone, String address, String role) {
+    public User(String id, String name, String email, String password, String phone,  String role) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
         this.phone = phone;
-        this.address = address;
         this.role = role;
     }
 
@@ -83,7 +78,6 @@ public class User {
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", phone='" + phone + '\'' +
-                ", address='" + address + '\'' +
                 ", role='" + role + '\'' +
                 '}';
     }

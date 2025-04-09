@@ -1,21 +1,32 @@
 package com.dietiestates.user_service.service;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.ServletComponentScan;
+import org.springframework.stereotype.Service;
 
 import com.dietiestates.user_service.dto.LoginRequest;
 import com.dietiestates.user_service.model.User;
 import com.dietiestates.user_service.rep.UserRepository;
 
+@Service
 public class LoginLogic {
-    public boolean userLogin(LoginRequest loginRequest){
-        
-        // Logic to authenticate user
-        User user = UserRepository.findByEmail(loginRequest.getEmail());
-        if (user == null) {
-            return false; // User not found
+
+    @Autowired
+    private UserRepository userRepository;
+
+   public boolean userLogin(LoginRequest loginRequest) {
+        Optional<User> userOpt = userRepository.findByEmail(loginRequest.getEmail());
+
+        if (userOpt.isEmpty()) {
+            return false; // Utente non trovato
         }
+
+        User user = userOpt.get();
+
         if (!user.getPassword().equals(loginRequest.getPassword())) {
-            return false; // Incorrect password
+            return false; // Password errata
         }
         // Logic to generate JWT token
 
