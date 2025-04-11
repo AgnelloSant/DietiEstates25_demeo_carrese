@@ -39,3 +39,6 @@ dist/
 
 # === macOS ===
 .DS_Store
+
+
+frontend-vue/src/views/LoginView.vue

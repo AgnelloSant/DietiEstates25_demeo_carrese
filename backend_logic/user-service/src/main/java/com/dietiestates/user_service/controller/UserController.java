@@ -9,13 +9,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dietiestates.user_service.dto.LoginRequest;
+import com.dietiestates.user_service.dto.RegisterRequest;
 import com.dietiestates.user_service.service.LoginLogic;
+import com.dietiestates.user_service.service.RegistrationLogic;
 
 @RestController
 @RequestMapping("/api/v1/user")
 public class UserController {
     @Autowired
     private LoginLogic loginLogic;
+
+    @Autowired
+    private RegistrationLogic registerLogic;
     
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
@@ -27,4 +32,17 @@ public class UserController {
         }
     }
 
+    @PostMapping("/register")
+    public ResponseEntity<String> register(@RequestBody RegisterRequest registerRequest) {
+        boolean success = registerLogic.userRegister(registerRequest);
+        if (!success) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Registration failed");
+        }else{ 
+            // Logic to send confirmation email
+
+
+        }
+        
+        return ResponseEntity.ok("Registration successful");
+    }
 }

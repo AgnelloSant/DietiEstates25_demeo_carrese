@@ -3,7 +3,6 @@ package com.dietiestates.user_service.service;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.stereotype.Service;
 
 import com.dietiestates.user_service.dto.LoginRequest;
