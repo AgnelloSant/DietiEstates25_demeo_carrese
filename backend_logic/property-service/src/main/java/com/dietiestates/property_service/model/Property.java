@@ -16,10 +16,11 @@ public class Property {
 
     @Column(length = 1000)
     private String description;
-
     private String city;
-    private Double area;
     private Double price;
+
+    @Column(nullable = false, name = "area_mq")  // "mq" = metri quadrati
+    private Double area; 
 
     @Column(name = "published_at")
     private LocalDate publishedAt;
@@ -27,7 +28,7 @@ public class Property {
     //  Costruttore vuoto richiesto da JPA
     public Property() {}
 
-    // Costruttore utile per creare oggetti (opzionale)
+    // Costruttore utile per creare oggetti 
     public Property(String title, String description, String city, Double area, Double price, LocalDate publishedAt) {
         this.title = title;
         this.description = description;
@@ -87,11 +88,11 @@ public class Property {
         this.price = price;
     }
 
-    public LocalDate getPublishedAt() {
+    public LocalDate getpublishedAt() {
         return publishedAt;
     }
 
-    public void setPublishedAt(LocalDate publishedAt) {
+    public void setpublishedAt(LocalDate publishedAt) {
         this.publishedAt = publishedAt;
     }
 }

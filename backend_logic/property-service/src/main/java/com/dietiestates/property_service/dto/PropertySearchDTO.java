@@ -1,6 +1,6 @@
 package com.dietiestates.property_service.dto;
 
-public class PropertyDTO {
+public class PropertySearchDTO {
 
     private String title;
     private String city;
@@ -8,7 +8,7 @@ public class PropertyDTO {
     private Double price;
 
     // Costruttore
-    public PropertyDTO(String title, String city, Double area, Double price) {
+    public PropertySearchDTO(String title, String city, Double area, Double price) {
         this.title = title;
         this.city = city;
         this.area = area;
@@ -41,7 +41,7 @@ public class PropertyDTO {
     }
     @Override
     public String toString() {
-        return "PropertyDTO{" +
+        return "PropertySearchDTO{" +
                 "title='" + title + '\'' +
                 ", city='" + city + '\'' +
                 ", area=" + area +
