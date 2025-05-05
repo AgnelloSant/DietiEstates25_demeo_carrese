@@ -27,7 +27,11 @@ public class LoginLogic {
         if (!user.getPassword().equals(loginRequest.getPassword())) {
             return false; // Password errata
         }
+        
         // Logic to generate JWT token
+        
+
+
 
         return true; // Placeholder return value
     }
