@@ -39,7 +39,7 @@ public class RegistrationLogic {
             return false; // Email non valida
         }
 
-        //Codifica della password
+        confirmPsw(registerRequest); 
 
         User newUser = new User();
         newUser.setName(registerRequest.getName());
@@ -83,5 +83,15 @@ public class RegistrationLogic {
             e.printStackTrace();
             System.out.println("Errore durante l'invio dell'email di conferma");
         }
+    }
+
+    public boolean confirmPsw(RegisterRequest registerRequest){ 
+        String psw = registerRequest.getPassword(); 
+        String pswRegex = "^(?=.*[!@#$%^&*()_+-=[]{};':|,.<>?])(?=.*[a-zA-Z0-9]).{8,}$"; 
+
+        if(!psw.matches(pswRegex)){
+            return false; //la password deve avere almeno 8 caratteri di cui uno speciale
+        }
+        return true;
     }
 }
