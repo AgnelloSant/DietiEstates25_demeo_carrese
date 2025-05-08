@@ -10,19 +10,20 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "users")
 public class User {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public String id;
+    public Long id;
     public String name;
     public String email;
     public String password;
     public String phone;
     public String role;
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
     public String getName() {
@@ -58,7 +59,7 @@ public class User {
         this.role = role;
     }
 
-    public User(String id, String name, String email, String password, String phone,  String role) {
+    public User(Long id, String name, String email, String password, String phone,  String role) {
         this.id = id;
         this.name = name;
         this.email = email;

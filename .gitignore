@@ -42,3 +42,6 @@ dist/
 
 
 frontend-vue/src/views/LoginView.vue
+frontend-vue/README
+frontend-vue/src/assets/registration-styles.css
+frontend-vue/src/views/Register.vue
