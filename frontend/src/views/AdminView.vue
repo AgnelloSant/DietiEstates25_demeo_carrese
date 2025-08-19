@@ -2,7 +2,7 @@
   <div class="admin-container">
     <h2>Gestione Proprietà</h2>
 
-    <!-- FORM CREAZIONE NUOVA PROPRIETÀ -->
+    <!-- ✍️ Form creazione nuova proprietà -->
     <form @submit.prevent="create" class="property-form">
       <input v-model="form.title" placeholder="Titolo" required />
       <input v-model="form.city" placeholder="Città" required />
@@ -13,15 +13,16 @@
 
     <hr />
 
-    <!-- LISTA PROPRIETÀ -->
+    <!-- 📋 Lista proprietà già presenti -->
     <ul class="property-list">
-      <li v-for="p in list" :key="p.id" class="property-item">
-        <strong>{{ p.title }}</strong> — {{ p.city }} — {{ p.area }}mq — €{{ p.price }}
+      <li v-for="p in list" :key="p.title" class="property-item">
+        <strong>{{ p.title }}</strong> — {{ p.city }} — {{ p.area }}mq — €{{ p.price.toLocaleString("it-IT") }}
+        <!-- 🗑️ Pulsante elimina -->
         <button @click="remove(p.id)">Elimina</button>
       </li>
     </ul>
 
-    <!-- Messaggi di stato -->
+    <!-- ⚠️ Messaggi di stato -->
     <p v-if="error" class="error">{{ error }}</p>
     <p v-if="list.length === 0">Nessuna proprietà presente.</p>
   </div>
@@ -33,15 +34,15 @@ import { storeToRefs } from "pinia"
 import { usePropertyStore } from "@/stores/properties"
 import type { PropertyCreateDTO } from "@/types/Properties"
 
-// ✅ Inietto lo store delle proprietà
+// ✅ Iniettiamo lo store
 const store = usePropertyStore()
-// Estraggo la lista reattiva con storeToRefs (serve per avere reattività corretta)
+// storeToRefs per rendere reattiva la lista
 const { list } = storeToRefs(store)
 
-// Stato per eventuali errori
+// Stato errori locali
 const error = ref("")
 
-// Form reattivo: corrisponde al DTO PropertyCreateDTO
+// DTO per creare nuova proprietà
 const form = reactive<PropertyCreateDTO>({
   title: "",
   city: "",
@@ -49,11 +50,11 @@ const form = reactive<PropertyCreateDTO>({
   price: 0,
 })
 
-// Crea una nuova proprietà
+// Crea nuova proprietà
 async function create() {
   try {
-    await store.addProperty(form)  // chiama POST → backend
-    // reset del form
+    await store.addProperty(form)  // chiamata allo store → API POST
+    // reset form
     form.title = ""
     form.city = ""
     form.area = 0
@@ -65,7 +66,7 @@ async function create() {
   }
 }
 
-// Elimina proprietà per ID
+// Elimina proprietà
 async function remove(id: number) {
   try {
     await store.removeProperty(id)
@@ -76,7 +77,7 @@ async function remove(id: number) {
   }
 }
 
-// Carico subito i dati al montaggio della pagina
+// Al caricamento mostro subito tutte le proprietà
 onMounted(() => {
   store.fetchList()
 })
@@ -91,19 +92,13 @@ onMounted(() => {
   background: #f8f9fa;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
-
 .property-form {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
   margin-bottom: 1.5rem;
 }
-
-.property-form input {
-  flex: 1 1 180px;
-  padding: 0.5rem;
-}
-
+.property-form input { flex: 1 1 180px; padding: 0.5rem; }
 .property-form button {
   padding: 0.5rem 1rem;
   background: #0d6efd;
@@ -112,19 +107,13 @@ onMounted(() => {
   border-radius: 4px;
   cursor: pointer;
 }
-
-.property-list {
-  list-style: none;
-  padding: 0;
-}
-
+.property-list { list-style: none; padding: 0; }
 .property-item {
   display: flex;
   justify-content: space-between;
   padding: 0.5rem;
   border-bottom: 1px solid #ddd;
 }
-
 .property-item button {
   background: #dc3545;
   color: white;
@@ -133,9 +122,5 @@ onMounted(() => {
   border-radius: 4px;
   cursor: pointer;
 }
-
-.error {
-  color: red;
-  margin-top: 1rem;
-}
+.error { color: red; margin-top: 1rem; }
 </style>

@@ -16,30 +16,34 @@ public class PropertyController {
     private final PropertyCreateLogic propertyCreateLogic;
     private final PropertyUpdateLogic propertyUpdateLogic;
     private final PropertyDeleteLogic propertyDeleteLogic;
+    private final PropertyGetLogic propertyGetLogic; 
 
     @Autowired
     public PropertyController(
         PropertySearchLogic propertySearchLogic,
         PropertyCreateLogic propertyCreateLogic,
         PropertyUpdateLogic propertyUpdateLogic,
-        PropertyDeleteLogic propertyDeleteLogic
+        PropertyDeleteLogic propertyDeleteLogic,
+        PropertyGetLogic propertyGetLogic
     ) {
         this.propertySearchLogic = propertySearchLogic;
         this.propertyCreateLogic = propertyCreateLogic;
         this.propertyUpdateLogic = propertyUpdateLogic;
         this.propertyDeleteLogic = propertyDeleteLogic;
+        this.propertyGetLogic= propertyGetLogic;
     }
 
     // --- Ricerca proprietà ---
-    @GetMapping("/search")
-    public ResponseEntity<List<PropertySearchDTO>> searchProperties(
-        @RequestParam String city,
-        @RequestParam Double minArea,
-        @RequestParam Double maxPrice
-    ) {
-        List<PropertySearchDTO> results = propertySearchLogic.searchProperties(city, minArea, maxPrice);
-        return ResponseEntity.ok(results);
-    }
+  @GetMapping("/search")
+public ResponseEntity<List<PropertySearchDTO>> searchProperties(
+    @RequestParam(required = false) String city,
+    @RequestParam(required = false) Double minArea,
+    @RequestParam(required = false) Double maxPrice
+) {
+    List<PropertySearchDTO> results = propertySearchLogic.searchProperties(city, minArea, maxPrice);
+    return ResponseEntity.ok(results);
+}
+
 
     // --- Creazione proprietà ---
     @PostMapping("/create")
@@ -64,4 +68,11 @@ public class PropertyController {
         propertyDeleteLogic.deleteProperty(id);
         return ResponseEntity.ok("Property deleted successfully.");
     }
+
+@GetMapping("/{id}")
+public ResponseEntity<PropertyDetailDTO> getProperty(@PathVariable Long id) {
+    return ResponseEntity.ok(propertyGetLogic.getById(id)); 
+}
+
+
 }

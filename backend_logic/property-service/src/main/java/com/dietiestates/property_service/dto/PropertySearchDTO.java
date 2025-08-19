@@ -6,9 +6,11 @@ public class PropertySearchDTO {
     private String city;
     private Double area;
     private Double price;
+private long id;
 
     // Costruttore
-    public PropertySearchDTO(String title, String city, Double area, Double price) {
+    public PropertySearchDTO(long id,String title, String city, Double area, Double price) {
+        this.id= id;
         this.title = title;
         this.city = city;
         this.area = area;
@@ -39,13 +41,17 @@ public class PropertySearchDTO {
     public void setPrice(Double price) {
         this.price = price;
     }
+    
+    public long getId() {
+        return id;
+    }
+    public void setId(long id) {
+        this.id = id;
+    }
     @Override
     public String toString() {
-        return "PropertySearchDTO{" +
-                "title='" + title + '\'' +
-                ", city='" + city + '\'' +
-                ", area=" + area +
-                ", price=" + price +
-                '}';
+        return "PropertySearchDTO [title=" + title + ", city=" + city + ", area=" + area + ", price=" + price + ", id="
+                + id + "]";
     }
+    
 }

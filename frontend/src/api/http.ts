@@ -5,8 +5,9 @@ import axios from 'axios'
 // 1) Crea istanza Axios con baseURL
 //    In sviluppo: /api → proxata a http://localhost:8082 (vite.config.ts)
 //    In produzione: configura l'hosting/reverse proxy per instradare /api al backend
+
 export const http = axios.create({
-  baseURL: '/api',
+  baseURL: '/property-service/api', // 👈 aggiunto prefisso corretto
   timeout: 10000,
 })
 

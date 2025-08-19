@@ -3,14 +3,19 @@
   "version": "0.0.1",
   "private": true,
 
-  "scripts": {
-    "start:eureka": "cd backend_logic/eureka-server && ./mvnw spring-boot:run",
-    "start:user": "cd backend_logic/user-service && ./mvnw spring-boot:run",
-    "start:property": "cd backend_logic/property-service && ./mvnw spring-boot:run",
-    "start:frontend": "cd frontend && npm run dev",
-    "start:all": "npm-run-all --parallel start:eureka start:user start:property start:frontend"
-  },
+"scripts": {
+  "start:eureka": "cd backend_logic/eureka-server && ./mvnw spring-boot:run",
+  "start:user": "cd backend_logic/user-service && ./mvnw spring-boot:run",
+  "start:property": "cd backend_logic/property-service && ./mvnw spring-boot:run",
+  "start:frontend": "cd frontend && npm run dev",
 
+  "start:backend": "npm-run-all --parallel start:eureka start:user start:property",
+
+  "start:frontend:delayed": "sleep 20 && npm run start:frontend",
+
+
+  "start:all": "npm-run-all --parallel start:backend start:frontend:delayed"
+},
   "dependencies": {
     "vue": "^3.3.0",
     "axios": "^1.4.0"
