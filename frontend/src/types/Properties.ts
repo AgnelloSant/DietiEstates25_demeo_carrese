@@ -8,6 +8,7 @@ export interface PropertySearchDTO {
   city: string;
   area: number;
   price: number;
+    imageUrl?: string ;
 }
 
 
@@ -35,4 +36,5 @@ export interface PropertyDetailDTO {
   price: number
   description?: string
   publishedAt?: string
+  imageUrl?: string ;
 }

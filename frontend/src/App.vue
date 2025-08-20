@@ -1,12 +1,14 @@
-
-
 <!-- src/App.vue -->
+
+
+
 <template>
   <div class="app">
     <!-- Header stile immobiliare.it -->
     <header class="header">
       <div class="container header-inner">
-        <h1 class="logo">Dieties Estates</h1>
+        <RouterLink to="/" class="logo">Dieti Estates</RouterLink>
+
 
         <!-- NAVBAR DINAMICA -->
         <nav class="nav">
@@ -36,7 +38,7 @@
     </main>
 
     <footer class="footer">
-      <div class="container">© {{ new Date().getFullYear() }} Dieties Estates</div>
+      <div class="container">© {{ new Date().getFullYear() }} Dieti Estates</div>
     </footer>
   </div>
 </template>
@@ -55,11 +57,49 @@ const logout = () => {
 </script>
 
 <style scoped>
-.header { background: #0c5db1; color: white; }
-.header-inner { display:flex; align-items:center; justify-content:space-between; padding: 12px 0; }
-.logo { font-size: 20px; font-weight: 700; }
-.nav a { color: white; margin-left: 16px; text-decoration: none; }
-.nav a.router-link-active { text-decoration: underline; }
-.footer { margin-top: 48px; padding: 24px 0; color:#666; border-top: 1px solid #eee; }
-.container { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
+.header {
+  background: #0c5db1;
+  color: white;
+}
+.header-inner {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding: 12px 0;
+}
+
+/* 🔹 Logo stile H1 */
+.logo {
+  font-size: 28px;        /* grande come un h1 */
+  font-weight: 800;       /* molto bold */
+  text-transform: uppercase;
+  text-decoration: none;  /* senza sottolineatura */
+  color: white;           /* resta bianco */
+  letter-spacing: 1px;    /* leggero spazio tra lettere */
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+.logo:hover {
+  color: #ffd700;         /* giallo oro al passaggio */
+  transform: scale(1.05); /* leggero ingrandimento */
+}
+
+.nav a {
+  color: white;
+  margin-left: 16px;
+  text-decoration: none;
+}
+.nav a.router-link-active {
+  text-decoration: underline;
+}
+.footer {
+  margin-top: 48px;
+  padding: 24px 0;
+  color:#666;
+  border-top: 1px solid #eee;
+}
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
 </style>

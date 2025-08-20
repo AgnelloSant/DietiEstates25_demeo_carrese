@@ -1,52 +1,87 @@
 <template>
-  <!-- Card cliccabile che porta al dettaglio -->
-  <article class="card" @click="goToDetail">
-    <!-- Thumbnail fittizia -->
-    <div class="thumb" />
+  <div class="property-card">
+    <!-- immagine -->
+    <img
+      class="property-img"
+      :src="property.imageUrl || '/placeholder-house.jpg'"
+      alt="Immobile"
+    />
 
-    <!-- Corpo della card -->
-    <div class="body">
-      <h3 class="title">{{ item.title }}</h3>
-      <p class="meta">{{ item.city }} · {{ item.area }} mq</p>
-      <div class="price">€ {{ formatPrice(item.price) }}</div>
-      <!-- ❌ Tolta la data perché non esiste in PropertySearchDTO -->
+    <!-- contenuto -->
+    <div class="property-content">
+      <h3 class="property-price">€ {{ property.price.toLocaleString() }}</h3>
+      <h2 class="property-title">{{ property.title }}</h2>
+      <p class="property-info">
+        {{ property.city }} • {{ property.area }} mq
+      </p>
+      <RouterLink :to="`/property/${property.id}`" class="details-btn">
+        Vedi dettagli
+      </RouterLink>
     </div>
-  </article>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
-// DTO corretto: PropertySearchDTO ora include id
-import type { PropertySearchDTO } from '@/types/Properties'
-
-// Prop: la card riceve un singolo annuncio
-const props = defineProps<{ item: PropertySearchDTO }>()
-
-// Router per navigare al dettaglio
-const router = useRouter()
-
-// Utility per formattare il prezzo
-function formatPrice(n: number) {
-  return new Intl.NumberFormat('it-IT').format(n)
-}
-
-// Naviga alla rotta di dettaglio con l'id
-function goToDetail() {
-  router.push({ name: 'property-detail', params: { id: props.item.id } })
-}
+import type { PropertySearchDTO } from "@/types/Properties"
+defineProps<{ property: PropertySearchDTO }>()
 </script>
 
 <style scoped>
-.card { display:flex; gap:16px; padding:12px; border:1px solid #eee; border-radius:12px; cursor:pointer; }
-.card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
-.thumb { width:160px; height:120px; background:#f2f2f2; border-radius:8px; }
-.body { display:flex; flex-direction:column; gap:6px; }
-.title { margin:0; font-size:18px; font-weight:700; }
-.meta { color:#666; }
-.price { font-size:18px; font-weight:700; color:#0c5db1; }
-.date { color:#888; }
-@media (max-width: 720px){
-  .card { flex-direction:column; }
-  .thumb { width:100%; height:180px; }
+.property-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  transition: transform 0.2s ease;
+  background: #fff;
+}
+.property-card:hover {
+  transform: translateY(-3px);
+}
+
+.property-img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.property-content {
+  padding: 1rem;
+}
+
+.property-price {
+  color: #0c5db1;
+  font-size: 1.3rem;
+  margin: 0 0 0.5rem 0;
+  font-weight: bold;
+}
+
+.property-title {
+  font-size: 1.1rem;
+  margin: 0 0 0.25rem 0;
+}
+
+.property-info {
+  color: #666;
+  margin: 0 0 0.5rem 0;
+}
+
+.property-date {
+  font-size: 0.85rem;
+  color: #999;
+  margin-bottom: 0.75rem;
+}
+
+.details-btn {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: #0c5db1;
+  color: #fff;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+.details-btn:hover {
+  background: #084080;
 }
 </style>

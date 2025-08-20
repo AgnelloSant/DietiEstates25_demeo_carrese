@@ -24,7 +24,7 @@ public class PropertySearchLogic {
     public List<PropertySearchDTO> searchProperties(String city, Double minArea, Double maxPrice) {
         // Recupera le entità dal repository con i criteri di ricerca
         List<Property> properties = propertyRepository
-            .findByCityAndAreaGreaterThanEqualAndPriceLessThanEqualOrderByPublishedAtDesc(
+            .findByCityIgnoreCaseAndAreaGreaterThanEqualAndPriceLessThanEqualOrderByPublishedAtDesc(
                 city, minArea, maxPrice
             );
 

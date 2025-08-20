@@ -19,7 +19,12 @@
     <!-- 📋 Lista immobili -->
     <div v-if="store.list.length" class="property-list">
       <!-- Uso PropertyCard per ogni immobile -->
-      <PropertyCard v-for="p in store.list" :key="p.id" :item="p" />
+      <PropertyCard
+  v-for="p in store.list"
+  :key="p.id"
+  :property="p"
+/>
+
     </div>
 
     <!-- 🛑 Nessun immobile trovato -->
