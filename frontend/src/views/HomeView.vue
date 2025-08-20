@@ -3,12 +3,13 @@
     <h1>Annunci immobiliari</h1>
 
     <!-- 🔍 Barra filtri: component riutilizzabile -->
-    <FiltersBar
-      :city="city"
-      :minArea="minArea ?? 0"
-      :maxPrice="maxPrice ?? 0"
-      @search="search"
-    />
+   <FiltersBar
+  :city="city"
+  :minArea="minArea"
+  :maxPrice="maxPrice"
+  @search="search"
+/>
+
 
     <!-- ⏳ Stato caricamento -->
     <p v-if="store.loading">Caricamento...</p>
@@ -33,6 +34,7 @@
 </template>
 
 <script setup lang="ts">
+
 /*
  * Importiamo lo store (Pinia) e i componenti UI
  */
@@ -53,7 +55,7 @@ const maxPrice = ref<number | null>(null)
  * Funzione di ricerca chiamata dall'evento "search"
  * emesso da FiltersBar
  */
-function search(payload: { city: string; minArea: number; maxPrice: number }) {
+function search(payload: { city?: string; minArea?: number | null; maxPrice?: number | null }) {
   store.fetchList(payload)
 }
 

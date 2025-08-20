@@ -21,19 +21,14 @@ public class PropertySearchLogic {
       //Ricerca proprietà filtrata per città, area minima e prezzo massimo.
     // Restituisce una lista di PropertySearchDTO (con id incluso).
      
-    public List<PropertySearchDTO> searchProperties(String city, Double minArea, Double maxPrice) {
-        // Recupera le entità dal repository con i criteri di ricerca
-        List<Property> properties = propertyRepository
-            .findByCityIgnoreCaseAndAreaGreaterThanEqualAndPriceLessThanEqualOrderByPublishedAtDesc(
-                city, minArea, maxPrice
-            );
+public List<PropertySearchDTO> searchProperties(String city, Double minArea, Double maxPrice) {
+    List<Property> properties = propertyRepository
+        .searchProperties(city, minArea, maxPrice); // 👈 usa il nuovo metodo
 
-        // Converte le entità in DTO
-        return properties.stream()
-            .map(this::convertToDto)
-            .collect(Collectors.toList());
-    }
-
+    return properties.stream()
+        .map(this::convertToDto)
+        .collect(Collectors.toList());
+}
    
     private PropertySearchDTO convertToDto(Property property) {
         return new PropertySearchDTO(

@@ -25,21 +25,33 @@ export const usePropertyStore = defineStore("properties", {
 
   actions: {
     // 🔹 Carica la lista di immobili dal backend
-    async fetchList(filters?: { city?: string; minArea?: number; maxPrice?: number }) {
-      this.loading = true
-      this.error = null
-      try {
-        // searchProperties ritorna AxiosResponse ⇒ dobbiamo prendere solo .data
-        const res = await searchProperties(filters)
-        this.list = res.data // ✅ fix errore TS2740
-      } catch (err) {
-        console.error("Errore nel caricamento proprietà", err)
-        this.error = "Errore nel caricamento delle proprietà"
-        this.list = [] // fallback
-      } finally {
-        this.loading = false
-      }
-    },
+async fetchList(filters?: { city?: string; minArea?: number | null; maxPrice?: number | null }) {
+  this.loading = true
+  this.error = null
+  try {
+    const params: any = {}
+
+    if (filters?.city && filters.city.trim() !== "") {
+      params.city = filters.city.trim()
+    }
+    if (filters?.minArea != null && filters.minArea > 0) {
+      params.minArea = filters.minArea
+    }
+    if (filters?.maxPrice != null && filters.maxPrice > 0) {
+      params.maxPrice = filters.maxPrice
+    }
+
+    const res = await searchProperties(params)
+    this.list = res.data
+  } catch (err) {
+    console.error("Errore nel caricamento proprietà", err)
+    this.error = "Errore nel caricamento delle proprietà"
+    this.list = []
+  } finally {
+    this.loading = false
+  }
+},
+
 
     // 🔹 Crea nuova proprietà
     async addProperty(payload: PropertyCreateDTO) {
