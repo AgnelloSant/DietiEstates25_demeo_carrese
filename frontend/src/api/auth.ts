@@ -8,7 +8,7 @@ import type { LoginRequest, LoginResponse, RegisterRequest, PswChangeRequest } f
 
 // 🔑 LOGIN
 export const login = (payload: LoginRequest) => {
-  return http.post<LoginResponse>("/v1/user/login", payload);
+  return http.post<LoginResponse>("api/v1/user/login", payload);
 };
 
 // 📝 REGISTRAZIONE

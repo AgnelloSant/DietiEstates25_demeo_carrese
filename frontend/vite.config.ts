@@ -11,7 +11,7 @@ server: {
       target: 'http://localhost:8082',  // property-service
       changeOrigin: true,
     },
-    '/user-service': {
+    '/api/v1/user': {
       target: 'http://localhost:8081',  // user-service
       changeOrigin: true,
     }

@@ -1,20 +1,30 @@
 package com.dietiestates.user_service.controller;
 
 import org.springframework.http.HttpStatus;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+
+import com.dietiestates.user_service.dto.FavouriteListRequest;
 import com.dietiestates.user_service.dto.LoginRequest;
 import com.dietiestates.user_service.dto.RegisterRequest;
 import com.dietiestates.user_service.service.LoginLogic;
 import com.dietiestates.user_service.service.PswChangeLogic;
 import com.dietiestates.user_service.service.RegistrationLogic;
+
+import main.java.com.dietiestates.shared.dto.PropertySearchDTO;
+
 import com.dietiestates.user_service.dto.PswChangeRequest;
+import com.dietiestates.user_service.service.FavouritesLogic;
 
 @RestController
 @RequestMapping("/api/v1/user")
@@ -27,10 +37,15 @@ public class UserController {
 
     @Autowired
     private PswChangeLogic pswChangeLogic;
+
+    @Autowired
+    private FavouritesLogic favouritesLogic;
     
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
+        System.err.println("Login attempt for email: " + loginRequest.getEmail() );
         boolean success = loginLogic.userLogin(loginRequest);
+        
         if (success) {
             return ResponseEntity.ok("Login successful");
         } else {
@@ -55,6 +70,35 @@ public class UserController {
         }
         return ResponseEntity.ok("Password change successful");
     }
+
+    @GetMapping("/favourites")
+    public ResponseEntity<List<PropertySearchDTO>> getFavourites()
+    {   
+        System.out.println("UserController.getFavourites: ");
+        System.err.println("UserController.getFavourites: userId=" );
+        //DEVO IMPLEMENTARE LA LOGICA PER OTTENERE ID UTENTE.
+        Long userId = 2L; // getCurrentUserId();
+        //chiamo il servizio
+        return ResponseEntity.ok(favouritesLogic.getFavouriteProperties(userId));
+    }
+
+    
+    @PostMapping("/addfavourite")
+    public ResponseEntity<Boolean> addFavourite(@RequestBody FavouriteListRequest favRequest)
+    {
+        Long userId = 2L; //favRequest.getIdUser();
+        Long propId = 4L;//favRequest.getIdProp();
+
+        favouritesLogic.addFavouriteProperty(userId, propId);
+        return ResponseEntity.ok(true);
+
+    } 
+    
+    @GetMapping("/ping")
+public ResponseEntity<String> ping() {
+  System.out.println(">>> PING NUOVO CODICE <<<");
+  return ResponseEntity.ok("OK");
+}
 
 
     //@PostMapping("/")

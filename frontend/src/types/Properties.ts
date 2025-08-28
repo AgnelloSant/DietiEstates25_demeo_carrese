@@ -38,3 +38,9 @@ export interface PropertyDetailDTO {
   publishedAt?: string
   imageUrl?: string ;
 }
+
+export interface FavoriteDTO {
+  id_user: number
+  id_prop: number
+  created_at?: string
+}
