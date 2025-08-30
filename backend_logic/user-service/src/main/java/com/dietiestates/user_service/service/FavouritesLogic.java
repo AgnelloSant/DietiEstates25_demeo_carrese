@@ -9,7 +9,7 @@ import com.dietiestates.user_service.model.Favourite;
 import com.dietiestates.user_service.model.FavouriteId;
 import com.dietiestates.user_service.rep.FavouriteRepository;
 
-import main.java.com.dietiestates.shared.dto.PropertySearchDTO;
+import com.dietiestates.shared.dto.PropertySearchDTO;
 
 @Service
 public class FavouritesLogic {

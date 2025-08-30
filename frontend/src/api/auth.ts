@@ -1,7 +1,7 @@
 // src/api/auth.ts
 // Wrapper per chiamate al microservizio user-service
 
-import { httpUser } from "./http";
+import { httpUS } from "./http";
 import type { LoginRequest, LoginResponse, RegisterRequest, PswChangeRequest } from "@/types/user";
 
 /*
@@ -10,7 +10,7 @@ import type { LoginRequest, LoginResponse, RegisterRequest, PswChangeRequest } f
  * backend → user-service (porta 8081)
  */
 export const login = (payload: LoginRequest) => {
-  return http.post<LoginResponse>("/login", payload);
+  return httpUS.post<LoginResponse>("/login", payload);
 };
 
 /*
@@ -18,7 +18,7 @@ export const login = (payload: LoginRequest) => {
  * POST → /api/v1/user/register
  */
 export const register = (payload: RegisterRequest) => {
-  return httpUser.post("/register", payload);
+  return httpUS.post("/register", payload);
 };
 
 /*
@@ -26,5 +26,5 @@ export const register = (payload: RegisterRequest) => {
  * PUT → /api/v1/user/newpsw
  */
 export const changePassword = (payload: PswChangeRequest) => {
-  return httpUser.put("/newpsw", payload);
+  return httpUS.put("/newpsw", payload);
 };
