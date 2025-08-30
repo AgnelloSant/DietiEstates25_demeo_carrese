@@ -1,28 +1,47 @@
-//Configura l’istanza Axios (baseURL relativa: /api). In dev Vite la proxerà al backend.
 // src/api/http.ts
-import axios from 'axios'
+// Configura le istanze Axios per i microservizi (property e user)
 
-// 1) Crea istanza Axios con baseURL
-//    In sviluppo: /api → proxata a http://localhost:8082 (vite.config.ts)
-//    In produzione: configura l'hosting/reverse proxy per instradare /api al backend
+import axios from "axios";
 
-export const http = axios.create({
-  baseURL: '/property-service/api', // 👈 aggiunto prefisso corretto
+/*
+ * 🔹 Property Service
+ * Tutte le chiamate relative agli immobili (ricerca, creazione, update, delete)
+ * Vanno su http://localhost:8082/property-service/api → proxato da Vite
+ */
+export const httpProperty = axios.create({
+  baseURL: "/property-service/api", // Vite proxy → backend property-service (8082)
   timeout: 10000,
-})
+});
 
-// 2) Interceptor di richiesta (es. aggiungere token se in futuro farai auth)
-http.interceptors.request.use((config) => {
-  // es: const token = localStorage.getItem('token')
-  // if (token) config.headers.Authorization = `Bearer ${token}`
-  return config
-})
+/*
+ * 🔹 User Service
+ * Tutte le chiamate relative all’autenticazione e agli utenti
+ * Vanno su http://localhost:8081/api/v1/user → proxato da Vite
+ */
+export const httpUser = axios.create({
+  baseURL: "/api/v1/user", // Vite proxy → backend user-service (8081)
+  timeout: 10000,
+});
 
-// 3) Interceptor di risposta (gestione errori centralizzata)
-http.interceptors.response.use(
-  (res) => res,
-  (err) => {
-    console.error('API error:', err?.response ?? err)
-    return Promise.reject(err)
-  }
-)
+/*
+ * Interceptor comuni → puoi aggiungere token JWT in futuro
+ */
+function setupInterceptors(instance: any) {
+  instance.interceptors.request.use((config: any) => {
+    // es: const token = localStorage.getItem("token")
+    // if (token) config.headers.Authorization = `Bearer ${token}`
+    return config;
+  });
+
+  instance.interceptors.response.use(
+    (res: any) => res,
+    (err: any) => {
+      console.error("API error:", err?.response ?? err);
+      return Promise.reject(err);
+    }
+  );
+}
+
+// Attacco gli interceptor a entrambe le istanze
+setupInterceptors(httpProperty);
+setupInterceptors(httpUser);

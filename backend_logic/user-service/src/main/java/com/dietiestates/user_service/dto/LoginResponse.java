@@ -5,15 +5,15 @@ public class LoginResponse {
     private String name;
     private String email;
     private String phone;
-    private String address;
+
     private String role;
 
-    public LoginResponse(String id, String name, String email, String phone, String address, String role) {
+    public LoginResponse(String id, String name, String email, String phone,  String role) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.phone = phone;
-        this.address = address;
+
         this.role = role;
     }
 
@@ -49,13 +49,7 @@ public class LoginResponse {
         this.phone = phone;
     }
 
-    public String getAddress() {
-        return address;
-    }
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
 
     public String getRole() {
         return role;

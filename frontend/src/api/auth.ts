@@ -1,22 +1,30 @@
 // src/api/auth.ts
+// Wrapper per chiamate al microservizio user-service
 
-//utilizziamo i dto da types
-
-// src/api/auth.ts
-import { http } from "./http";
+import { httpUser } from "./http";
 import type { LoginRequest, LoginResponse, RegisterRequest, PswChangeRequest } from "@/types/user";
 
-// 🔑 LOGIN
+/*
+ * 🔑 LOGIN
+ * POST → /api/v1/user/login
+ * backend → user-service (porta 8081)
+ */
 export const login = (payload: LoginRequest) => {
-  return http.post<LoginResponse>("/v1/user/login", payload);
+  return httpUser.post<LoginResponse>("/login", payload);
 };
 
-// 📝 REGISTRAZIONE
+/*
+ * 📝 REGISTRAZIONE
+ * POST → /api/v1/user/register
+ */
 export const register = (payload: RegisterRequest) => {
-  return http.post("/v1/user/register", payload);
+  return httpUser.post("/register", payload);
 };
 
-// 🔒 CAMBIO PASSWORD
+/*
+ * 🔒 CAMBIO PASSWORD
+ * PUT → /api/v1/user/newpsw
+ */
 export const changePassword = (payload: PswChangeRequest) => {
-  return http.put("/v1/user/newpsw", payload);
+  return httpUser.put("/newpsw", payload);
 };

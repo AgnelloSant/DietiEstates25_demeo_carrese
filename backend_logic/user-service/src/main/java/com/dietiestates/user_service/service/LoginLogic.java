@@ -15,27 +15,19 @@ public class LoginLogic {
     @Autowired
     private UserRepository userRepository;
 
-   public boolean userLogin(LoginRequest loginRequest) {
+    public User userLogin(LoginRequest loginRequest) {
         Optional<User> userOpt = userRepository.findByEmail(loginRequest.getEmail());
 
         if (userOpt.isEmpty()) {
-            return false; // Utente non trovato
+            return null; // Utente non trovato
         }
 
         User user = userOpt.get();
 
         if (!user.getPassword().equals(loginRequest.getPassword())) {
-            return false; // Password errata
+            return null; // Password errata
         }
-        
-        // Logic to generate JWT token
-        
 
-
-
-        return true; // Placeholder return value
+        return user; // ritorna l'utente trovato
     }
 }
-
-
-
