@@ -2,7 +2,11 @@ package com.dietiestates.user_service;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
+@EnableFeignClients(basePackages = "com.dietiestates.user_service.client")
+@EnableDiscoveryClient
 @SpringBootApplication
 public class UserServiceApplication {
 

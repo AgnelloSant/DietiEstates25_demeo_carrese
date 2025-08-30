@@ -7,6 +7,16 @@
       alt="Immobile"
     />
 
+    <button class="fav-btn" :title="`Aggiungi ai preferiti`" @click.stop="onFavClick">
+        <!-- semplice cuore SVG -->
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+          <path
+            d="M12 21s-6.716-4.317-9.173-7.053C1.01 11.977 1 9.61 2.343 8.05 3.686 6.49 6.08 6.21 7.76 7.54L12 11l4.24-3.46c1.68-1.33 4.074-1.05 5.417.51 1.343 1.56 1.333 3.927.173 5.897C18.716 16.683 12 21 12 21z"
+            fill="currentColor"
+          />
+        </svg>
+      </button>
+
     <!-- contenuto -->
     <div class="property-content">
       <h3 class="property-price">€ {{ property.price.toLocaleString() }}</h3>
@@ -23,7 +33,15 @@
 
 <script setup lang="ts">
 import type { PropertySearchDTO } from "@/types/Properties"
-defineProps<{ property: PropertySearchDTO }>()
+const props = defineProps<{ property: PropertySearchDTO }>()
+
+const emit = defineEmits<{
+  (e: "add-fav", propId: number): void
+}>()
+
+function onFavClick() {
+  emit("add-fav", props.property.id)
+}
 </script>
 
 <style scoped>

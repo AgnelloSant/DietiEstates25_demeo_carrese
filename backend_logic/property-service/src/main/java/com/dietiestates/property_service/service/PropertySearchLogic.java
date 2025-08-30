@@ -1,6 +1,6 @@
 package com.dietiestates.property_service.service;
 
-import com.dietiestates.property_service.dto.PropertySearchDTO;
+import main.java.com.dietiestates.shared.dto.PropertySearchDTO;
 import com.dietiestates.property_service.model.Property;
 import com.dietiestates.property_service.repository.PropertyRepository;
 import org.springframework.stereotype.Service;
@@ -22,6 +22,7 @@ public class PropertySearchLogic {
     // Restituisce una lista di PropertySearchDTO (con id incluso).
      
 public List<PropertySearchDTO> searchProperties(String city, Double minArea, Double maxPrice) {
+    System.err.println("PropertySearchLogic.searchProperties: city=" + city + " minArea=" + minArea + " maxPrice=" + maxPrice);
     List<Property> properties = propertyRepository
         .searchProperties(city, minArea, maxPrice); // 👈 usa il nuovo metodo
 
@@ -39,4 +40,6 @@ public List<PropertySearchDTO> searchProperties(String city, Double minArea, Dou
             property.getPrice()
         );
     }
+
+
 }

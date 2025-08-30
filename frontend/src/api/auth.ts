@@ -10,7 +10,7 @@ import type { LoginRequest, LoginResponse, RegisterRequest, PswChangeRequest } f
  * backend → user-service (porta 8081)
  */
 export const login = (payload: LoginRequest) => {
-  return httpUser.post<LoginResponse>("/login", payload);
+  return http.post<LoginResponse>("/login", payload);
 };
 
 /*

@@ -2,6 +2,8 @@ package com.dietiestates.property_service.controller;
 
 import com.dietiestates.property_service.dto.*;
 import com.dietiestates.property_service.service.*;
+import main.java.com.dietiestates.shared.dto.PropertySearchDTO;
+import main.java.com.dietiestates.shared.dto.IdsRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,6 +42,7 @@ public ResponseEntity<List<PropertySearchDTO>> searchProperties(
     @RequestParam(required = false) Double minArea,
     @RequestParam(required = false) Double maxPrice
 ) {
+    System.out.println("Cerco in propertyController: city=" + city + " minArea=" + minArea + " maxPrice=" + maxPrice);
     List<PropertySearchDTO> results = propertySearchLogic.searchProperties(city, minArea, maxPrice);
     return ResponseEntity.ok(results);
 }
@@ -61,6 +64,15 @@ public ResponseEntity<List<PropertySearchDTO>> searchProperties(
         PropertyUpdateDTO updated = propertyUpdateLogic.updateProperty(id, updateDTO);
         return ResponseEntity.ok(updated);
     }
+
+    @PostMapping("/batch")
+    public ResponseEntity<List<PropertySearchDTO>> getByIds(@RequestBody IdsRequest req){
+        System.out.println("PropertyController.getByIds");
+        var out = propertyGetLogic.findByIds(req.getIds());
+        return ResponseEntity.ok(out);
+    }
+
+
 
     // --- Cancellazione proprietà ---
     @DeleteMapping("/delete/{id}")
