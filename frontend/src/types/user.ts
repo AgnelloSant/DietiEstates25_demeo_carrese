@@ -6,14 +6,19 @@ export interface LoginRequest {
   password: string
 }
 
+export interface PublicUserDTO {
+  id: number
+  email: string
+  role: string
+  name?: string
+  phone?: string
+  address?: string
+}
+
 // DTO che il backend restituisce al login
 export interface LoginResponse {
-  id: string
-  name: string
-  email: string
-  phone: string
-  address: string
-  role: string // "ADMIN" | "USER"
+  accessToken: string
+  user: PublicUserDTO // "ADMIN" | "USER"
 }
 
 // DTO per registrazione
@@ -30,4 +35,9 @@ export interface PswChangeRequest {
   email: string
   oldPsw: string
   newPsw: string
+}
+
+
+export interface LogoutRequest{ 
+  
 }

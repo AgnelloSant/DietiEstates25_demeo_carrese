@@ -33,7 +33,7 @@ ensure_network() {
 
 build_eureka() {
   echo "🛠  Build $EUREKA_IMAGE"
-  docker build -t "$EUREKA_IMAGE" -f eureka-server/Dockerfile .
+  docker build -t "$EUREKA_IMAGE" -f eureka-server/Dockerfile eureka-server/
 }
 
 build_user() {
@@ -53,20 +53,29 @@ run_eureka() {
   docker run -d --name "$EUREKA_NAME" \
     --network "$NET" \
     -p ${EUREKA_PORT}:${EUREKA_PORT} \
-    "${EUREKA_ENV[@]}" \
+    ${EUREKA_ENV[@]+"${EUREKA_ENV[@]}"} \
     "$EUREKA_IMAGE"
 }
 
 run_user() {
   ensure_network
+
+  KEYS_DIR="$(cd "$(dirname "$0")" && pwd)/.gitignore"
+
   echo "♻️  Restart container $USER_NAME"
   docker rm -f "$USER_NAME" >/dev/null 2>&1 || true
+
   docker run -d --name "$USER_NAME" \
     --network "$NET" \
     -p ${USER_PORT}:${USER_PORT} \
+    --env-file user-service/.env \
+    -v "${KEYS_DIR}/private.pem":/run/secrets/jwt_private.pem:ro \
+    -v "${KEYS_DIR}/public.pem":/run/secrets/jwt_public.pem:ro \
     "${USER_ENV[@]}" \
     "$USER_IMAGE"
 }
+
+
 
 run_prop() {
   ensure_network

@@ -3,20 +3,42 @@
 //utilizziamo i dto da types
 
 // src/api/auth.ts
-import { http } from "./http";
+import { http, httpUS } from "./http";
 import type { LoginRequest, LoginResponse, RegisterRequest, PswChangeRequest } from "@/types/user";
+import { useAuthStore } from "@/stores/authenticate"
+import { usePropertyStore } from "@/stores/properties";
 
 // 🔑 LOGIN
 export const login = (payload: LoginRequest) => {
-  return http.post<LoginResponse>("api/v1/user/login", payload);
+  return httpUS.post<LoginResponse>("/login", payload);
 };
 
 // 📝 REGISTRAZIONE
 export const register = (payload: RegisterRequest) => {
-  return http.post("/v1/user/register", payload);
+  return httpUS.post("/register", payload);
 };
 
 // 🔒 CAMBIO PASSWORD
 export const changePassword = (payload: PswChangeRequest) => {
-  return http.put("/v1/user/newpsw", payload);
+  return httpUS.put("/v1/user/newpsw", payload);
 };
+
+
+export const logout = async () => {
+  const store = useAuthStore()
+  const prop = usePropertyStore()
+
+  try {
+    await httpUS.post("/logout")
+  } catch (_) {}
+
+  // Pulisci localStorage
+  localStorage.removeItem("token")
+  localStorage.removeItem("user")
+
+  // Pulisci lo store
+  store.token = null
+  store.user = null
+
+  prop.favList = []
+}
