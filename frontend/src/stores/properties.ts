@@ -63,8 +63,13 @@ export const usePropertyStore = defineStore("properties", {
     }
     this.favList = data
   } catch (e:any) {
-    this.favError = e?.message ?? 'Errore nel caricamento dei preferiti'
-    this.favList = []
+    if (e.response &&e.response.status === 401){ 
+      this.favError = "401"
+      this.favList = []
+    }else{
+      this.favError = e?.message ?? 'Errore nel caricamento dei preferiti'
+      this.favList = []
+    }
   } finally {
     this.favLoading = false
   }

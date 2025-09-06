@@ -4,7 +4,7 @@
 
 <template>
   <div class="app">
-    <!-- Header stile immobiliare.it -->
+    
     <header class="header">
       <div class="container header-inner">
         <RouterLink to="/" class="logo">Dieti Estates</RouterLink>

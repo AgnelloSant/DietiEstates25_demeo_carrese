@@ -42,9 +42,10 @@ const handleLogin = async () => {
   if (success) {
     // se ADMIN → admin page
     if (auth.user?.role === "ADMIN") router.push("/admin");
-    else router.push("/"); // altrimenti home
+    else router.push("/"); 
   } else {
     error.value = "Email o password errati";
   }
 };
 </script>
+ 
