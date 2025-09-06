@@ -2,7 +2,7 @@ import { useAuthStore } from '@/stores/authenticate'
 import axios from 'axios'
 
 // property-service (porta 8082, context-path /property-service)
-export const http = axios.create({
+export const httpProperty = axios.create({
   baseURL: '/property-service/api',
   timeout: 10000,
 })
@@ -14,6 +14,7 @@ export const httpUS = axios.create({
 })
 
 // Interceptor minimi (puoi ampliarli in futuro)
+<<<<<<< HEAD
 http.interceptors.request.use(c => {
   //const store = useAuthStore()
   const token = localStorage.getItem("token")
@@ -32,4 +33,9 @@ httpUS.interceptors.request.use(c => {
   return c
 })
 http.interceptors.response.use(r => r, e => Promise.reject(e))
+=======
+httpProperty.interceptors.request.use(c => c)
+httpUS.interceptors.request.use(c => c)
+httpProperty.interceptors.response.use(r => r, e => Promise.reject(e))
+>>>>>>> main-pulito
 httpUS.interceptors.response.use(r => r, e => Promise.reject(e))

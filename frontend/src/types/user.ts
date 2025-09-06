@@ -17,8 +17,16 @@ export interface PublicUserDTO {
 
 // DTO che il backend restituisce al login
 export interface LoginResponse {
+<<<<<<< HEAD
   accessToken: string
   user: PublicUserDTO // "ADMIN" | "USER"
+=======
+  id: string
+  name: string
+  email: string
+  phone: string
+  role: string // "ADMIN" | "USER"
+>>>>>>> main-pulito
 }
 
 // DTO per registrazione

@@ -4,7 +4,12 @@ package com.dietiestates.property_service.service;
 import com.dietiestates.property_service.dto.PropertyDetailDTO;
 import com.dietiestates.property_service.model.Property;
 import com.dietiestates.property_service.repository.PropertyRepository;
+<<<<<<< HEAD
 import com.dietiestates.shared.dto.PropertySearchDTO;
+=======
+import com.dietiestates.shared.dto.PropertySearchDTO; // ✅ import dal JAR shared
+
+>>>>>>> main-pulito
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
