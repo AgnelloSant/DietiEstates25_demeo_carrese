@@ -13,7 +13,7 @@ import com.dietiestates.user_service.service.RegistrationLogic;
 import com.dietiestates.user_service.service.LoginLogic.LoginResult;
 import com.dietiestates.user_service.auth.AuthService;
 import com.dietiestates.user_service.auth.JwtProperties;
-import main.java.com.dietiestates.shared.dto.PropertySearchDTO;
+import com.dietiestates.shared.dto.PropertySearchDTO;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
