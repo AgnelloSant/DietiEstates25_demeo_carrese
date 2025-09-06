@@ -6,5 +6,3 @@ public record LoginResponse(
 ) {
     
 }
-
-

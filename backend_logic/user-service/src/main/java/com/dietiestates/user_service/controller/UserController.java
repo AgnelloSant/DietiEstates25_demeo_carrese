@@ -13,7 +13,7 @@ import com.dietiestates.user_service.service.RegistrationLogic;
 import com.dietiestates.user_service.service.LoginLogic.LoginResult;
 import com.dietiestates.user_service.auth.AuthService;
 import com.dietiestates.user_service.auth.JwtProperties;
-import main.java.com.dietiestates.shared.dto.PropertySearchDTO;
+import com.dietiestates.shared.dto.PropertySearchDTO;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -55,6 +55,7 @@ public class UserController {
         this.authService = authService;
         this.jwtProps = jwtProps;
     }
+
 
     // === LOGIN ===
     @PostMapping("/login")
@@ -122,7 +123,19 @@ public class UserController {
         return ResponseEntity.noContent()
                 .header(HttpHeaders.SET_COOKIE, cleared.toString())
                 .build();
+
     }
+
+    LoginResponse response = new LoginResponse(
+        String.valueOf(user.getId()),
+        user.getName(),
+        user.getEmail(),
+        user.getPhone(),
+        user.getRole()
+    );
+
+    return ResponseEntity.ok(response);
+}
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterRequest registerRequest) {

@@ -30,10 +30,10 @@ router.beforeEach((to, from, next) => {
     return next({ name: "login" });
   }
 
-  if (to.meta.requiresAdmin && auth.user?.role !== "ADMIN") {
-    // Non admin → torna in home
-    return next({ name: "home" });
-  }
+  if (to.meta.requiresAdmin && auth.user?.role?.toUpperCase() !== "ADMIN") {
+  return next({ name: "home" });
+}
+
 
   next();
 });
