@@ -1,7 +1,7 @@
 // src/api/properties.ts
 // Wrapper per chiamate al microservizio property-service
 
-import { httpProperty } from "./http";
+import { httpProp } from "./http";
 import type { PropertySearchDTO, PropertyCreateDTO, PropertyUpdateDTO } from "@/types/Properties";
 import type { AxiosResponse } from "axios";
 
@@ -15,7 +15,7 @@ export const searchProperties = (params?: {
   minArea?: number;
   maxPrice?: number;
 }): Promise<AxiosResponse<PropertySearchDTO[]>> => {
-  return httpProperty.get<PropertySearchDTO[]>("/properties/search", { params });
+  return httpProp.get<PropertySearchDTO[]>("/properties/search", { params });
 };
 
 /*
@@ -23,7 +23,7 @@ export const searchProperties = (params?: {
  * POST → /property-service/api/properties/create
  */
 export async function createProperty(payload: PropertyCreateDTO) {
-  const { data } = await httpProperty.post<PropertyCreateDTO>("/properties/create", payload);
+  const { data } = await httpProp.post<PropertyCreateDTO>("/properties/create", payload);
   return data;
 }
 
@@ -32,7 +32,7 @@ export async function createProperty(payload: PropertyCreateDTO) {
  * PUT → /property-service/api/properties/update/{id}
  */
 export async function updateProperty(id: number, payload: PropertyUpdateDTO) {
-  const { data } = await httpProperty.put(`/properties/update/${id}`, payload);
+  const { data } = await httpProp.put(`/properties/update/${id}`, payload);
   return data;
 }
 
@@ -41,5 +41,5 @@ export async function updateProperty(id: number, payload: PropertyUpdateDTO) {
  * DELETE → /property-service/api/properties/delete/{id}
  */
 export async function deleteProperty(id: number) {
-  await httpProperty.delete(`/properties/delete/${id}`);
+  await httpProp.delete(`/properties/delete/${id}`);
 }
