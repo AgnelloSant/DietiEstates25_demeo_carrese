@@ -1,69 +1,83 @@
-// src/stores/authenticate.ts
-// Store Pinia per gestire autenticazione utente (login, logout, registrazione, cambio psw)
+import { defineStore } from "pinia"
+import { login, register, changePassword } from "@/api/auth"
+import type { LoginRequest, RegisterRequest, PswChangeRequest } from "@/types/user"
 
-import { defineStore } from "pinia";
-// Importiamo le API che parlano col backend
-import { login, register, changePassword } from "@/api/auth";
-// Importiamo i tipi DTO che rappresentano le request/response del backend
-import type { LoginRequest, LoginResponse, RegisterRequest, PswChangeRequest } from "@/types/user";
+// Tipo coerente con la risposta del backend
+interface AuthUser {
+  id: number
+  email: string
+  role: string
+  name?: string
+  phone?: string
+  address?: string
+}
+
+interface LoginResponse {
+  accessToken: string
+  user: AuthUser
+}
 
 export const useAuthStore = defineStore("auth", {
-  // ------------------ STATO ------------------
   state: () => ({
-    // Oggetto utente loggato (torna dal backend come LoginResponse) oppure null se non autenticato
-    user: null as LoginResponse | null,
+    user: (localStorage.getItem("user")
+      ? JSON.parse(localStorage.getItem("user")!)
+      : null) as AuthUser | null,
 
-    // Token JWT in futuro. Per ora mettiamo un "dummy" o null
-    token: null as string | null,
+    token: localStorage.getItem("token") || null,
   }),
 
-  // ------------------ AZIONI ------------------
+  getters: { 
+    isLoggedIn: (state) => !!state.token
+  },
+
   actions: {
-    // LOGIN → chiama il backend passando l’oggetto LoginRequest
+    // LOGIN
     async loginUser(payload: LoginRequest) {
       try {
-        // Chiamo la API con il payload (email, password)
-        const res = await login(payload);
+        const res = await login(payload)
+        const data = res.data as LoginResponse
 
-        // Salvo i dati utente ritornati (LoginResponse)
-        this.user = res.data;
+        this.user = data.user
+        this.token = data.accessToken
 
-        // Salvo un token fittizio (in futuro potresti gestire JWT)
-        this.token = "dummy";
+        localStorage.setItem("user", JSON.stringify(this.user))
+        localStorage.setItem("token", this.token)
 
-        return true;
+        return true
       } catch (err) {
-        console.error("Login fallito", err);
-        return false;
+        console.error("Login fallito", err)
+        return false
       }
     },
 
-    // REGISTRAZIONE → invia RegisterRequest al backend
+    // REGISTRAZIONE
     async registerUser(payload: RegisterRequest) {
       try {
-        await register(payload); // basta inviare i dati al backend
-        return true;
+        await register(payload)
+        return true
       } catch (err) {
-        console.error("Registrazione fallita", err);
-        return false;
+        console.error("Registrazione fallita", err)
+        return false
       }
     },
 
-    // CAMBIO PASSWORD → invia PswChangeRequest al backend
+    // CAMBIO PASSWORD
     async updatePassword(payload: PswChangeRequest) {
       try {
-        await changePassword(payload);
-        return true;
+        await changePassword(payload)
+        return true
       } catch (err) {
-        console.error("Cambio password fallito", err);
-        return false;
+        console.error("Cambio password fallito", err)
+        return false
       }
     },
 
-    // LOGOUT → svuota lo stato utente e token
+    // LOGOUT
     logout() {
-      this.user = null;
-      this.token = null;
+      this.user = null
+      this.token = null
+      localStorage.removeItem("user")
+      localStorage.removeItem("token")
     },
   },
-});
+})

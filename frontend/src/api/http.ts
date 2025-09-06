@@ -1,3 +1,4 @@
+import { useAuthStore } from '@/stores/authenticate'
 import axios from 'axios'
 
 // property-service (porta 8082, context-path /property-service)
@@ -13,7 +14,22 @@ export const httpUS = axios.create({
 })
 
 // Interceptor minimi (puoi ampliarli in futuro)
-httpProperty.interceptors.request.use(c => c)
-httpUS.interceptors.request.use(c => c)
-httpProperty.interceptors.response.use(r => r, e => Promise.reject(e))
+http.interceptors.request.use(c => {
+  //const store = useAuthStore()
+  const token = localStorage.getItem("token")
+  if(token){ 
+    c.headers.Authorization = `Bearer ${token}`
+  }
+  return c
+})
+
+httpUS.interceptors.request.use(c => {
+  //const store = useAuthStore()
+  const token = localStorage.getItem("token")
+  if(token){ 
+    c.headers.Authorization = `Bearer ${token}`
+  }
+  return c
+})
+http.interceptors.response.use(r => r, e => Promise.reject(e))
 httpUS.interceptors.response.use(r => r, e => Promise.reject(e))

@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# DOVE SIAMO: metti questo file dentro backend_logic/ e lancialo da lì
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$ROOT_DIR"
 
@@ -20,7 +19,6 @@ EUREKA_PORT=8761
 USER_PORT=8081
 PROP_PORT=8082
 
-# Env vars per i container
 EUREKA_ENV=()
 USER_ENV=( -e "EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:${EUREKA_PORT}/eureka/" )
 PROP_ENV=( -e "EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:${EUREKA_PORT}/eureka/" )
@@ -51,30 +49,32 @@ run_eureka() {
   ensure_network
   echo "♻️  Restart container $EUREKA_NAME"
   docker rm -f "$EUREKA_NAME" >/dev/null 2>&1 || true
-  if [ ${#EUREKA_ENV[@]} -eq 0 ]; then
-    docker run -d --name "$EUREKA_NAME" \
-      --network "$NET" \
-      -p ${EUREKA_PORT}:${EUREKA_PORT} \
-      "$EUREKA_IMAGE"
-  else
-    docker run -d --name "$EUREKA_NAME" \
-      --network "$NET" \
-      -p ${EUREKA_PORT}:${EUREKA_PORT} \
-      "${EUREKA_ENV[@]}" \
-      "$EUREKA_IMAGE"
-  fi
+  docker run -d --name "$EUREKA_NAME" \
+    --network "$NET" \
+    -p ${EUREKA_PORT}:${EUREKA_PORT} \
+    ${EUREKA_ENV[@]+"${EUREKA_ENV[@]}"} \
+    "$EUREKA_IMAGE"
 }
 
 run_user() {
   ensure_network
+
+  KEYS_DIR="$(cd "$(dirname "$0")" && pwd)/.gitignore"
+
   echo "♻️  Restart container $USER_NAME"
   docker rm -f "$USER_NAME" >/dev/null 2>&1 || true
+
   docker run -d --name "$USER_NAME" \
     --network "$NET" \
     -p ${USER_PORT}:${USER_PORT} \
+    --env-file user-service/.env \
+    -v "${KEYS_DIR}/private.pem":/run/secrets/jwt_private.pem:ro \
+    -v "${KEYS_DIR}/public.pem":/run/secrets/jwt_public.pem:ro \
     "${USER_ENV[@]}" \
     "$USER_IMAGE"
 }
+
+
 
 run_prop() {
   ensure_network

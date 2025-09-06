@@ -19,7 +19,7 @@
         </small>
       </h3>
 
-      <div v-if="!isLoggedIn">
+      <div v-if="!isLoggedIn || store.favError === '401'">
         <p>Effettua l'accesso per visualizzare gli annunci salvati.</p>
       </div>
 
@@ -50,7 +50,6 @@
     <!-- ⏳ Stato caricamento -->
     <p v-if="store.loading">Caricamento…</p>
 
-    <!-- ⚠️ Errore -->
     <p v-if="store.error" class="error">{{ store.error }}</p>
 
     <!-- 📋 Lista immobili -->
@@ -71,11 +70,13 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue"
 import { usePropertyStore } from "@/stores/properties"
+import { useAuthStore } from "@/stores/authenticate"
 import FiltersBar from "@/components/FiltersBar.vue"
 import PropertyCard from "@/components/PropertyCard.vue"
 
 // TODO: sostituire con stato reale auth
-const isLoggedIn = true
+const auth = useAuthStore()
+const isLoggedIn = auth.isLoggedIn
 
 const store = usePropertyStore()
 

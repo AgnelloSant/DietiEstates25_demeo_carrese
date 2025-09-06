@@ -1,8 +1,15 @@
 // src/api/auth.ts
 // Wrapper per chiamate al microservizio user-service
 
-import { httpUS } from "./http";
+
+//utilizziamo i dto da types
+
+// src/api/auth.ts
+import { http, httpUS } from "./http";
+
 import type { LoginRequest, LoginResponse, RegisterRequest, PswChangeRequest } from "@/types/user";
+import { useAuthStore } from "@/stores/authenticate"
+import { usePropertyStore } from "@/stores/properties";
 
 /*
  * 🔑 LOGIN
@@ -28,3 +35,23 @@ export const register = (payload: RegisterRequest) => {
 export const changePassword = (payload: PswChangeRequest) => {
   return httpUS.put("/newpsw", payload);
 };
+
+
+export const logout = async () => {
+  const store = useAuthStore()
+  const prop = usePropertyStore()
+
+  try {
+    await httpUS.post("/logout")
+  } catch (_) {}
+
+  // Pulisci localStorage
+  localStorage.removeItem("token")
+  localStorage.removeItem("user")
+
+  // Pulisci lo store
+  store.token = null
+  store.user = null
+
+  prop.favList = []
+}
