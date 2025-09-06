@@ -33,7 +33,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { http } from '@/api/http'
+import { httpProperty } from '@/api/http'
 import type { PropertyDetailDTO } from '@/types/Properties'
 
 // id dalla route
@@ -42,7 +42,7 @@ const property = ref<PropertyDetailDTO | null>(null)
 
 onMounted(async () => {
   try {
-    const { data } = await http.get<PropertyDetailDTO>(`/properties/${props.id}`)
+    const { data } = await httpProperty.get<PropertyDetailDTO>(`/properties/${props.id}`)
     property.value = data
   } catch (err) {
     console.error("Errore caricamento proprietà", err)

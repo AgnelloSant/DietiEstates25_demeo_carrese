@@ -4,7 +4,7 @@ package com.dietiestates.property_service.service;
 import com.dietiestates.property_service.dto.PropertyDetailDTO;
 import com.dietiestates.property_service.model.Property;
 import com.dietiestates.property_service.repository.PropertyRepository;
-import main.java.com.dietiestates.shared.dto.PropertySearchDTO; // ✅ import dal JAR shared
+import com.dietiestates.shared.dto.PropertySearchDTO; // ✅ import dal JAR shared
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -2,8 +2,8 @@ package com.dietiestates.property_service.controller;
 
 import com.dietiestates.property_service.dto.*;
 import com.dietiestates.property_service.service.*;
-import main.java.com.dietiestates.shared.dto.PropertySearchDTO;
-import main.java.com.dietiestates.shared.dto.IdsRequest;
+import com.dietiestates.shared.dto.PropertySearchDTO;
+import com.dietiestates.shared.dto.IdsRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

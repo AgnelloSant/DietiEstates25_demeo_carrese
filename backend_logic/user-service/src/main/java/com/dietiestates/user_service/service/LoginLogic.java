@@ -19,6 +19,7 @@ public class LoginLogic {
     private final PasswordEncoder passwordEncoder;
     private final AuthService authService;
 
+
     public record LoginResult(User user, AuthService.Tokens tokens) {}
 
     public LoginLogic(UserRepository userRepository,
@@ -29,15 +30,19 @@ public class LoginLogic {
         this.authService = authService;
     }
 
+
     public Optional<LoginResult> userLogin(LoginRequest loginRequest,
                                            String uaHash,
                                            String ipHash) {
         Optional<User> userOpt = userRepository.findByEmail(loginRequest.getEmail());
         if (userOpt.isEmpty()) {
+
             return Optional.empty(); // Utente non trovato
+
         }
 
         User user = userOpt.get();
+
 
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
             return Optional.empty(); // Password errata

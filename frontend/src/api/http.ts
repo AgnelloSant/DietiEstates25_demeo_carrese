@@ -2,7 +2,7 @@ import { useAuthStore } from '@/stores/authenticate'
 import axios from 'axios'
 
 // property-service (porta 8082, context-path /property-service)
-export const http = axios.create({
+export const httpProperty = axios.create({
   baseURL: '/property-service/api',
   timeout: 10000,
 })
