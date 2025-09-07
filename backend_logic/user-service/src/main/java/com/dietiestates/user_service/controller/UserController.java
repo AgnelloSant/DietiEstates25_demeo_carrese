@@ -56,7 +56,6 @@ public class UserController {
         this.jwtProps = jwtProps;
     }
 
-
     // === LOGIN ===
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest req, HttpServletRequest httpReq) {
@@ -74,6 +73,7 @@ public class UserController {
         result.user().getEmail(),
         result.user().getRole()
     );
+
 
     LoginResponse response = new LoginResponse(
         result.tokens().access(),
@@ -123,19 +123,8 @@ public class UserController {
         return ResponseEntity.noContent()
                 .header(HttpHeaders.SET_COOKIE, cleared.toString())
                 .build();
-
     }
 
-    LoginResponse response = new LoginResponse(
-        String.valueOf(user.getId()),
-        user.getName(),
-        user.getEmail(),
-        user.getPhone(),
-        user.getRole()
-    );
-
-    return ResponseEntity.ok(response);
-}
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterRequest registerRequest) {

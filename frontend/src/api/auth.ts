@@ -2,11 +2,8 @@
 // Wrapper per chiamate al microservizio user-service
 
 
-//utilizziamo i dto da types
-
 // src/api/auth.ts
-import { http, httpUS } from "./http";
-
+import { httpUS } from "./http";
 import type { LoginRequest, LoginResponse, RegisterRequest, PswChangeRequest } from "@/types/user";
 import { useAuthStore } from "@/stores/authenticate"
 import { usePropertyStore } from "@/stores/properties";
@@ -33,7 +30,7 @@ export const register = (payload: RegisterRequest) => {
  * PUT → /api/v1/user/newpsw
  */
 export const changePassword = (payload: PswChangeRequest) => {
-  return httpUS.put("/newpsw", payload);
+  return httpUS.put("/v1/user/newpsw", payload);
 };
 
 
