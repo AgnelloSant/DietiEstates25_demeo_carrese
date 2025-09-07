@@ -19,7 +19,6 @@ public class LoginLogic {
     private final PasswordEncoder passwordEncoder;
     private final AuthService authService;
 
-<<<<<<< HEAD
     public record LoginResult(User user, AuthService.Tokens tokens) {}
 
     public LoginLogic(UserRepository userRepository,
@@ -33,21 +32,13 @@ public class LoginLogic {
     public Optional<LoginResult> userLogin(LoginRequest loginRequest,
                                            String uaHash,
                                            String ipHash) {
-=======
-    public User userLogin(LoginRequest loginRequest) {
->>>>>>> main-pulito
         Optional<User> userOpt = userRepository.findByEmail(loginRequest.getEmail());
         if (userOpt.isEmpty()) {
-<<<<<<< HEAD
             return Optional.empty(); // Utente non trovato
-=======
-            return null; // Utente non trovato
->>>>>>> main-pulito
         }
 
         User user = userOpt.get();
 
-<<<<<<< HEAD
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
             return Optional.empty(); // Password errata
         }
@@ -59,12 +50,5 @@ public class LoginLogic {
         System.out.println("Access Token: " + tokens.access());
 
         return Optional.of(new LoginResult(user, tokens));
-=======
-        if (!user.getPassword().equals(loginRequest.getPassword())) {
-            return null; // Password errata
-        }
-
-        return user; // ritorna l'utente trovato
->>>>>>> main-pulito
     }
 }

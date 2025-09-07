@@ -51,26 +51,11 @@ run_eureka() {
   ensure_network
   echo "♻️  Restart container $EUREKA_NAME"
   docker rm -f "$EUREKA_NAME" >/dev/null 2>&1 || true
-<<<<<<< HEAD
   docker run -d --name "$EUREKA_NAME" \
     --network "$NET" \
     -p ${EUREKA_PORT}:${EUREKA_PORT} \
     ${EUREKA_ENV[@]+"${EUREKA_ENV[@]}"} \
     "$EUREKA_IMAGE"
-=======
-  if [ ${#EUREKA_ENV[@]} -eq 0 ]; then
-    docker run -d --name "$EUREKA_NAME" \
-      --network "$NET" \
-      -p ${EUREKA_PORT}:${EUREKA_PORT} \
-      "$EUREKA_IMAGE"
-  else
-    docker run -d --name "$EUREKA_NAME" \
-      --network "$NET" \
-      -p ${EUREKA_PORT}:${EUREKA_PORT} \
-      "${EUREKA_ENV[@]}" \
-      "$EUREKA_IMAGE"
-  fi
->>>>>>> main-pulito
 }
 
 run_user() {

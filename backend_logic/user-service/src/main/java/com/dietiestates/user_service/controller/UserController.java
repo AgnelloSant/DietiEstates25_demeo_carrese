@@ -3,17 +3,13 @@ package com.dietiestates.user_service.controller;
 import com.dietiestates.user_service.dto.FavouriteListRequest;
 import com.dietiestates.user_service.dto.LoginRequest;
 import com.dietiestates.user_service.dto.LoginResponse;
-<<<<<<< HEAD
 import com.dietiestates.user_service.dto.PswChangeRequest;
 import com.dietiestates.user_service.dto.PublicUserDTO;
-=======
->>>>>>> main-pulito
 import com.dietiestates.user_service.dto.RegisterRequest;
 import com.dietiestates.user_service.service.FavouritesLogic;
 import com.dietiestates.user_service.service.LoginLogic;
 import com.dietiestates.user_service.service.PswChangeLogic;
 import com.dietiestates.user_service.service.RegistrationLogic;
-<<<<<<< HEAD
 import com.dietiestates.user_service.service.LoginLogic.LoginResult;
 import com.dietiestates.user_service.auth.AuthService;
 import com.dietiestates.user_service.auth.JwtProperties;
@@ -21,10 +17,6 @@ import com.dietiestates.shared.dto.PropertySearchDTO;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-=======
-import com.dietiestates.user_service.model.User;
-import com.dietiestates.shared.dto.PropertySearchDTO;
->>>>>>> main-pulito
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -64,7 +56,6 @@ public class UserController {
         this.jwtProps = jwtProps;
     }
 
-<<<<<<< HEAD
     // === LOGIN ===
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest req, HttpServletRequest httpReq) {
@@ -131,29 +122,8 @@ public class UserController {
         return ResponseEntity.noContent()
                 .header(HttpHeaders.SET_COOKIE, cleared.toString())
                 .build();
-=======
-    @Autowired
-    private FavouritesLogic favouritesLogic;
-    
-  @PostMapping("/login")
-public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-    User user = loginLogic.userLogin(loginRequest);
-
-    if (user == null) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
->>>>>>> main-pulito
     }
 
-    LoginResponse response = new LoginResponse(
-        String.valueOf(user.getId()),
-        user.getName(),
-        user.getEmail(),
-        user.getPhone(),
-        user.getRole()
-    );
-
-    return ResponseEntity.ok(response);
-}
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterRequest registerRequest) {
