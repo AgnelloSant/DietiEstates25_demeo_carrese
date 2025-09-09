@@ -10,8 +10,17 @@ public class PropertyDetailDTO {
     private Double price;
     private String description;   // 👈 opzionale, se hai campo in entity
     private String publishedAt;   // 👈 opzionale, se hai LocalDateTime in entity
+    private Double latitude;   
+    private Double longitude;  
+    private boolean nearSchool;    
+    private boolean nearPark;      
+    private boolean nearTransport;
 
-    public PropertyDetailDTO(Long id, String title, String city, Double area, Double price, String description, String publishedAt) {
+
+
+    public PropertyDetailDTO(Long id, String title, String city, Double area, Double price, String description,
+            String publishedAt, Double latitude, Double longitude, boolean nearSchool, boolean nearPark,
+            boolean nearTransport) {
         this.id = id;
         this.title = title;
         this.city = city;
@@ -19,8 +28,12 @@ public class PropertyDetailDTO {
         this.price = price;
         this.description = description;
         this.publishedAt = publishedAt;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.nearSchool = nearSchool;
+        this.nearPark = nearPark;
+        this.nearTransport = nearTransport;
     }
-
     // Getters & Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -42,4 +55,37 @@ public class PropertyDetailDTO {
 
     public String getPublishedAt() { return publishedAt; }
     public void setPublishedAt(String publishedAt) { this.publishedAt = publishedAt; }
+    public Double getLatitude() {
+        return latitude;
+    }
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+    public Double getLongitude() {
+        return longitude;
+    }
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+    public boolean isNearSchool() {
+        return nearSchool;
+    }
+    public void setNearSchool(boolean nearSchool) {
+        this.nearSchool = nearSchool;
+    }
+    public boolean isNearPark() {
+        return nearPark;
+    }
+    public void setNearPark(boolean nearPark) {
+        this.nearPark = nearPark;
+    }
+    public boolean isNearTransport() {
+        return nearTransport;
+    }
+    public void setNearTransport(boolean nearTransport) {
+        this.nearTransport = nearTransport;
+    }
+
+
+    
 }

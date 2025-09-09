@@ -30,6 +30,7 @@
     "@prettier/plugin-oxc": "^0.0.4",
     "@tsconfig/node22": "^22.0.2",
     "@types/jsdom": "^21.1.7",
+    "@types/leaflet": "^1.9.20",
     "@types/node": "^22.16.5",
     "@vitejs/plugin-vue": "^6.0.1",
     "@vitejs/plugin-vue-jsx": "^5.0.1",
@@ -55,5 +56,4 @@
     "vitest": "^3.2.4",
     "vue-tsc": "^3.0.4"
   }
-
 }

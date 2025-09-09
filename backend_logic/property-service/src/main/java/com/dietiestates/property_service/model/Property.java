@@ -25,25 +25,92 @@ public class Property {
     @Column(name = "published_at")
     private LocalDate publishedAt;
 
+//coordinate per geoapify
+private Double latitude;
+private Double longitude;
+
+    private boolean nearSchool;
+    private boolean nearPark;
+    private boolean nearTransport;
+
     //  Costruttore vuoto richiesto da JPA
     public Property() {}
 
     // Costruttore utile per creare oggetti 
-    public Property(String title, String description, String city, Double area, Double price, LocalDate publishedAt) {
+
+  public Property(Long id, String title, String description, String city, Double price, Double area,
+            LocalDate publishedAt, Double latitude, Double longitude, boolean nearSchool, boolean nearPark,
+            boolean nearTransport) {
+        this.id = id;
         this.title = title;
         this.description = description;
         this.city = city;
-        this.area = area;
         this.price = price;
+        this.area = area;
         this.publishedAt = publishedAt;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.nearSchool = nearSchool;
+        this.nearPark = nearPark;
+        this.nearTransport = nearTransport;
     }
 
     //  Getter e Setter
+
+    public LocalDate getPublishedAt() {
+    return publishedAt;
+}
+
+
+  public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+  public void setPublishedAt(LocalDate publishedAt) {
+    this.publishedAt = publishedAt;
+  }
+
+  public boolean isNearSchool() {
+    return nearSchool;
+  }
+
+  public void setNearSchool(boolean nearSchool) {
+    this.nearSchool = nearSchool;
+  }
+
+  public boolean isNearPark() {
+    return nearPark;
+  }
+
+  public void setNearPark(boolean nearPark) {
+    this.nearPark = nearPark;
+  }
+
+  public boolean isNearTransport() {
+    return nearTransport;
+  }
+
+  public void setNearTransport(boolean nearTransport) {
+    this.nearTransport = nearTransport;
+  }
 
     public Long getId() {
         return id;
     }
 
+  
     public void setId(Long id) {
         this.id = id;
     }

@@ -22,10 +22,12 @@ public class PropertyGetLogic {
         this.propertyRepository = propertyRepository;
     }
 
+    // 🔹 Recupera una proprietà per ID e la converte in PropertyDetailDTO
     public PropertyDetailDTO getById(Long id) {
         Property property = propertyRepository.findById(id)
             .orElseThrow(() -> new NoSuchElementException("Property not found with id " + id));
 
+        // ✅ Converte in DTO includendo i nuovi campi
         return new PropertyDetailDTO(
             property.getId(),
             property.getTitle(),
@@ -33,20 +35,26 @@ public class PropertyGetLogic {
             property.getArea(),
             property.getPrice(),
             property.getDescription(),
-            property.getpublishedAt() != null               // ✅ getter corretto (P maiuscola)
-                ? property.getpublishedAt().format(DateTimeFormatter.ISO_DATE)
-                : null
+            property.getPublishedAt() != null
+                ? property.getPublishedAt().format(DateTimeFormatter.ISO_DATE)
+                : null,
+            property.getLatitude(),
+            property.getLongitude(),
+            property.isNearSchool(),
+            property.isNearPark(),
+            property.isNearTransport()
         );
     }
 
+    // 🔹 Recupera più proprietà per lista di ID (usato nei preferiti)
     public List<PropertySearchDTO> findByIds(List<Long> ids) {
         System.out.println("PropertyGetLogic.findByIds: ");
         if (ids == null || ids.isEmpty()) return List.of();
 
-        // 1) fetch in bulk
+        // 1) Fetch dal DB
         List<Property> props = propertyRepository.findAllById(ids);
 
-        // 2) map Entity -> DTO
+        // 2) Conversione in DTO includendo i flag nearX
         List<PropertySearchDTO> dtos = new ArrayList<>(props.size());
         for (Property p : props) {
             dtos.add(new PropertySearchDTO(
@@ -54,11 +62,14 @@ public class PropertyGetLogic {
                 p.getTitle(),
                 p.getCity(),
                 p.getArea(),
-                p.getPrice()
+                p.getPrice(),
+                p.isNearSchool(),
+                p.isNearPark(),
+                p.isNearTransport()
             ));
         }
 
-        // 3) (opzionale ma consigliato) preserva l’ordine degli ids in ingresso
+        // 3) Preserva l’ordine degli ID passati in input
         Map<Long, Integer> order = new HashMap<>();
         for (int i = 0; i < ids.size(); i++) order.put(ids.get(i), i);
         dtos.sort(Comparator.comparingInt(d -> order.getOrDefault(d.getId(), Integer.MAX_VALUE)));
