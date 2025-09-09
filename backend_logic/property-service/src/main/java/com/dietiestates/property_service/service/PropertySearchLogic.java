@@ -1,6 +1,6 @@
 package com.dietiestates.property_service.service;
 
-import main.java.com.dietiestates.shared.dto.PropertySearchDTO;
+import com.dietiestates.shared.dto.PropertySearchDTO;
 import com.dietiestates.property_service.model.Property;
 import com.dietiestates.property_service.repository.PropertyRepository;
 import org.springframework.stereotype.Service;

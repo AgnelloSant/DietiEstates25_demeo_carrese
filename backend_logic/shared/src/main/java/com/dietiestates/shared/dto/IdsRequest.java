@@ -1,4 +1,4 @@
-package main.java.com.dietiestates.shared.dto;
+package com.dietiestates.shared.dto;
 
 import java.util.List;
 
