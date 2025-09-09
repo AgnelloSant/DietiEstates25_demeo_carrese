@@ -20,6 +20,7 @@ EUREKA_PORT=8761
 USER_PORT=8081
 PROP_PORT=8082
 
+# Env vars per i container
 EUREKA_ENV=()
 USER_ENV=( -e "EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:${EUREKA_PORT}/eureka/" )
 PROP_ENV=( -e "EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:${EUREKA_PORT}/eureka/" )
@@ -33,6 +34,7 @@ ensure_network() {
 
 build_eureka() {
   echo "🛠  Build $EUREKA_IMAGE"
+  docker build -t "$EUREKA_IMAGE" -f eureka-server/Dockerfile eureka-server/
   docker build -t "$EUREKA_IMAGE" -f eureka-server/Dockerfile eureka-server/
 }
 
@@ -50,6 +52,18 @@ run_eureka() {
   ensure_network
   echo "♻️  Restart container $EUREKA_NAME"
   docker rm -f "$EUREKA_NAME" >/dev/null 2>&1 || true
+  if [ ${#EUREKA_ENV[@]} -eq 0 ]; then
+    docker run -d --name "$EUREKA_NAME" \
+      --network "$NET" \
+      -p ${EUREKA_PORT}:${EUREKA_PORT} \
+      "$EUREKA_IMAGE"
+  else
+    docker run -d --name "$EUREKA_NAME" \
+      --network "$NET" \
+      -p ${EUREKA_PORT}:${EUREKA_PORT} \
+      "${EUREKA_ENV[@]}" \
+      "$EUREKA_IMAGE"
+  fi
   docker run -d --name "$EUREKA_NAME" \
     --network "$NET" \
     -p ${EUREKA_PORT}:${EUREKA_PORT} \

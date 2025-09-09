@@ -17,29 +17,33 @@ public class PropertySearchLogic {
         this.propertyRepository = propertyRepository;
     }
 
-    
-      //Ricerca proprietà filtrata per città, area minima e prezzo massimo.
-    // Restituisce una lista di PropertySearchDTO (con id incluso).
-     
-public List<PropertySearchDTO> searchProperties(String city, Double minArea, Double maxPrice) {
-    System.err.println("PropertySearchLogic.searchProperties: city=" + city + " minArea=" + minArea + " maxPrice=" + maxPrice);
-    List<Property> properties = propertyRepository
-        .searchProperties(city, minArea, maxPrice); // 👈 usa il nuovo metodo
+    /**
+     * Ricerca proprietà filtrata per città, superficie minima e prezzo massimo.
+     * Restituisce una lista di PropertySearchDTO.
+     */
+    public List<PropertySearchDTO> searchProperties(String city, Double minArea, Double maxPrice) {
+        System.err.println("PropertySearchLogic.searchProperties: city=" + city + " minArea=" + minArea + " maxPrice=" + maxPrice);
 
-    return properties.stream()
-        .map(this::convertToDto)
-        .collect(Collectors.toList());
-}
-   
+        // Query al repository (JPQL con parametri opzionali)
+        List<Property> properties = propertyRepository.searchProperties(city, minArea, maxPrice);
+
+        // Mapping Entity → DTO
+        return properties.stream()
+            .map(this::convertToDto)
+            .collect(Collectors.toList());
+    }
+
+    // Conversione singola Property in DTO
     private PropertySearchDTO convertToDto(Property property) {
         return new PropertySearchDTO(
-            property.getId(),      // 👈 adesso includiamo l'id
+            property.getId(),
             property.getTitle(),
             property.getCity(),
             property.getArea(),
-            property.getPrice()
+            property.getPrice(),
+            property.isNearSchool(),
+            property.isNearPark(),
+            property.isNearTransport()
         );
     }
-
-
 }

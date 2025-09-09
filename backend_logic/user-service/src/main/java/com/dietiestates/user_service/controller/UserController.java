@@ -123,6 +123,17 @@ public class UserController {
                 .build();
     }
 
+    // LoginResponse response = new LoginResponse(
+    //     String.valueOf(user.getId()),
+    //     user.getName(),
+    //     user.getEmail(),
+    //     user.getPhone(),
+    //     user.getRole()
+    // );
+
+    // return ResponseEntity.ok(response);
+
+
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterRequest registerRequest) {
         boolean success = registerLogic.userRegister(registerRequest);

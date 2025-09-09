@@ -13,7 +13,7 @@ export const router = createRouter({
   history: createWebHistory(),
   routes: [
     { path: "/", name: "home", component: HomeView },
-    { path: "/property/:id", name: "property-detail", component: PropertyDetailView, props: true },
+   { path: "/properties/:id", name: "property-detail", component: PropertyDetailView, props: true },
     { path: "/login", name: "login", component: LoginView },
     { path: "/register", name: "register", component: RegisterView },
     { path: "/profile", name: "profile", component: ProfileView, meta: { requiresAuth: true } },
@@ -30,10 +30,10 @@ router.beforeEach((to, from, next) => {
     return next({ name: "login" });
   }
 
-  if (to.meta.requiresAdmin && auth.user?.role !== "ADMIN") {
-    // Non admin → torna in home
-    return next({ name: "home" });
-  }
+  if (to.meta.requiresAdmin && auth.user?.role?.toUpperCase() !== "ADMIN") {
+  return next({ name: "home" });
+}
+
 
   next();
 });

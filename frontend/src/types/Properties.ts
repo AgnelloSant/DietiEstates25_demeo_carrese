@@ -3,12 +3,15 @@
 // PropertySearchDTO (risultati della ricerca)
 // src/types/Properties.ts
 export interface PropertySearchDTO {
-  id: number;   
-  title: string;
-  city: string;
-  area: number;
-  price: number;
-    imageUrl?: string ;
+  id: number
+  title: string
+  city: string
+  area: number
+  price: number
+    imageUrl?: string 
+      nearSchool?: boolean
+  nearPark?: boolean
+  nearTransport?: boolean
 }
 
 
@@ -18,7 +21,13 @@ export interface PropertyCreateDTO {
   city: string
   area: number
   price: number
+  latitude?: number | null
+  longitude?: number | null
+  nearSchool?: boolean
+  nearPark?: boolean
+  nearTransport?: boolean
 }
+
 
 // PropertyUpdateDTO
 export interface PropertyUpdateDTO {
@@ -36,7 +45,12 @@ export interface PropertyDetailDTO {
   price: number
   description?: string
   publishedAt?: string
-  imageUrl?: string ;
+  imageUrl?: string 
+  latitude?: number | null   // 👈 meglio nullable
+  longitude?: number | null 
+    nearSchool?: boolean
+  nearPark?: boolean
+  nearTransport?: boolean
 }
 
 export interface FavoriteDTO {

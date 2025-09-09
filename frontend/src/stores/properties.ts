@@ -3,6 +3,9 @@ import { defineStore } from "pinia"
 import { searchProperties, createProperty, updateProperty, deleteProperty } from "@/api/properties"
 import { getFavourites, addFavourite } from "@/api/users" 
 import type { PropertySearchDTO, PropertyCreateDTO, PropertyUpdateDTO } from "@/types/Properties"
+// 👇 importa anche il dettaglio
+import type { PropertyDetailDTO } from "@/types/Properties"
+import { httpProperty } from "@/api/http"   // <-- se non c'è, importa il tuo client axios
 
 export const usePropertyStore = defineStore("properties", {
   state: () => ({
@@ -10,7 +13,6 @@ export const usePropertyStore = defineStore("properties", {
     loading: false as boolean,
     error: null as string | null,
 
-    // 🔹 stato per Preferiti
     favList: [] as PropertySearchDTO[],
     favLoading: false as boolean,
     favError: null as string | null,
@@ -19,9 +21,6 @@ export const usePropertyStore = defineStore("properties", {
   }),
 
   actions: {
-    // -------------------------------------------------
-    // LISTA PROPERTIES
-    // -------------------------------------------------
     async fetchList(filters?: { city?: string; minArea?: number | null; maxPrice?: number | null }) {
       this.loading = true
       this.error = null
@@ -41,20 +40,21 @@ export const usePropertyStore = defineStore("properties", {
       }
     },
 
-    // -------------------------------------------------
-    // LISTA PREFERITI (DTO dal user-service → property-service)
-    // -------------------------------------------------
- async fetchFavList() {
-  // usa i valori dello store se non passati
+    // 🔹 Fetch dettaglio proprietà
+    async fetchDetail(id: number): Promise<PropertyDetailDTO> {
+      const { data } = await httpProperty.get<PropertyDetailDTO>(`/properties/${id}`)
+      return data
+    },
 
-  this.favLoading = true
-  this.favError = null
-  try {
-    const res = await getFavourites()
-    const data = res.data
-    const isValid =
-      Array.isArray(data) &&
-      data.every((x) => x && typeof x === 'object' && 'id' in x && 'title' in x && 'city' in x && 'area' in x && 'price' in x)
+    async fetchFavList() {
+      this.favLoading = true
+      this.favError = null
+      try {
+        const res = await getFavourites()
+        const data = res.data
+        const isValid =
+          Array.isArray(data) &&
+          data.every((x) => x && typeof x === "object" && "id" in x && "title" in x && "city" in x && "area" in x && "price" in x)
 
     if (!isValid) {
       this.favError = 'Formato risposta non valido dai preferiti'
@@ -75,23 +75,19 @@ export const usePropertyStore = defineStore("properties", {
   }
 },
 
-  async addToFavourites( idProp: number){ 
-     try {
-    await addFavourite({ idUser: 2, idProp })   // userId fisso per test
-    // (opzionale) UI ottimistica:
-    const justAdded = this.list.find(p => p.id === idProp)
-    if (justAdded && !this.favList.some(p => p.id === idProp)) {
-      this.favList = [justAdded, ...this.favList]
-    }
-  } catch (e) {
-    console.error("Errore aggiunta preferito", e)
-    this.favError = "Errore nell'aggiunta ai preferiti"
-  }
-  },
+    async addToFavourites(idProp: number) {
+      try {
+        await addFavourite({ idUser: 2, idProp })
+        const justAdded = this.list.find((p) => p.id === idProp)
+        if (justAdded && !this.favList.some((p) => p.id === idProp)) {
+          this.favList = [justAdded, ...this.favList]
+        }
+      } catch (e) {
+        console.error("Errore aggiunta preferito", e)
+        this.favError = "Errore nell'aggiunta ai preferiti"
+      }
+    },
 
-    // -------------------------------------------------
-    // CRUD PROPERTY
-    // -------------------------------------------------
     async addProperty(payload: PropertyCreateDTO) {
       await createProperty(payload)
       await this.fetchList()

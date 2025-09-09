@@ -1,6 +1,5 @@
 package com.dietiestates.user_service.dto;
 
-import org.bouncycastle.pqc.jcajce.provider.lms.LMSSignatureSpi.generic;
 
 public class FavouriteListRequest {
     

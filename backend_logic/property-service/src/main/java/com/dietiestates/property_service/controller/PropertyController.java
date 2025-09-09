@@ -50,10 +50,11 @@ public ResponseEntity<List<PropertySearchDTO>> searchProperties(
 
     // --- Creazione proprietà ---
     @PostMapping("/create")
-    public ResponseEntity<PropertyCreateDTO> createProperty(@RequestBody PropertyCreateDTO createDTO) {
-        PropertyCreateDTO created = propertyCreateLogic.createProperty(createDTO);
-        return ResponseEntity.ok(created);
-    }
+public ResponseEntity<PropertyCreateDTO> createProperty(@RequestBody PropertyCreateDTO createDTO) {
+    PropertyCreateDTO created = propertyCreateLogic.createProperty(createDTO); // ✅ ora viene usato
+    return ResponseEntity.ok(created);
+}
+
 
     // --- Aggiornamento proprietà ---
     @PutMapping("/update/{id}")

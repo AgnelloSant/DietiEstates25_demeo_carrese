@@ -1,5 +1,7 @@
 // src/api/auth.ts
+// Wrapper per chiamate al microservizio user-service
 
+import { httpUS } from "./http";
 //utilizziamo i dto da types
 
 // src/api/auth.ts
@@ -11,15 +13,24 @@ import { usePropertyStore } from "@/stores/properties";
 // 🔑 LOGIN
 export const login = (payload: LoginRequest) => {
   return httpUS.post<LoginResponse>("/login", payload);
+  return httpUS.post<LoginResponse>("/login", payload);
 };
 
-// 📝 REGISTRAZIONE
+/*
+ * 📝 REGISTRAZIONE
+ * POST → /api/v1/user/register
+ */
 export const register = (payload: RegisterRequest) => {
+  return httpUS.post("/register", payload);
   return httpUS.post("/register", payload);
 };
 
-// 🔒 CAMBIO PASSWORD
+/*
+ * 🔒 CAMBIO PASSWORD
+ * PUT → /api/v1/user/newpsw
+ */
 export const changePassword = (payload: PswChangeRequest) => {
+  return httpUS.put("/newpsw", payload);
   return httpUS.put("/v1/user/newpsw", payload);
 };
 

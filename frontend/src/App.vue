@@ -15,7 +15,12 @@
           <RouterLink to="/">Annunci</RouterLink>
 
           <!-- Link solo per admin -->
-          <RouterLink v-if="auth.user?.role === 'ADMIN'" to="/admin">Admin</RouterLink>
+          <RouterLink 
+  v-if="auth.user && auth.user.role?.toUpperCase() === 'ADMIN'" 
+  to="/admin"
+>
+  Admin
+</RouterLink>
 
           <!-- Link per utenti loggati -->
           <template v-if="auth.user">

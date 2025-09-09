@@ -1,6 +1,6 @@
 package com.dietiestates.user_service.service;
 
-import java.util.HashMap;
+
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,14 +22,22 @@ public class FavouritesLogic {
 
     
  @Transactional(readOnly = true)
-  public List<PropertySearchDTO> getFavouriteProperties(Long userId) {
+public List<PropertySearchDTO> getFavouriteProperties(Long userId) {
     return favouriteRepository.findFavouriteRowsByUser(userId).stream()
-      .map(r -> new PropertySearchDTO(
-        r.getId(), r.getTitle(), r.getCity(), r.getArea(), r.getPrice()
-      ))
-      .toList();
-  }
-  
+        .map(r -> new PropertySearchDTO(
+            r.getId(),
+            r.getTitle(),
+            r.getCity(),
+            r.getArea(),
+            r.getPrice(),
+                        false, // default, perché non arrivano dalla query
+            false,
+            false
+
+        ))
+        .toList();
+}
+
 
     @Transactional(readOnly = true)
     public long countFavourites(Long userId) {
