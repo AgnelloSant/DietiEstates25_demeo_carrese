@@ -7,19 +7,57 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
+
+
+
 
 @Service
 public class GeoapifyService {
 
-    private static final String API_KEY = "c4dc78950f8f486cbf36cb126f4efda1"; // 👈 l' API Key
+    private static final String API_KEY = "c4dc78950f8f486cbf36cb126f4efda1";
     private final RestTemplate restTemplate = new RestTemplate();
 
     /**
-     * Controlla la presenza di scuole, parchi o trasporto pubblico
-     * vicino alle coordinate passate.
+     * Geocoding: converte un indirizzo in coordinate (lat, lon)
+     */
+public Map<String, Double> geocodeAddress(String address) {
+    try {
+        String url = "https://api.geoapify.com/v1/geocode/search?text=" +
+                     URLEncoder.encode(address, StandardCharsets.UTF_8) +
+                     "&apiKey=" + API_KEY;
+
+        ResponseEntity<JsonNode> response = restTemplate.getForEntity(url, JsonNode.class);
+
+        if (response.getBody() != null &&
+            response.getBody().has("features") &&
+            response.getBody().get("features").size() > 0) {
+
+            JsonNode coords = response.getBody()
+                .get("features").get(0)
+                .get("geometry").get("coordinates");
+
+            double lon = coords.get(0).asDouble();
+            double lat = coords.get(1).asDouble();
+
+            Map<String, Double> result = new HashMap<>();
+            result.put("lat", lat);
+            result.put("lon", lon);
+            return result;
+        }
+    } catch (Exception e) {
+        System.out.println("❌ Errore geocoding Geoapify: " + e.getMessage());
+    }
+    return Map.of();
+}
+
+
+    /**
+     * Controlla la presenza di scuole, parchi o trasporto pubblico vicino alle coordinate
      */
     public Map<String, Boolean> checkNearbyPlaces(double lat, double lon) {
-        // Costruisco URL: cerco entro 1000m (1km) dalle coordinate
         String url = "https://api.geoapify.com/v2/places" +
                 "?categories=education.school,leisure.park,public_transport" +
                 "&filter=circle:" + lon + "," + lat + ",1000" +

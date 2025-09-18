@@ -8,10 +8,18 @@ export interface PropertySearchDTO {
   city: string
   area: number
   price: number
-    imageUrl?: string 
-      nearSchool?: boolean
+  imageUrl?: string 
+
+  nearSchool?: boolean
   nearPark?: boolean
   nearTransport?: boolean
+
+  listingType?: string      // vendita / affitto
+  rooms?: number
+  energyClass?: string
+    latitude?: number | null
+  longitude?: number | null
+  address?: string
 }
 
 
@@ -19,6 +27,7 @@ export interface PropertySearchDTO {
 export interface PropertyCreateDTO {
   title: string
   city: string
+   address: string
   area: number
   price: number
   latitude?: number | null
@@ -26,8 +35,10 @@ export interface PropertyCreateDTO {
   nearSchool?: boolean
   nearPark?: boolean
   nearTransport?: boolean
+  listingType: "vendita" | "affitto"   // tipologia inserzione
+  rooms: number                        // numero stanze
+  energyClass: string                  // es. A, B, C...
 }
-
 
 // PropertyUpdateDTO
 export interface PropertyUpdateDTO {
@@ -35,22 +46,31 @@ export interface PropertyUpdateDTO {
   city?: string
   area?: number
   price?: number
+   address: string
+  listingType?: "vendita" | "affitto"
+  rooms?: number
+  energyClass?: string
 }
 
+// PropertyDetailDTO
 export interface PropertyDetailDTO {
   id: number
   title: string
   city: string
+   address: string
   area: number
   price: number
   description?: string
   publishedAt?: string
   imageUrl?: string 
-  latitude?: number | null   // 👈 meglio nullable
-  longitude?: number | null 
-    nearSchool?: boolean
+  latitude?: number | null
+  longitude?: number | null
+  nearSchool?: boolean
   nearPark?: boolean
   nearTransport?: boolean
+  listingType?: "vendita" | "affitto"
+  rooms?: number
+  energyClass?: string
 }
 
 export interface FavoriteDTO {

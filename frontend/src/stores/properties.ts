@@ -1,4 +1,5 @@
 // src/stores/properties.ts
+import L, { Map as LeafletMap } from "leaflet" 
 import { defineStore } from "pinia"
 import { searchProperties, createProperty, updateProperty, deleteProperty } from "@/api/properties"
 import { getFavourites, addFavourite } from "@/api/users" 
@@ -21,24 +22,53 @@ export const usePropertyStore = defineStore("properties", {
   }),
 
   actions: {
-    async fetchList(filters?: { city?: string; minArea?: number | null; maxPrice?: number | null }) {
-      this.loading = true
-      this.error = null
-      try {
-        const params: Record<string, any> = {}
-        if (filters?.city?.trim()) params.city = filters.city.trim()
-        if (filters?.minArea != null && filters.minArea > 0) params.minArea = filters.minArea
-        if (filters?.maxPrice != null && filters.maxPrice > 0) params.maxPrice = filters.maxPrice
-        const res = await searchProperties(params)
-        this.list = res.data
-      } catch (err) {
-        console.error("Errore nel caricamento proprietà", err)
-        this.error = "Errore nel caricamento delle proprietà"
-        this.list = []
-      } finally {
-        this.loading = false
-      }
-    },
+async fetchList(filters?: { 
+  city?: string
+  minArea?: number | null
+  maxPrice?: number | null
+  listingType?: string       // nuovo filtro: vendita/affitto
+  rooms?: number | null      // nuovo filtro: numero di stanze
+  energyClass?: string       // nuovo filtro: classe energetica
+}) {
+  this.loading = true       //  attivo lo stato di caricamento (spinner o messaggio)
+  this.error = null         // resetto eventuali errori precedenti
+
+  try {
+    const params: Record<string, any> = {}   // oggetto che conterrà i filtri validi
+
+    //  se la città è stata passata e non è stringa vuota, aggiungila
+    if (filters?.city?.trim()) params.city = filters.city.trim()
+
+    //  se la superficie minima è > 0, aggiungila
+    if (filters?.minArea != null && filters.minArea > 0) params.minArea = filters.minArea
+
+    //  se il prezzo massimo è > 0, aggiungilo
+    if (filters?.maxPrice != null && filters.maxPrice > 0) params.maxPrice = filters.maxPrice
+
+    //  se è stato selezionato un tipo di annuncio (vendita/affitto)
+    if (filters?.listingType) params.listingType = filters.listingType
+
+    //  se il numero di stanze è valido (> 0), aggiungilo
+    if (filters?.rooms != null && filters.rooms > 0) params.rooms = filters.rooms
+
+    //  se la classe energetica è selezionata (es. "A", "B", "C")
+    if (filters?.energyClass) params.energyClass = filters.energyClass
+
+    // chiamata API al backend con i parametri costruiti sopra
+    const res = await searchProperties(params)
+
+    //  salvo i risultati nella lista del Pinia store
+    this.list = res.data
+  } catch (err) {
+    console.error("Errore nel caricamento proprietà", err)
+    this.error = "Errore nel caricamento delle proprietà"
+    this.list = []          // 🔴 se fallisce → svuoto la lista
+  } finally {
+    this.loading = false    // 🔵 disattivo stato di caricamento
+  }
+
+},
+
 
     // 🔹 Fetch dettaglio proprietà
     async fetchDetail(id: number): Promise<PropertyDetailDTO> {
@@ -75,6 +105,26 @@ export const usePropertyStore = defineStore("properties", {
   }
 },
 
+//azione per la ricerca tramite mappa
+async fetchListByBounds(lat: number, lon: number, radiusKm: number) {
+  this.loading = true
+  this.error = null
+  try {
+    const res = await httpProperty.get("/properties/search-by-bounds", {
+      params: { lat, lon, radiusKm }
+    })
+    this.list = res.data
+  } catch (err) {
+    console.error("Errore nella ricerca geografica", err)
+    this.error = "Errore nella ricerca geografica"
+    this.list = []
+  } finally {
+    this.loading = false
+  }
+},
+
+
+
     async addToFavourites(idProp: number) {
       try {
         await addFavourite({ idUser: 2, idProp })
@@ -88,10 +138,18 @@ export const usePropertyStore = defineStore("properties", {
       }
     },
 
-    async addProperty(payload: PropertyCreateDTO) {
-      await createProperty(payload)
-      await this.fetchList()
-    },
+    // ✍️ CRUD PROPERTY
+  async addProperty(payload: any) {
+  try {
+    const res = await httpProperty.post("/properties/create", payload)
+    this.list.push(res.data)
+    return res.data
+  } catch (err) {
+    console.error("Errore addProperty", err)
+    throw err
+  }
+},
+
     async editProperty(id: number, payload: PropertyUpdateDTO) {
       await updateProperty(id, payload)
       await this.fetchList()

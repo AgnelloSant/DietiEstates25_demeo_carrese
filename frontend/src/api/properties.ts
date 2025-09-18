@@ -5,12 +5,15 @@ import type { AxiosResponse } from "axios";
 
 // 🔍 Ricerca
 export const searchProperties = (params?: {
-  city?: string;
-  minArea?: number;
-  maxPrice?: number;
+  city?: string
+  minArea?: number
+  maxPrice?: number
+  listingType?: string     // "vendita" | "affitto"
+  rooms?: number
+  energyClass?: string
 }): Promise<AxiosResponse<PropertySearchDTO[]>> => {
-  return httpProperty.get<PropertySearchDTO[]>("/properties/search", { params });
-};
+  return httpProperty.get<PropertySearchDTO[]>("/properties/search", { params })
+}
 
 // ✍️ Creazione proprietà
 export async function createProperty(payload: PropertyCreateDTO) {

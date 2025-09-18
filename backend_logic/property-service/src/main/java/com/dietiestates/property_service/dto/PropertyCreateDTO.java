@@ -14,15 +14,24 @@ private Double longitude;
     private Boolean nearSchool;
     private Boolean nearPark;
     private Boolean nearTransport;
+// Tipo di inserzione: "vendita" o "affitto"
+private String listingType;
+
+// Numero stanze
+private Integer rooms;
+
+// Classe energetica: es. "A", "B", "C", ...
+private String energyClass;
+
+private String address;
 
     // Costruttori
     public PropertyCreateDTO() {}
 
-  
-    
 
     public PropertyCreateDTO(String title, String city, Double area, Double price, LocalDate publishedAt,
-            Double latitude, Double longitude, boolean nearSchool, boolean nearPark, boolean nearTransport) {
+            Double latitude, Double longitude, Boolean nearSchool, Boolean nearPark, Boolean nearTransport,
+            String listingType, Integer rooms, String energyClass, String address) {
         this.title = title;
         this.city = city;
         this.area = area;
@@ -33,9 +42,11 @@ private Double longitude;
         this.nearSchool = nearSchool;
         this.nearPark = nearPark;
         this.nearTransport = nearTransport;
+        this.listingType = listingType;
+        this.rooms = rooms;
+        this.energyClass = energyClass;
+        this.address = address;
     }
-
-
 
     // Getter e Setter
 
@@ -177,6 +188,44 @@ private Double longitude;
         this.nearTransport = nearTransport;
     }
 
+    public String getListingType() {
+        return listingType;
+    }
+
+    public void setListingType(String listingType) {
+        this.listingType = listingType;
+    }
+
+    public Integer getRooms() {
+        return rooms;
+    }
+
+    public void setRooms(Integer rooms) {
+        this.rooms = rooms;
+    }
+
+    public String getEnergyClass() {
+        return energyClass;
+    }
+
+    public void setEnergyClass(String energyClass) {
+        this.energyClass = energyClass;
+    }
+
+
+    public String getAddress() {
+        return address;
+    }
+
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+
+
+
+    
 
 
     

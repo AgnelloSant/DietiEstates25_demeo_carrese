@@ -36,35 +36,64 @@ public class PropertyController {
     }
 
     // --- Ricerca proprietà ---
-  @GetMapping("/search")
+@GetMapping("/search")
 public ResponseEntity<List<PropertySearchDTO>> searchProperties(
     @RequestParam(required = false) String city,
     @RequestParam(required = false) Double minArea,
-    @RequestParam(required = false) Double maxPrice
+    @RequestParam(required = false) Double maxPrice,
+    @RequestParam(required = false) String listingType,   // vendita / affitto
+    @RequestParam(required = false) Integer rooms,        // numero stanze
+    @RequestParam(required = false) String energyClass    // classe energetica
 ) {
-    System.out.println("Cerco in propertyController: city=" + city + " minArea=" + minArea + " maxPrice=" + maxPrice);
-    List<PropertySearchDTO> results = propertySearchLogic.searchProperties(city, minArea, maxPrice);
+    System.out.println("Cerco in PropertyController: " +
+            "city=" + city +
+            ", minArea=" + minArea +
+            ", maxPrice=" + maxPrice +
+            ", listingType=" + listingType +
+            ", rooms=" + rooms +
+            ", energyClass=" + energyClass);
+
+    List<PropertySearchDTO> results = propertySearchLogic.searchProperties(
+        city, minArea, maxPrice, listingType, rooms, energyClass
+    );
+
     return ResponseEntity.ok(results);
 }
 
 
+//ricerca tramite mappa 
+@GetMapping("/search-by-bounds")
+public ResponseEntity<List<PropertySearchDTO>> searchByBounds(
+    @RequestParam Double lat,
+    @RequestParam Double lon,
+    @RequestParam Double radiusKm
+) {
+    List<PropertySearchDTO> results = propertySearchLogic.searchByBounds(lat, lon, radiusKm);
+    return ResponseEntity.ok(results);
+}
+
+
+
     // --- Creazione proprietà ---
-    @PostMapping("/create")
+@PostMapping("/create")
 public ResponseEntity<PropertyCreateDTO> createProperty(@RequestBody PropertyCreateDTO createDTO) {
-    PropertyCreateDTO created = propertyCreateLogic.createProperty(createDTO); // ✅ ora viene usato
+    System.out.println("📩 Create richiesta con DTO: " + createDTO);
+    PropertyCreateDTO created = propertyCreateLogic.createProperty(createDTO);
     return ResponseEntity.ok(created);
 }
 
 
+
     // --- Aggiornamento proprietà ---
-    @PutMapping("/update/{id}")
-    public ResponseEntity<PropertyUpdateDTO> updateProperty(
+ @PutMapping("/update/{id}")
+public ResponseEntity<PropertyUpdateDTO> updateProperty(
         @PathVariable Long id,
         @RequestBody PropertyUpdateDTO updateDTO
-    ) {
-        PropertyUpdateDTO updated = propertyUpdateLogic.updateProperty(id, updateDTO);
-        return ResponseEntity.ok(updated);
-    }
+) {
+    System.out.println("🔄 Update richiesta per ID=" + id + " con DTO: " + updateDTO);
+    PropertyUpdateDTO updated = propertyUpdateLogic.updateProperty(id, updateDTO);
+    return ResponseEntity.ok(updated);
+}
 
     @PostMapping("/batch")
     public ResponseEntity<List<PropertySearchDTO>> getByIds(@RequestBody IdsRequest req){

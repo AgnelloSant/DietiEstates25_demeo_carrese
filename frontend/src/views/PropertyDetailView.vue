@@ -14,6 +14,10 @@
       <p class="detail-city"><i class="fa-solid fa-location-dot"></i> {{ property.city }}</p>
       <p class="detail-area"><strong>{{ property.area }} m²</strong></p>
       <p class="detail-price">€ {{ property.price.toLocaleString() }}</p>
+<p class="detail-extra"><b>Tipo:</b> {{ property.listingType }}</p>
+<p class="detail-extra"><b>Stanze:</b> {{ property.rooms }}</p>
+<p class="detail-extra"><b>Classe energetica:</b> {{ property.energyClass }}</p>
+<p class="detail-extra"><b>Indirizzo:</b> {{ property.address }}</p>
 
       <!-- descrizione -->
       <p v-if="property.description" class="detail-description">
@@ -54,7 +58,7 @@ import type { PropertyDetailDTO } from '@/types/Properties'
 import L from "leaflet"
 import "leaflet/dist/leaflet.css"
 
-// ✅ Fix icone Leaflet (CDN)
+//  icone Leaflet (CDN)
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png",

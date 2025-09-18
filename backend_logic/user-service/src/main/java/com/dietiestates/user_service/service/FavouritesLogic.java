@@ -29,11 +29,7 @@ public List<PropertySearchDTO> getFavouriteProperties(Long userId) {
             r.getTitle(),
             r.getCity(),
             r.getArea(),
-            r.getPrice(),
-                        false, // default, perché non arrivano dalla query
-            false,
-            false
-
+            r.getPrice()
         ))
         .toList();
 }

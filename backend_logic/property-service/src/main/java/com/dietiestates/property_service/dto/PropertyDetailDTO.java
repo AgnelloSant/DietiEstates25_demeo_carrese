@@ -15,25 +15,40 @@ public class PropertyDetailDTO {
     private boolean nearSchool;    
     private boolean nearPark;      
     private boolean nearTransport;
+// Tipo di inserzione: "vendita" o "affitto"
+private String listingType;
+
+// Numero stanze
+private Integer rooms;
+
+// Classe energetica: es. "A", "B", "C", ...
+private String energyClass;
+
+private String address;
 
 
 
     public PropertyDetailDTO(Long id, String title, String city, Double area, Double price, String description,
-            String publishedAt, Double latitude, Double longitude, boolean nearSchool, boolean nearPark,
-            boolean nearTransport) {
-        this.id = id;
-        this.title = title;
-        this.city = city;
-        this.area = area;
-        this.price = price;
-        this.description = description;
-        this.publishedAt = publishedAt;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.nearSchool = nearSchool;
-        this.nearPark = nearPark;
-        this.nearTransport = nearTransport;
-    }
+        String publishedAt, Double latitude, Double longitude, boolean nearSchool, boolean nearPark,
+        boolean nearTransport, String listingType, Integer rooms, String energyClass, String address) {
+    this.id = id;
+    this.title = title;
+    this.city = city;
+    this.area = area;
+    this.price = price;
+    this.description = description;
+    this.publishedAt = publishedAt;
+    this.latitude = latitude;
+    this.longitude = longitude;
+    this.nearSchool = nearSchool;
+    this.nearPark = nearPark;
+    this.nearTransport = nearTransport;
+    this.listingType = listingType;
+    this.rooms = rooms;
+    this.energyClass = energyClass;
+    this.address = address;
+}
+
     // Getters & Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -84,6 +99,56 @@ public class PropertyDetailDTO {
     }
     public void setNearTransport(boolean nearTransport) {
         this.nearTransport = nearTransport;
+    }
+
+
+
+
+    public String getListingType() {
+        return listingType;
+    }
+
+
+
+
+    public void setListingType(String listingType) {
+        this.listingType = listingType;
+    }
+
+
+
+
+    public Integer getRooms() {
+        return rooms;
+    }
+
+
+
+
+    public void setRooms(Integer rooms) {
+        this.rooms = rooms;
+    }
+
+
+
+
+    public String getEnergyClass() {
+        return energyClass;
+    }
+
+
+
+
+    public void setEnergyClass(String energyClass) {
+        this.energyClass = energyClass;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
 

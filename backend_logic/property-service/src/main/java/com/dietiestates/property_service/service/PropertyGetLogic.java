@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+
 @Service
 public class PropertyGetLogic {
 
@@ -22,12 +23,11 @@ public class PropertyGetLogic {
         this.propertyRepository = propertyRepository;
     }
 
-    // 🔹 Recupera una proprietà per ID e la converte in PropertyDetailDTO
+    // Recupera una proprietà singola
     public PropertyDetailDTO getById(Long id) {
         Property property = propertyRepository.findById(id)
             .orElseThrow(() -> new NoSuchElementException("Property not found with id " + id));
 
-        // ✅ Converte in DTO includendo i nuovi campi
         return new PropertyDetailDTO(
             property.getId(),
             property.getTitle(),
@@ -42,19 +42,20 @@ public class PropertyGetLogic {
             property.getLongitude(),
             property.isNearSchool(),
             property.isNearPark(),
-            property.isNearTransport()
+            property.isNearTransport(),
+            property.getListingType(),
+            property.getRooms(),
+            property.getEnergyClass(),
+            property.getAddress()
         );
     }
 
-    // 🔹 Recupera più proprietà per lista di ID (usato nei preferiti)
+    // Recupera più proprietà (es. preferiti)
     public List<PropertySearchDTO> findByIds(List<Long> ids) {
-        System.out.println("PropertyGetLogic.findByIds: ");
         if (ids == null || ids.isEmpty()) return List.of();
 
-        // 1) Fetch dal DB
         List<Property> props = propertyRepository.findAllById(ids);
 
-        // 2) Conversione in DTO includendo i flag nearX
         List<PropertySearchDTO> dtos = new ArrayList<>(props.size());
         for (Property p : props) {
             dtos.add(new PropertySearchDTO(
@@ -65,11 +66,17 @@ public class PropertyGetLogic {
                 p.getPrice(),
                 p.isNearSchool(),
                 p.isNearPark(),
-                p.isNearTransport()
+                p.isNearTransport(),
+                p.getListingType(),
+                p.getRooms(),
+                p.getEnergyClass(),
+                p.getAddress(),
+                p.getLatitude(),
+                p.getLongitude()
             ));
         }
 
-        // 3) Preserva l’ordine degli ID passati in input
+        // Ordine input preservato
         Map<Long, Integer> order = new HashMap<>();
         for (int i = 0; i < ids.size(); i++) order.put(ids.get(i), i);
         dtos.sort(Comparator.comparingInt(d -> order.getOrDefault(d.getId(), Integer.MAX_VALUE)));

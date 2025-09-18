@@ -25,6 +25,9 @@ public class Property {
     @Column(name = "published_at")
     private LocalDate publishedAt;
 
+    @Column(name = "address")
+private String address;
+
 //coordinate per geoapify
 private Double latitude;
 private Double longitude;
@@ -33,14 +36,18 @@ private Double longitude;
     private boolean nearPark;
     private boolean nearTransport;
 
+    //attributi per ricerca avanzata
+      private String listingType;   // "vendita" | "affitto"
+    private Integer rooms;        // numero stanze
+    private String energyClass;   // es: A, B, C, ...
+
     //  Costruttore vuoto richiesto da JPA
     public Property() {}
 
     // Costruttore utile per creare oggetti 
-
   public Property(Long id, String title, String description, String city, Double price, Double area,
-            LocalDate publishedAt, Double latitude, Double longitude, boolean nearSchool, boolean nearPark,
-            boolean nearTransport) {
+            LocalDate publishedAt, String address, Double latitude, Double longitude, boolean nearSchool,
+            boolean nearPark, boolean nearTransport, String listingType, Integer rooms, String energyClass) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -48,12 +55,18 @@ private Double longitude;
         this.price = price;
         this.area = area;
         this.publishedAt = publishedAt;
+        this.address = address;
         this.latitude = latitude;
         this.longitude = longitude;
         this.nearSchool = nearSchool;
         this.nearPark = nearPark;
         this.nearTransport = nearTransport;
+        this.listingType = listingType;
+        this.rooms = rooms;
+        this.energyClass = energyClass;
     }
+  
+
 
     //  Getter e Setter
 
@@ -162,4 +175,47 @@ private Double longitude;
     public void setpublishedAt(LocalDate publishedAt) {
         this.publishedAt = publishedAt;
     }
+
+    public String getListingType() {
+        return listingType;
+    }
+
+    public void setListingType(String listingType) {
+        this.listingType = listingType;
+    }
+
+    public Integer getRooms() {
+        return rooms;
+    }
+
+    public void setRooms(Integer rooms) {
+        this.rooms = rooms;
+    }
+
+    public String getEnergyClass() {
+        return energyClass;
+    }
+
+    public void setEnergyClass(String energyClass) {
+        this.energyClass = energyClass;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+
+
+
+
+
+
+
+
+
+    
 }

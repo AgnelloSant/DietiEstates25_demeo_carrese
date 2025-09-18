@@ -64,11 +64,7 @@ run_eureka() {
       "${EUREKA_ENV[@]}" \
       "$EUREKA_IMAGE"
   fi
-  docker run -d --name "$EUREKA_NAME" \
-    --network "$NET" \
-    -p ${EUREKA_PORT}:${EUREKA_PORT} \
-    ${EUREKA_ENV[@]+"${EUREKA_ENV[@]}"} \
-    "$EUREKA_IMAGE"
+  
 }
 
 run_user() {
