@@ -1,14 +1,20 @@
 package com.dietiestates.property_service.controller;
 
 import com.dietiestates.property_service.dto.*;
+import com.dietiestates.property_service.model.Bid;
+import com.dietiestates.property_service.model.Reservation;
 import com.dietiestates.property_service.service.*;
 import com.dietiestates.shared.dto.PropertySearchDTO;
+
+
 import com.dietiestates.shared.dto.IdsRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+
 
 @RestController
 @RequestMapping("/api/properties")
@@ -19,6 +25,8 @@ public class PropertyController {
     private final PropertyUpdateLogic propertyUpdateLogic;
     private final PropertyDeleteLogic propertyDeleteLogic;
     private final PropertyGetLogic propertyGetLogic; 
+    private final ReservationService reservationService;
+    private final BidService bidService;
 
     @Autowired
     public PropertyController(
@@ -26,13 +34,17 @@ public class PropertyController {
         PropertyCreateLogic propertyCreateLogic,
         PropertyUpdateLogic propertyUpdateLogic,
         PropertyDeleteLogic propertyDeleteLogic,
-        PropertyGetLogic propertyGetLogic
+        PropertyGetLogic propertyGetLogic, 
+        ReservationService reservationService,
+        BidService bidService
     ) {
         this.propertySearchLogic = propertySearchLogic;
         this.propertyCreateLogic = propertyCreateLogic;
         this.propertyUpdateLogic = propertyUpdateLogic;
         this.propertyDeleteLogic = propertyDeleteLogic;
         this.propertyGetLogic= propertyGetLogic;
+        this.reservationService = reservationService;
+        this.bidService = bidService;
     }
 
     // --- Ricerca proprietà ---
@@ -72,6 +84,12 @@ public ResponseEntity<List<PropertySearchDTO>> searchProperties(
         return ResponseEntity.ok(out);
     }
 
+    @PostMapping("/updateviews/{id}")
+    public ResponseEntity<Void> incrementViews(@PathVariable Long id) {
+        propertyUpdateLogic.incrementPropertyViews(id);
+        return ResponseEntity.ok().build();
+    }
+
 
 
     // --- Cancellazione proprietà ---
@@ -85,6 +103,95 @@ public ResponseEntity<List<PropertySearchDTO>> searchProperties(
 public ResponseEntity<PropertyDetailDTO> getProperty(@PathVariable Long id) {
     return ResponseEntity.ok(propertyGetLogic.getById(id)); 
 }
+
+//OPERAZIONI SU ANNUNCI 
+
+    //Prenotazioni
+
+    @PostMapping("/reservations/new")
+    public ResponseEntity<Boolean> newReservation(@RequestBody ReservationCreateDTO reservationCreateDTO) {
+
+        return ResponseEntity.ok(reservationService.createReservation(
+            reservationCreateDTO.getIdProp(), 
+            reservationCreateDTO.getIdUser(), 
+            reservationCreateDTO.getDate()
+        ));
+
+    }
+
+    @GetMapping("/reservations/getbyproperty/{id}")
+    public ResponseEntity<List<Reservation>> getReservations(@PathVariable Long id) {
+        return ResponseEntity.ok(reservationService.getReservationsByPropertyId(id));
+    } 
+
+    @GetMapping("/reservations/getbyuser/{id}")
+    public ResponseEntity<List<Reservation>> getUserReservations(@PathVariable Long id) {
+        return ResponseEntity.ok(reservationService.getReservationsByUserId(id));
+    }
+
+    @DeleteMapping("/reservations/delete/{id}")
+    public ResponseEntity<Boolean> deleteReservation(@PathVariable Long id) {
+        
+        return ResponseEntity.ok(reservationService.deleteReservation(id));
+    }
+
+    @GetMapping("/reservations/countByUser/{idUser}")
+    public ResponseEntity<Long> countReservationsByUser(@PathVariable Long idUser) {
+        return ResponseEntity.ok(reservationService.countReservationsByUser(idUser));
+    }
+
+    @GetMapping("/reservation/countByProperty/{idProperty}")
+    public ResponseEntity<Long> countReservationsByProperty(@PathVariable Long idProp){ 
+        return ResponseEntity.ok(reservationService.countReservationByProperty(idProp));
+    }
+
+    //Offerte
+
+    @GetMapping("/bids/getbyproperty/{id}")
+    public ResponseEntity<List<Bid>> getBid(@PathVariable Long id) {
+        return ResponseEntity.ok(bidService.getBidsByPropertyId(id));
+    }
+
+    @GetMapping("/bids/getbyuser/{id}")
+    public ResponseEntity<List<Bid>> getUserBids(@PathVariable Long id) {
+        return ResponseEntity.ok(bidService.getBidsByUserId(id));
+   }
+
+    @PostMapping("/bids/new/{id}")
+    public ResponseEntity<Boolean> newBid(@RequestBody BidCreateDTO bidCreateDTO) {
+        return ResponseEntity.ok(bidService.placeBid(bidCreateDTO));
+    }   
+
+    @DeleteMapping("/bids/delete/{id}")
+    public ResponseEntity<Boolean> deleteOffer(@PathVariable Long id) {
+        return ResponseEntity.ok(bidService.deleteBid(id));
+    }
+
+    @GetMapping("/bids/countByUser/{idUser}")
+    public ResponseEntity<Long> countBidsByUser(@PathVariable Long idUser) {
+        return ResponseEntity.ok(bidService.countBidsByUserId(idUser));
+    }
+
+    @GetMapping("bids/getsummary/{id}")
+    public ResponseEntity<List<BidSummaryDTO>> getBidSummary(@PathVariable Long id){
+
+        return ResponseEntity.ok(bidService.getBidsSummaryByUser(id));
+    }
+
+    @GetMapping("bids/getlast/{id}")
+    public ResponseEntity<String> getLastBid(@PathVariable Long idProp){
+        Bid bid = bidService.getDateLastBid(idProp); 
+        String date = bid.getPublishedAt();
+
+        return ResponseEntity.ok(date); 
+    }
+
+    
+
+
+
+
+
 
 
 }

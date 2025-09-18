@@ -26,12 +26,14 @@
           <template v-if="auth.user">
             <RouterLink to="/profile">Profilo</RouterLink>
             <a href="#" @click.prevent="logout">Logout</a>
+            <RouterLink to="/analitics">Insights</RouterLink>
           </template>
 
           <!-- Link per guest -->
           <template v-else>
             <RouterLink to="/login">Login</RouterLink>
             <RouterLink to="/register">Registrati</RouterLink>
+            
           </template>
         </nav>
       </div>

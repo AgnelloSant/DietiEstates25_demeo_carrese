@@ -5,7 +5,7 @@
 //utilizziamo i dto da types
 
 // src/api/auth.ts
-import { http, httpUS } from "./http";
+import { httpUS } from "./http";
 
 import type { LoginRequest, LoginResponse, RegisterRequest, PswChangeRequest } from "@/types/user";
 import { useAuthStore } from "@/stores/authenticate"

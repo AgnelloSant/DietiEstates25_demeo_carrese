@@ -11,6 +11,8 @@ public class Property {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // ID auto-incrementale
     private Long id;
+    @Column(name = "user_id", nullable = false)
+    private Long idUser;
 
     private String title;
 
@@ -24,6 +26,8 @@ public class Property {
 
     @Column(name = "published_at")
     private LocalDate publishedAt;
+
+    private Long views; 
 
     //  Costruttore vuoto richiesto da JPA
     public Property() {}
@@ -46,6 +50,13 @@ public class Property {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getIdUser() {
+        return idUser;
+    }
+    public void setIdUser(Long idUser) {
+        this.idUser = idUser;
     }
 
     public String getTitle() {
@@ -94,5 +105,13 @@ public class Property {
 
     public void setpublishedAt(LocalDate publishedAt) {
         this.publishedAt = publishedAt;
+    }
+
+    public Long getViews() {
+        return views;
+    }
+    
+    public void setViews(Long views) {
+        this.views = views;
     }
 }

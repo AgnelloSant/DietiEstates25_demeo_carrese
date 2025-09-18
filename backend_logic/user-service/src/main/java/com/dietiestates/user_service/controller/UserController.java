@@ -10,7 +10,6 @@ import com.dietiestates.user_service.service.FavouritesLogic;
 import com.dietiestates.user_service.service.LoginLogic;
 import com.dietiestates.user_service.service.PswChangeLogic;
 import com.dietiestates.user_service.service.RegistrationLogic;
-import com.dietiestates.user_service.service.LoginLogic.LoginResult;
 import com.dietiestates.user_service.auth.AuthService;
 import com.dietiestates.user_service.auth.JwtProperties;
 import com.dietiestates.shared.dto.PropertySearchDTO;
@@ -125,17 +124,6 @@ public class UserController {
                 .build();
 
     }
-
-    LoginResponse response = new LoginResponse(
-        String.valueOf(user.getId()),
-        user.getName(),
-        user.getEmail(),
-        user.getPhone(),
-        user.getRole()
-    );
-
-    return ResponseEntity.ok(response);
-}
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterRequest registerRequest) {

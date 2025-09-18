@@ -1,8 +1,12 @@
 // src/stores/properties.ts
 import { defineStore } from "pinia"
-import { searchProperties, createProperty, updateProperty, deleteProperty } from "@/api/properties"
+import { searchProperties, createProperty, updateProperty, deleteProperty, createReservation, 
+      getReservationsByProperty, getReservationsByUser, createBid, getBidsByProperty,
+      getBidsByUser, getBidsSummaryByUserOwned
+    } from "@/api/properties"
 import { getFavourites, addFavourite } from "@/api/users" 
-import type { PropertySearchDTO, PropertyCreateDTO, PropertyUpdateDTO } from "@/types/Properties"
+import type { PropertySearchDTO, PropertyCreateDTO, PropertyUpdateDTO, CreateReservationDTO, CreateBidDTO } from "@/types/Properties"
+import { create } from "domain"
 
 export const usePropertyStore = defineStore("properties", {
   state: () => ({
@@ -78,7 +82,6 @@ export const usePropertyStore = defineStore("properties", {
   async addToFavourites( idProp: number){ 
      try {
     await addFavourite({ idUser: 2, idProp })   // userId fisso per test
-    // (opzionale) UI ottimistica:
     const justAdded = this.list.find(p => p.id === idProp)
     if (justAdded && !this.favList.some(p => p.id === idProp)) {
       this.favList = [justAdded, ...this.favList]
@@ -88,6 +91,93 @@ export const usePropertyStore = defineStore("properties", {
     this.favError = "Errore nell'aggiunta ai preferiti"
   }
   },
+
+  // -------------------------------------------------
+  // OPERAZIONI SU RESERVATIONS
+  // -------------------------------------------------
+
+
+  async createAReservation(payload: CreateReservationDTO) {
+    try {
+      await createReservation(payload)
+      
+    }catch (e) {
+      console.error("Errore creazione prenotazione", e)
+    }
+  },
+
+  async fetchReservationsByProperty(idProp: number) {
+    try {
+      const res = await getReservationsByProperty(idProp)
+      console.log("Prenotazioni per proprietà", res.data)
+      return res.data
+    } catch (e) {
+      console.error("Errore nel recupero delle prenotazioni per proprietà", e)
+      return null
+    }
+  },
+  
+  async fetchReservationsByUser(idUser: number) {
+    try {
+      const res = await getReservationsByUser(idUser)
+      console.log("Prenotazioni per utente", res.data)
+      return res.data
+    } catch (e) {
+      console.error("Errore nel recupero delle prenotazioni per utente", e)
+      return null
+    }
+  },
+
+    //-------------------------------------------------
+    // OPERAZIONI SU BIDS
+    //-------------------------------------------------
+
+    async createABid(payload: CreateBidDTO) {
+      try {
+        const res = await createBid(payload)
+        console.log("Offerta creata:", res) 
+        return res
+      }catch (e) {
+        console.error("Errore creazione offerta", e)
+        return null
+      }
+    },
+
+    async fetchBidsByProperty(idProp: number) {
+      try {
+        const res = await getBidsByProperty(idProp)
+        console.log("Offerte per proprietà", res.data)
+        return res.data
+      } catch (e) {
+        console.error("Errore nel recupero delle offerte per proprietà", e)
+        return null
+      }
+    },
+    
+    async fetchBidsByUser(idUser: number) {
+      try {
+        const res = await getBidsByUser(idUser)
+        console.log("Offerte per utente", res.data)
+        return res.data
+      } catch (e) {
+        console.error("Errore nel recupero delle offerte per utente", e)
+        return null
+      }
+    },    
+
+    async fetchBidsSummaryByUserOwned(idUser: number) {
+      try {
+        const res = await getBidsSummaryByUserOwned(idUser)
+        console.log("Riepilogo offerte per utente proprietario", res)
+        return res.data
+      } catch (e) {
+        console.error("Errore nel recupero del riepilogo delle offerte per utente proprietario", e)
+        return null
+      }
+    },
+
+
+
 
     // -------------------------------------------------
     // CRUD PROPERTY

@@ -25,6 +25,7 @@
         Pubblicato il {{ new Date(property.publishedAt).toLocaleDateString() }}
       </p>
     </div>
+    <h3>Effettua una prenotazione</h3>
   </div>
 
   <!-- stato caricamento -->
@@ -43,6 +44,7 @@ const property = ref<PropertyDetailDTO | null>(null)
 onMounted(async () => {
   try {
     const { data } = await httpProperty.get<PropertyDetailDTO>(`/properties/${props.id}`)
+    await httpProperty.post(`/properties/updateviews/${props.id}`) 
     property.value = data
   } catch (err) {
     console.error("Errore caricamento proprietà", err)

@@ -44,3 +44,16 @@ export interface FavoriteDTO {
   id_prop: number
   created_at?: string
 }
+
+export interface CreateReservationDTO {
+  id_prop: number
+  id_user: number
+  date: string
+}
+
+export interface CreateBidDTO {
+  id_prop: number
+  id_user: number
+  amount: number
+}
+

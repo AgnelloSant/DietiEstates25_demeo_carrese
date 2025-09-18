@@ -8,7 +8,8 @@ services:
       - "8761:8761"
 
   user-service:
-    build: ./backend_logic/user-service
+    build: ./backend_logic
+    dockerfile: ./user-service/Dockerfile
     environment:
       # Forza la porta del servizio
       SERVER_PORT: 8081
@@ -27,7 +28,8 @@ services:
       - "8081:8081"
 
   property-service:
-    build: ./backend_logic/property-service
+    build: ./backend_logic
+    dockerfile: ./property-service/Dockerfile
     environment:
       SERVER_PORT: 8082
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka

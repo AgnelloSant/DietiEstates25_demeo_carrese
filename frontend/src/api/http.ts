@@ -14,7 +14,7 @@ export const httpUS = axios.create({
 })
 
 // Interceptor minimi (puoi ampliarli in futuro)
-http.interceptors.request.use(c => {
+httpProperty.interceptors.request.use(c => {
   //const store = useAuthStore()
   const token = localStorage.getItem("token")
   if(token){ 
@@ -31,5 +31,5 @@ httpUS.interceptors.request.use(c => {
   }
   return c
 })
-http.interceptors.response.use(r => r, e => Promise.reject(e))
+httpProperty.interceptors.response.use(r => r, e => Promise.reject(e))
 httpUS.interceptors.response.use(r => r, e => Promise.reject(e))
