@@ -1,11 +1,11 @@
 // src/api/auth.ts
 // Wrapper per chiamate al microservizio user-service
 
-import { httpUS } from "./http";
+
 //utilizziamo i dto da types
 
 // src/api/auth.ts
-import { http, httpUS } from "./http";
+import { httpUS } from "./http";
 import type { LoginRequest, LoginResponse, RegisterRequest, PswChangeRequest } from "@/types/user";
 import { useAuthStore } from "@/stores/authenticate"
 import { usePropertyStore } from "@/stores/properties";
