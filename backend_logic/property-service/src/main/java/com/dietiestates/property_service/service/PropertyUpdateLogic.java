@@ -43,4 +43,8 @@ public class PropertyUpdateLogic {
             updatedProperty.getPrice()
         );
     }
+
+    public void incrementPropertyViews(Long propertyId) {
+        propertyRepository.incrementViews(propertyId);
+    }
 }

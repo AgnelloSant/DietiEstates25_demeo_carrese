@@ -2,7 +2,6 @@
 FROM maven:3.9-eclipse-temurin-17 AS build
 WORKDIR /workspace
 
-# 1) build di 'shared' dentro al container (installa nel repo Maven locale del container)
 COPY shared/pom.xml shared/pom.xml
 COPY shared/src shared/src
 RUN mvn -q -DskipTests -f shared/pom.xml clean install

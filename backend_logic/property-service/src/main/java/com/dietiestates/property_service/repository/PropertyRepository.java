@@ -24,4 +24,9 @@ List<Property> searchProperties(
     @Param("maxPrice") Double maxPrice
 );
 
+  List<Property> findByIdUser(Long idUser);
+  
+  @Query(value = "UPDATE properties SET views = views + 1 WHERE id = :propertyId", nativeQuery = true)
+  void incrementViews(Long propertyId);
+
 }

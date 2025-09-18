@@ -1,6 +1,7 @@
 // src/router/index.ts
 import { createRouter, createWebHistory } from "vue-router";
 import { useAuthStore } from "@/stores/authenticate";
+import AnaliticsView from "@/views/AnaliticsView.vue";
 
 const HomeView = () => import("@/views/HomeView.vue");
 const PropertyDetailView = () => import("@/views/PropertyDetailView.vue");
@@ -18,6 +19,7 @@ export const router = createRouter({
     { path: "/register", name: "register", component: RegisterView },
     { path: "/profile", name: "profile", component: ProfileView, meta: { requiresAuth: true } },
     { path: "/admin", name: "admin", component: AdminView, meta: { requiresAdmin: true } },
+    { path: "/analitics", name: "analitics", component: AnaliticsView},
   ],
 });
 

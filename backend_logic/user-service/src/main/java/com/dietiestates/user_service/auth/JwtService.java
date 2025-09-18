@@ -1,7 +1,6 @@
 package com.dietiestates.user_service.auth;
 
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Service;
 
 import java.security.PrivateKey;
