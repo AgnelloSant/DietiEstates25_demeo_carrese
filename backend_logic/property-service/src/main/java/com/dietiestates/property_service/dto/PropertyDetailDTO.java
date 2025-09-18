@@ -10,16 +10,44 @@ public class PropertyDetailDTO {
     private Double price;
     private String description;   // 👈 opzionale, se hai campo in entity
     private String publishedAt;   // 👈 opzionale, se hai LocalDateTime in entity
+    private Double latitude;   
+    private Double longitude;  
+    private boolean nearSchool;    
+    private boolean nearPark;      
+    private boolean nearTransport;
+// Tipo di inserzione: "vendita" o "affitto"
+private String listingType;
 
-    public PropertyDetailDTO(Long id, String title, String city, Double area, Double price, String description, String publishedAt) {
-        this.id = id;
-        this.title = title;
-        this.city = city;
-        this.area = area;
-        this.price = price;
-        this.description = description;
-        this.publishedAt = publishedAt;
-    }
+// Numero stanze
+private Integer rooms;
+
+// Classe energetica: es. "A", "B", "C", ...
+private String energyClass;
+
+private String address;
+
+
+
+    public PropertyDetailDTO(Long id, String title, String city, Double area, Double price, String description,
+        String publishedAt, Double latitude, Double longitude, boolean nearSchool, boolean nearPark,
+        boolean nearTransport, String listingType, Integer rooms, String energyClass, String address) {
+    this.id = id;
+    this.title = title;
+    this.city = city;
+    this.area = area;
+    this.price = price;
+    this.description = description;
+    this.publishedAt = publishedAt;
+    this.latitude = latitude;
+    this.longitude = longitude;
+    this.nearSchool = nearSchool;
+    this.nearPark = nearPark;
+    this.nearTransport = nearTransport;
+    this.listingType = listingType;
+    this.rooms = rooms;
+    this.energyClass = energyClass;
+    this.address = address;
+}
 
     // Getters & Setters
     public Long getId() { return id; }
@@ -42,4 +70,87 @@ public class PropertyDetailDTO {
 
     public String getPublishedAt() { return publishedAt; }
     public void setPublishedAt(String publishedAt) { this.publishedAt = publishedAt; }
+    public Double getLatitude() {
+        return latitude;
+    }
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+    public Double getLongitude() {
+        return longitude;
+    }
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+    public boolean isNearSchool() {
+        return nearSchool;
+    }
+    public void setNearSchool(boolean nearSchool) {
+        this.nearSchool = nearSchool;
+    }
+    public boolean isNearPark() {
+        return nearPark;
+    }
+    public void setNearPark(boolean nearPark) {
+        this.nearPark = nearPark;
+    }
+    public boolean isNearTransport() {
+        return nearTransport;
+    }
+    public void setNearTransport(boolean nearTransport) {
+        this.nearTransport = nearTransport;
+    }
+
+
+
+
+    public String getListingType() {
+        return listingType;
+    }
+
+
+
+
+    public void setListingType(String listingType) {
+        this.listingType = listingType;
+    }
+
+
+
+
+    public Integer getRooms() {
+        return rooms;
+    }
+
+
+
+
+    public void setRooms(Integer rooms) {
+        this.rooms = rooms;
+    }
+
+
+
+
+    public String getEnergyClass() {
+        return energyClass;
+    }
+
+
+
+
+    public void setEnergyClass(String energyClass) {
+        this.energyClass = energyClass;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+
+    
 }

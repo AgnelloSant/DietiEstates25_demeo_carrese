@@ -17,29 +17,81 @@ public class PropertySearchLogic {
         this.propertyRepository = propertyRepository;
     }
 
-    
-      //Ricerca proprietà filtrata per città, area minima e prezzo massimo.
-    // Restituisce una lista di PropertySearchDTO (con id incluso).
-     
-public List<PropertySearchDTO> searchProperties(String city, Double minArea, Double maxPrice) {
-    System.err.println("PropertySearchLogic.searchProperties: city=" + city + " minArea=" + minArea + " maxPrice=" + maxPrice);
-    List<Property> properties = propertyRepository
-        .searchProperties(city, minArea, maxPrice); // 👈 usa il nuovo metodo
+    /**
+     *  Ricerca avanzata delle proprietà filtrata per:
+     * - città (case-insensitive, opzionale)
+     * - superficie minima (opzionale)
+     * - prezzo massimo (opzionale)
+     * - tipologia di inserzione: vendita / affitto (opzionale)
+     * - numero di stanze (opzionale)
+     * - classe energetica (opzionale)
+     *
+     * Restituisce una lista di PropertySearchDTO.
+     */
+    public List<PropertySearchDTO> searchProperties(
+            String city,
+            Double minArea,
+            Double maxPrice,
+            String listingType,
+            Integer rooms,
+            String energyClass
+    ) {
+        System.err.println("PropertySearchLogic.searchProperties: city=" + city +
+                ", minArea=" + minArea +
+                ", maxPrice=" + maxPrice +
+                ", listingType=" + listingType +
+                ", rooms=" + rooms +
+                ", energyClass=" + energyClass);
 
-    return properties.stream()
-        .map(this::convertToDto)
-        .collect(Collectors.toList());
-}
-   
-    private PropertySearchDTO convertToDto(Property property) {
-        return new PropertySearchDTO(
-            property.getId(),      // 👈 adesso includiamo l'id
-            property.getTitle(),
-            property.getCity(),
-            property.getArea(),
-            property.getPrice()
+        // Query avanzata sul repository
+        List<Property> properties = propertyRepository.advancedSearch(
+                city, minArea, maxPrice, listingType, rooms, energyClass
         );
+
+        // Mapping Entity → DTO
+        return properties.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
     }
 
+    /**
+     * 🔎 Ricerca geografica per raggio .
+     * Vengono restituite tutte le proprietà entro un certo raggio in km
+     * da un punto centrale (lat, lon).
+     *
+     * @param lat       Latitudine del centro
+     * @param lon       Longitudine del centro
+     * @param radiusKm  Raggio di ricerca in km
+     */
+    public List<PropertySearchDTO> searchByBounds(double lat, double lon, double radiusKm) {
+        List<Property> props = propertyRepository.searchByBounds(lat, lon, radiusKm);
 
+        // Mapping Entity → DTO
+        return props.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     *  Conversione singola Property → DTO
+     * Include latitudine e longitudine per la mappa
+     */
+    private PropertySearchDTO convertToDto(Property property) {
+        return new PropertySearchDTO(
+                property.getId(),
+                property.getTitle(),
+                property.getCity(),
+                property.getArea(),
+                property.getPrice(),
+                property.isNearSchool(),
+                property.isNearPark(),
+                property.isNearTransport(),
+                property.getListingType(),
+                property.getRooms(),
+                property.getEnergyClass(),
+                property.getAddress(),
+                property.getLatitude(),
+                property.getLongitude()
+        );
+    }
 }

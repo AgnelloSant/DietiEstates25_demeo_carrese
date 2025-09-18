@@ -1,51 +1,47 @@
 <template>
   <div class="auth-container">
     <h1>Accedi</h1>
-    <!-- form login -->
     <form @submit.prevent="handleLogin" class="auth-form">
+      <!-- 📧 Email -->
       <div class="form-group">
         <label>Email</label>
-        <input v-model="form.email" type="email" required />
+        <input v-model="email" type="email" placeholder="Inserisci la tua email" required />
       </div>
+
+      <!-- 🔑 Password -->
       <div class="form-group">
         <label>Password</label>
-        <input v-model="form.password" type="password" required />
+        <input v-model="password" type="password" placeholder="Inserisci la tua password" required />
       </div>
-      <button type="submit" class="btn-primary">Accedi</button>
+
+      <!-- ▶️ Pulsante -->
+      <button type="submit" class="btn-primary">Login</button>
+
+      <!-- ❌ Errori -->
       <p v-if="error" class="error-message">{{ error }}</p>
-      <div class="auth-links">
-        <RouterLink to="/register">Registrati</RouterLink>
-        <RouterLink to="/forgot-password">Password dimenticata?</RouterLink>
-      </div>
     </form>
   </div>
 </template>
 
 <script setup lang="ts">
-// reactive = oggetto reattivo, ref = variabile reattiva singola
-import { reactive, ref } from "vue";
+import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/authenticate";
-import type { LoginRequest } from "@/types/user";
 
-// store + router
-const auth = useAuthStore();
 const router = useRouter();
+const auth = useAuthStore();
 
-// DTO per login
-const form = reactive<LoginRequest>({ email: "", password: "" });
+const email = ref("");
+const password = ref("");
 const error = ref("");
 
-// funzione submit
+// submit login
 const handleLogin = async () => {
-  const success = await auth.loginUser(form);
+  const success = await auth.loginUser({ email: email.value, password: password.value });
   if (success) {
-    // se ADMIN → admin page
-    if (auth.user?.role === "ADMIN") router.push("/admin");
-    else router.push("/"); 
+    router.push("/");
   } else {
-    error.value = "Email o password errati";
+    error.value = "Email o password non validi";
   }
 };
 </script>
- 

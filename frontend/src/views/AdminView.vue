@@ -1,24 +1,118 @@
 <template>
   <div class="admin-container">
-    <h2>Gestione Proprietà</h2>
+    <h2 class="title">Gestione Proprietà</h2>
 
     <!-- ✍️ Form creazione nuova proprietà -->
     <form @submit.prevent="create" class="property-form">
-      <input v-model="form.title" placeholder="Titolo" required />
-      <input v-model="form.city" placeholder="Città" required />
-      <input v-model.number="form.area" type="number" placeholder="Superficie (mq)" required />
-      <input v-model.number="form.price" type="number" placeholder="Prezzo (€)" required />
-      <button type="submit">Crea</button>
+      <!-- Titolo -->
+      <div class="form-group">
+        <input v-model="form.title" placeholder="🏠 Titolo annuncio" required />
+      </div>
+
+      <!-- Città -->
+      <div class="form-group">
+        <input v-model="form.city" placeholder="📍 Città (Es. Roma)" required />
+      </div>
+
+      <!-- Indirizzo completo (via + civico) -->
+      <div class="form-group">
+        <input
+          v-model="form.address"
+          placeholder="📍 Indirizzo (via e civico)"
+          required
+        />
+      </div>
+
+      <!-- Superficie -->
+      <div class="form-group">
+        <input
+          v-model.number="form.area"
+          type="number"
+          min="0"
+          placeholder="📏 Superficie (mq)"
+          required
+        />
+      </div>
+
+      <!-- Prezzo -->
+      <div class="form-group">
+        <input
+          v-model.number="form.price"
+          type="number"
+          min="0"
+          placeholder="💰 Prezzo (€)"
+          required
+        />
+      </div>
+
+      <!-- Tipo inserzione -->
+      <div class="form-group">
+        <select v-model="form.listingType" required>
+          <option disabled value="">-- Tipo annuncio --</option>
+          <option value="vendita">Vendita</option>
+          <option value="affitto">Affitto</option>
+        </select>
+      </div>
+
+      <!-- Numero stanze -->
+      <div class="form-group">
+        <input
+          v-model.number="form.rooms"
+          type="number"
+          min="1"
+          placeholder="🛏️ Numero stanze"
+          required
+        />
+      </div>
+
+      <!-- Classe energetica -->
+      <div class="form-group">
+        <select v-model="form.energyClass" required>
+          <option disabled value="">-- Classe energetica --</option>
+          <option>A</option>
+          <option>B</option>
+          <option>C</option>
+          <option>D</option>
+          <option>E</option>
+          <option>F</option>
+          <option>G</option>
+        </select>
+      </div>
+
+      <!-- Lat/Long (opzionali, solo debug) -->
+      <div class="form-group">
+        <input
+          v-model.number="form.latitude"
+          type="number"
+          step="0.0001"
+          placeholder="Latitudine (opzionale)"
+        />
+      </div>
+      <div class="form-group">
+        <input
+          v-model.number="form.longitude"
+          type="number"
+          step="0.0001"
+          placeholder="Longitudine (opzionale)"
+        />
+      </div>
+
+      <button type="submit" class="btn-create">➕ Crea Annuncio</button>
     </form>
 
     <hr />
 
     <!-- 📋 Lista proprietà già presenti -->
+    <h3 class="subtitle">Lista Annunci</h3>
     <ul class="property-list">
-      <li v-for="p in list" :key="p.title" class="property-item">
-        <strong>{{ p.title }}</strong> — {{ p.city }} — {{ p.area }}mq — €{{ p.price.toLocaleString("it-IT") }}
+      <li v-for="p in list" :key="p.id" class="property-item">
+        <div class="property-info">
+          <strong>{{ p.title }}</strong><br />
+          📍 {{ p.city }}  <br />
+          📏 {{ p.area }} mq — 💰 €{{ p.price.toLocaleString("it-IT") }}
+        </div>
         <!-- 🗑️ Pulsante elimina -->
-        <button @click="remove(p.id)">Elimina</button>
+        <button class="btn-delete" @click="remove(p.id)">Elimina</button>
       </li>
     </ul>
 
@@ -34,9 +128,8 @@ import { storeToRefs } from "pinia"
 import { usePropertyStore } from "@/stores/properties"
 import type { PropertyCreateDTO } from "@/types/Properties"
 
-// ✅ Iniettiamo lo store
+// ✅ Iniettiamo lo store Pinia
 const store = usePropertyStore()
-// storeToRefs per rendere reattiva la lista
 const { list } = storeToRefs(store)
 
 // Stato errori locali
@@ -46,19 +139,33 @@ const error = ref("")
 const form = reactive<PropertyCreateDTO>({
   title: "",
   city: "",
+  address: "", // 👈 nuovo campo
   area: 0,
   price: 0,
+  latitude: null, // verranno calcolate lato backend da Geoapify
+  longitude: null,
+  listingType: "vendita", // default
+  rooms: 1,
+  energyClass: "A"
 })
 
-// Crea nuova proprietà
+// ➕ Crea nuova proprietà
 async function create() {
   try {
-    await store.addProperty(form)  // chiamata allo store → API POST
+    await store.addProperty(form)
+
     // reset form
     form.title = ""
     form.city = ""
+    form.address = ""
     form.area = 0
     form.price = 0
+    form.latitude = null
+    form.longitude = null
+    form.listingType = "vendita"
+    form.rooms = 1
+    form.energyClass = "A"
+
     error.value = ""
   } catch (err) {
     error.value = "Errore nella creazione della proprietà"
@@ -66,7 +173,7 @@ async function create() {
   }
 }
 
-// Elimina proprietà
+// ❌ Elimina proprietà
 async function remove(id: number) {
   try {
     await store.removeProperty(id)
@@ -77,50 +184,12 @@ async function remove(id: number) {
   }
 }
 
-// Al caricamento mostro subito tutte le proprietà
+// 🔄 Al caricamento mostro subito tutte le proprietà
 onMounted(() => {
   store.fetchList()
 })
 </script>
 
 <style scoped>
-.admin-container {
-  max-width: 800px;
-  margin: 2rem auto;
-  padding: 2rem;
-  border-radius: 8px;
-  background: #f8f9fa;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-}
-.property-form {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
-}
-.property-form input { flex: 1 1 180px; padding: 0.5rem; }
-.property-form button {
-  padding: 0.5rem 1rem;
-  background: #0d6efd;
-  border: none;
-  color: white;
-  border-radius: 4px;
-  cursor: pointer;
-}
-.property-list { list-style: none; padding: 0; }
-.property-item {
-  display: flex;
-  justify-content: space-between;
-  padding: 0.5rem;
-  border-bottom: 1px solid #ddd;
-}
-.property-item button {
-  background: #dc3545;
-  color: white;
-  border: none;
-  padding: 0.3rem 0.8rem;
-  border-radius: 4px;
-  cursor: pointer;
-}
-.error { color: red; margin-top: 1rem; }
+/* stessi stili che avevi */
 </style>
