@@ -21,14 +21,18 @@ public class FavouritesLogic {
 
     
  @Transactional(readOnly = true)
-  public List<PropertySearchDTO> getFavouriteProperties(Long userId) {
+public List<PropertySearchDTO> getFavouriteProperties(Long userId) {
     return favouriteRepository.findFavouriteRowsByUser(userId).stream()
-      .map(r -> new PropertySearchDTO(
-        r.getId(), r.getTitle(), r.getCity(), r.getArea(), r.getPrice()
-      ))
-      .toList();
-  }
-  
+        .map(r -> new PropertySearchDTO(
+            r.getId(),
+            r.getTitle(),
+            r.getCity(),
+            r.getArea(),
+            r.getPrice()
+        ))
+        .toList();
+}
+
 
     @Transactional(readOnly = true)
     public long countFavourites(Long userId) {

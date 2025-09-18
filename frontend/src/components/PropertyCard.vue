@@ -1,105 +1,149 @@
 <template>
-  <div class="property-card">
-    <!-- immagine -->
-    <img
-      class="property-img"
-      :src="property.imageUrl || '/placeholder-house.jpg'"
-      alt="Immobile"
-    />
+  <div class="property-card" :class="{ compact }">
+    <!-- Badge tipo annuncio -->
+    <div v-if="property.listingType" class="listing-type" :class="property.listingType.toLowerCase()">
+      {{ property.listingType.toUpperCase() }}
+    </div>
 
-    <button class="fav-btn" :title="`Aggiungi ai preferiti`" @click.stop="onFavClick">
-        <!-- semplice cuore SVG -->
-        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-          <path
-            d="M12 21s-6.716-4.317-9.173-7.053C1.01 11.977 1 9.61 2.343 8.05 3.686 6.49 6.08 6.21 7.76 7.54L12 11l4.24-3.46c1.68-1.33 4.074-1.05 5.417.51 1.343 1.56 1.333 3.927.173 5.897C18.716 16.683 12 21 12 21z"
-            fill="currentColor"
-          />
-        </svg>
-      </button>
+    <!-- Immagine -->
+    <img :src="property.imageUrl || '/placeholder-house.jpg'" alt="Foto immobile" class="property-img"/>
 
-    <!-- contenuto -->
-    <div class="property-content">
-      <h3 class="property-price">€ {{ property.price.toLocaleString() }}</h3>
-      <h2 class="property-title">{{ property.title }}</h2>
-      <p class="property-info">
-        {{ property.city }} • {{ property.area }} mq
+    <div class="property-info">
+      <h3>{{ property.title }}</h3>
+      <p>{{ property.city }} • {{ property.area }} m² • {{ property.address }}</p>
+      <p class="price">€ {{ property.price.toLocaleString() }}</p>
+
+      <!-- Extra info -->
+      <p v-if="property.rooms || property.energyClass" class="extras">
+        <span v-if="property.rooms">🛏️ {{ property.rooms }} stanze</span>
+        <span v-if="property.energyClass"> • 🔋 Classe {{ property.energyClass }}</span>
       </p>
-      <RouterLink :to="`/property/${property.id}`" class="details-btn">
-        Vedi dettagli
-      </RouterLink>
+
+      <!-- 🆕 Badge vantaggi -->
+      <div class="badges">
+        <span v-if="property.nearSchool" class="badge">🏫 Scuole</span>
+        <span v-if="property.nearPark" class="badge">🌳 Parchi</span>
+        <span v-if="property.nearTransport" class="badge">🚌 Trasporti</span>
+      </div>
+
+      <!-- Azioni -->
+      <div class="card-actions">
+        <RouterLink :to="`/properties/${property.id}`" class="details-btn">Dettagli</RouterLink>
+        <!-- ❤️ toggle preferiti -->
+        <button
+          class="fav-btn"
+          :class="{ active: isFavourite }"
+          @click="$emit('toggle-fav', property.id)"
+        >
+          <i class="fa-solid fa-heart"></i>
+        </button>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import type { PropertySearchDTO } from "@/types/Properties"
-const props = defineProps<{ property: PropertySearchDTO }>()
 
-const emit = defineEmits<{
-  (e: "add-fav", propId: number): void
+defineProps<{ property: PropertySearchDTO; compact?: boolean; isFavourite?: boolean }>()
+defineEmits<{
+  (e: "toggle-fav", id: number): void
 }>()
-
-function onFavClick() {
-  emit("add-fav", props.property.id)
-}
 </script>
 
 <style scoped>
-.property-card {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-  transition: transform 0.2s ease;
+.property-card { 
   background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease;
+  display: flex;
+  flex-direction: column;
 }
 .property-card:hover {
-  transform: translateY(-3px);
+  transform: translateY(-4px);
 }
-
 .property-img {
   width: 100%;
   height: 180px;
   object-fit: cover;
 }
-
-.property-content {
+.property-info {
   padding: 1rem;
 }
-
-.property-price {
+.property-info h3 {
+  font-size: 1.2rem;
+  margin-bottom: 0.3rem;
   color: #0c5db1;
-  font-size: 1.3rem;
-  margin: 0 0 0.5rem 0;
+}
+.price {
   font-weight: bold;
+  color: #28a745;
+  margin: 0.5rem 0;
 }
-
-.property-title {
-  font-size: 1.1rem;
-  margin: 0 0 0.25rem 0;
-}
-
-.property-info {
-  color: #666;
-  margin: 0 0 0.5rem 0;
-}
-
-.property-date {
-  font-size: 0.85rem;
-  color: #999;
-  margin-bottom: 0.75rem;
-}
-
-.details-btn {
-  display: inline-block;
-  padding: 0.5rem 1rem;
-  background: #0c5db1;
-  color: #fff;
-  border-radius: 4px;
-  text-decoration: none;
+.extras {
   font-size: 0.9rem;
+  color: #555;
+  margin-top: 4px;
+}
+.badges {
+  margin-top: 8px;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.badge {
+  font-size: 0.8rem;
+  background: #eaf4ff;
+  color: #0c5db1;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+.card-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+.details-btn {
+  padding: 6px 12px;
+  background: #0c5db1;
+  color: white;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: background 0.2s;
 }
 .details-btn:hover {
-  background: #084080;
+  background: #094a88;
+}
+.fav-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.3rem;
+  color: #aaa;
+  transition: color 0.2s;
+}
+.fav-btn.active {
+  color: #e63946; /* rosso acceso quando attivo */
+}
+
+/* Badge tipo annuncio */
+.listing-type {
+  position: absolute;
+  margin: 10px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: white;
+}
+.listing-type.vendita {
+  background: #28a745;
+}
+.listing-type.affitto {
+  background: #ff9800;
 }
 </style>

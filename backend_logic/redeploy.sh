@@ -33,6 +33,7 @@ ensure_network() {
 build_eureka() {
   echo "🛠  Build $EUREKA_IMAGE"
   docker build -t "$EUREKA_IMAGE" -f eureka-server/Dockerfile eureka-server/
+  docker build -t "$EUREKA_IMAGE" -f eureka-server/Dockerfile eureka-server/
 }
 
 build_user() {

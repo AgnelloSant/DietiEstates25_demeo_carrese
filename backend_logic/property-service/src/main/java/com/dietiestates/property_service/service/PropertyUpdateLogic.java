@@ -5,7 +5,6 @@ import com.dietiestates.property_service.repository.PropertyRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-
 @Service
 public class PropertyUpdateLogic {
 
@@ -15,32 +14,32 @@ public class PropertyUpdateLogic {
         this.propertyRepository = propertyRepository;
     }
 
-    // Metodo per aggiornare una proprietà esistente
     public PropertyUpdateDTO updateProperty(Long id, PropertyUpdateDTO updateDTO) {
-        // Ricerca della proprietà esistente
-        Optional<Property> existingPropertyOpt = propertyRepository.findById(id);
+        Property property = propertyRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Property not found with id: " + id));
 
-        if (existingPropertyOpt.isEmpty()) {
-            throw new RuntimeException("Property not found with id: " + id);
-        }
-
-        Property property = existingPropertyOpt.get();
-
-        // Aggiornamento dei campi
+        // Aggiorna campi base
         property.setTitle(updateDTO.getTitle());
         property.setCity(updateDTO.getCity());
         property.setArea(updateDTO.getArea());
         property.setPrice(updateDTO.getPrice());
 
-        // Salvataggio aggiornato
+        //  campi ricerca avanzata 
+        property.setListingType(updateDTO.getListingType());
+        property.setRooms(updateDTO.getRooms());
+        property.setEnergyClass(updateDTO.getEnergyClass());
+
         Property updatedProperty = propertyRepository.save(property);
 
-        // Conversione in DTO da restituire
         return new PropertyUpdateDTO(
             updatedProperty.getTitle(),
             updatedProperty.getCity(),
             updatedProperty.getArea(),
-            updatedProperty.getPrice()
+            updatedProperty.getPrice(),
+            updatedProperty.getListingType(),
+            updatedProperty.getRooms(),
+            updatedProperty.getEnergyClass(),
+            updatedProperty.getAddress()
         );
     }
 

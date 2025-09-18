@@ -13,6 +13,7 @@ import com.dietiestates.user_service.service.RegistrationLogic;
 import com.dietiestates.user_service.auth.AuthService;
 import com.dietiestates.user_service.auth.JwtProperties;
 import com.dietiestates.shared.dto.PropertySearchDTO;
+import com.dietiestates.shared.dto.PropertySearchDTO;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -122,7 +123,6 @@ public class UserController {
         return ResponseEntity.noContent()
                 .header(HttpHeaders.SET_COOKIE, cleared.toString())
                 .build();
-
     }
 
     @PostMapping("/register")

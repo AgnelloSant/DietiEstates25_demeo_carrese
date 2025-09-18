@@ -2,6 +2,7 @@
 // Wrapper per chiamate al microservizio user-service
 
 
+
 //utilizziamo i dto da types
 
 // src/api/auth.ts
@@ -11,12 +12,9 @@ import type { LoginRequest, LoginResponse, RegisterRequest, PswChangeRequest } f
 import { useAuthStore } from "@/stores/authenticate"
 import { usePropertyStore } from "@/stores/properties";
 
-/*
- * 🔑 LOGIN
- * POST → /api/v1/user/login
- * backend → user-service (porta 8081)
- */
+// 🔑 LOGIN
 export const login = (payload: LoginRequest) => {
+  return httpUS.post<LoginResponse>("/login", payload);
   return httpUS.post<LoginResponse>("/login", payload);
 };
 
@@ -25,6 +23,7 @@ export const login = (payload: LoginRequest) => {
  * POST → /api/v1/user/register
  */
 export const register = (payload: RegisterRequest) => {
+  return httpUS.post("/register", payload);
   return httpUS.post("/register", payload);
 };
 
