@@ -3,37 +3,32 @@ package com.dietiestates.property_service.dto;
 import java.time.LocalDate;
 
 public class PropertyCreateDTO {
-    private String title;
+private String title;
     private String city;
     private Double area;
     private Double price;
- private LocalDate publishedAt;
-  
-  private Double latitude;
-private Double longitude;
+    private LocalDate publishedAt;
+    private Double latitude;
+    private Double longitude;
     private Boolean nearSchool;
     private Boolean nearPark;
     private Boolean nearTransport;
-// Tipo di inserzione: "vendita" o "affitto"
-private String listingType;
-
-// Numero stanze
-private Integer rooms;
-
-// Classe energetica: es. "A", "B", "C", ...
-private String energyClass;
-
-private String address;
-
+    private String listingType;   // vendita | affitto
+    private Integer rooms;
+    private String energyClass;
+        private String address;
+     private Long idUser;      // ID dell'utente che crea la proprietà
+    private Long views;
     // Costruttori
     public PropertyCreateDTO() {}
 
 
-    public PropertyCreateDTO(String title, String city, Double area, Double price, LocalDate publishedAt,
-            Double latitude, Double longitude, Boolean nearSchool, Boolean nearPark, Boolean nearTransport,
-            String listingType, Integer rooms, String energyClass, String address) {
+    public PropertyCreateDTO(String title, String city,  Double area, Double price,
+            LocalDate publishedAt, Double latitude, Double longitude, Boolean nearSchool, Boolean nearPark,
+            Boolean nearTransport, String listingType, Integer rooms, String energyClass,String address, Long idUser, Long views) {
         this.title = title;
         this.city = city;
+
         this.area = area;
         this.price = price;
         this.publishedAt = publishedAt;
@@ -45,12 +40,13 @@ private String address;
         this.listingType = listingType;
         this.rooms = rooms;
         this.energyClass = energyClass;
-        this.address = address;
+             this.address = address;
+        this.idUser = idUser;
+        this.views = views;
     }
 
-    // Getter e Setter
 
-
+ // Getter e Setter
     public String getTitle() {
         return title;
     }
@@ -220,6 +216,26 @@ private String address;
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+
+    public Long getIdUser() {
+        return idUser;
+    }
+
+
+    public void setIdUser(Long idUser) {
+        this.idUser = idUser;
+    }
+
+
+    public Long getViews() {
+        return views;
+    }
+
+
+    public void setViews(Long views) {
+        this.views = views;
     }
 
 
