@@ -11,8 +11,6 @@ public class Property {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // ID auto-incrementale
     private Long id;
-    @Column(name = "user_id", nullable = false)
-    private Long idUser;
 
     private String title;
 
@@ -27,8 +25,6 @@ public class Property {
     @Column(name = "published_at")
     private LocalDate publishedAt;
 
-    @Column(name = "address")
-private String address;
 
 //coordinate per geoapify
 private Double latitude;
@@ -43,33 +39,23 @@ private Double longitude;
     private Integer rooms;        // numero stanze
     private String energyClass;   // es: A, B, C, ...
 
+    @Column(name = "address")
+private String address;
+
+   @Column(name = "user_id", nullable = false)
+    private Long idUser;
+
     private Long views; 
+     
 
     //  Costruttore vuoto richiesto da JPA
     public Property() {}
 
     // Costruttore utile per creare oggetti 
-  public Property(Long id, String title, String description, String city, Double price, Double area,
-            LocalDate publishedAt, String address, Double latitude, Double longitude, boolean nearSchool,
-            boolean nearPark, boolean nearTransport, String listingType, Integer rooms, String energyClass) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.city = city;
-        this.price = price;
-        this.area = area;
-        this.publishedAt = publishedAt;
-        this.address = address;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.nearSchool = nearSchool;
-        this.nearPark = nearPark;
-        this.nearTransport = nearTransport;
-        this.listingType = listingType;
-        this.rooms = rooms;
-        this.energyClass = energyClass;
-    }
-  
+
+
+
+
 
 
     //  Getter e Setter
@@ -78,6 +64,29 @@ private Double longitude;
     return publishedAt;
 }
 
+  public Property(Long id, String title, String description, String city, Double price, Double area,
+            LocalDate publishedAt,  Double latitude, Double longitude, boolean nearSchool,
+            boolean nearPark, boolean nearTransport, String listingType, Integer rooms, String energyClass, String address,Long idUser,
+            Long views) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.city = city;
+        this.price = price;
+        this.area = area;
+        this.publishedAt = publishedAt;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.nearSchool = nearSchool;
+        this.nearPark = nearPark;
+        this.nearTransport = nearTransport;
+        this.listingType = listingType;
+        this.rooms = rooms;
+        this.energyClass = energyClass;
+           this.address = address;
+        this.idUser = idUser;
+        this.views = views;
+    }
 
   public Double getLatitude() {
         return latitude;

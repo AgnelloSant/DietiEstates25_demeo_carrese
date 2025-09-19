@@ -32,6 +32,9 @@ public class PropertyCreateLogic {
         property.setRooms(createDTO.getRooms());
         property.setEnergyClass(createDTO.getEnergyClass());
 
+    property.setIdUser(createDTO.getIdUser());
+    property.setViews(createDTO.getViews() != null ? createDTO.getViews() : 0L);
+
         // --- Gestione coordinate ---
         Double lat = createDTO.getLatitude();
         Double lon = createDTO.getLongitude();
@@ -75,7 +78,9 @@ public class PropertyCreateLogic {
             savedProperty.getListingType(),
             savedProperty.getRooms(),
             savedProperty.getEnergyClass(),
-            savedProperty.getAddress()
+            savedProperty.getAddress(),
+            savedProperty.getIdUser(),
+            savedProperty.getViews()
         );
     }
 }

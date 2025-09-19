@@ -89,7 +89,7 @@ public ResponseEntity<List<PropertySearchDTO>> searchByBounds(
     // --- Creazione proprietà ---
 @PostMapping("/create")
 public ResponseEntity<PropertyCreateDTO> createProperty(@RequestBody PropertyCreateDTO createDTO) {
-    System.out.println("📩 Create richiesta con DTO: " + createDTO);
+    System.out.println("📩Create richiesta con DTO: " + createDTO);
     PropertyCreateDTO created = propertyCreateLogic.createProperty(createDTO);
     return ResponseEntity.ok(created);
 }

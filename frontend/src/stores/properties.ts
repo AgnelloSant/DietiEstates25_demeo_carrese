@@ -230,9 +230,9 @@ async fetchListByBounds(lat: number, lon: number, radiusKm: number) {
     // ✍️ CRUD PROPERTY
   async addProperty(payload: PropertyCreateDTO) {
   try {
-    const res = await createProperty(payload)
+   await createProperty(payload)
     //this.list.push(res)
-    return res
+ await this.fetchList
   } catch (err) {
     console.error("Errore addProperty", err)
     throw err

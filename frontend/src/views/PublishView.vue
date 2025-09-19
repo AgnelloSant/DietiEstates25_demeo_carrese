@@ -108,48 +108,47 @@
     </div>
 
     <!-- Step 4: Riepilogo -->
-<!-- Step 4: Riepilogo -->
-<div v-if="step === 4" class="step">
-  <h2>✅ Riepilogo finale</h2>
+    <div v-if="step === 4" class="step">
+      <h2>✅ Riepilogo finale</h2>
 
-  <div class="summary-container">
-    <!-- 📋 Dati -->
-    <ul class="summary">
-      <li><b>Titolo:</b> {{ form.title }}</li>
-      <li><b>Descrizione:</b> {{ form.description }}</li>
-      <li><b>Città:</b> {{ form.city }}</li>
-      <li><b>Indirizzo:</b> {{ form.address }}</li>
-      <li><b>Superficie:</b> {{ form.area }} m²</li>
-      <li><b>Prezzo:</b> € {{ form.price.toLocaleString() }}</li>
-      <li><b>Tipo:</b> {{ form.listingType }}</li>
-      <li><b>Stanze:</b> {{ form.rooms }}</li>
-      <li><b>Classe energetica:</b> {{ form.energyClass }}</li>
-    </ul>
+      <div class="summary-container">
+        <!-- 📋 Dati -->
+        <ul class="summary">
+          <li><b>Titolo:</b> {{ form.title }}</li>
+          <li><b>Descrizione:</b> {{ form.description }}</li>
+          <li><b>Città:</b> {{ form.city }}</li>
+          <li><b>Indirizzo:</b> {{ form.address }}</li>
+          <li><b>Superficie:</b> {{ form.area }} m²</li>
+          <li><b>Prezzo:</b> € {{ form.price.toLocaleString() }}</li>
+          <li><b>Tipo:</b> {{ form.listingType }}</li>
+          <li><b>Stanze:</b> {{ form.rooms }}</li>
+          <li><b>Classe energetica:</b> {{ form.energyClass }}</li>
+        </ul>
 
-    <!-- 🌍 Mini mappa -->
-    <div v-if="coords" id="map-summary" class="map-summary"></div>
-  </div>
+        <!-- 🌍 Mini mappa -->
+        <div v-if="coords" id="map-summary" class="map-summary"></div>
+      </div>
 
-  <div class="nav-buttons">
-    <button class="btn-prev" @click="prevStep">⬅️ Indietro</button>
-    <button class="btn-publish" @click="publish">🚀 Pubblica</button>
-  </div>
-</div>
-
+      <div class="nav-buttons">
+        <button class="btn-prev" @click="prevStep">⬅️ Indietro</button>
+        <button class="btn-publish" @click="publish">🚀 Pubblica</button>
+      </div>
+    </div>
 
     <p v-if="error" class="error">{{ error }}</p>
   </div>
 </template>
 
-
 <script setup lang="ts">
 import { reactive, ref, nextTick, watch } from "vue"
 import { usePropertyStore } from "@/stores/properties"
+import { useAuthStore } from "@/stores/authenticate" // ✅ NUOVO: Import auth store
 import { useToast } from "vue-toastification"
 import L from "leaflet"
 import "leaflet/dist/leaflet.css"
 
 const store = usePropertyStore()
+const authStore = useAuthStore() // ✅ NUOVO: Auth store
 const toast = useToast()
 
 // Step system
@@ -174,7 +173,9 @@ const form = reactive({
   longitude: null as number | null,
   listingType: "vendita" as "vendita" | "affitto",
   rooms: 1,
-  energyClass: "A"
+  energyClass: "A",
+  idUser: 0,    // ✅ NUOVO: ID utente
+  views: 0      // ✅ NUOVO: Visualizzazioni (sempre 0 alla creazione)
 })
 
 // --- Step control ---
@@ -241,6 +242,14 @@ watch(step, async (newStep) => {
 // --- Pubblica annuncio ---
 async function publish() {
   try {
+    //  Usa authStore.user?.id 
+    if (!authStore.user?.id) {
+      toast.error("❌ Devi essere loggato per pubblicare un annuncio")
+      return
+    }
+
+    form.idUser = authStore.user.id  // Prende l'ID dall'utente loggato
+    form.views = 0   
     await store.addProperty(form)
     toast.success("Annuncio pubblicato con successo 🎉")
 
@@ -254,6 +263,8 @@ async function publish() {
     form.price = 0
     form.latitude = null
     form.longitude = null
+    form.idUser = 0    // ✅ NUOVO: Reset
+    form.views = 0     // ✅ NUOVO: Reset
     addressInput.value = ""
     coords.value = null
     if (map) {
@@ -266,7 +277,6 @@ async function publish() {
   }
 }
 </script>
-
 
 <style scoped>
 .publish-container {
@@ -383,5 +393,4 @@ textarea {
   margin-top: 1rem;
   text-align: center;
 }
-
 </style>

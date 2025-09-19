@@ -1,6 +1,9 @@
 //Servono come documentazione del shape dei dati attesi dal backend. Se usi JS, tienili come riferimento.
 // Modella i DTO in base a quanto esposto dal tuo backend
 // PropertySearchDTO (risultati della ricerca)
+
+import { RouteLocationNormalizedLoadedTyped } from "vue-router"
+
 // src/types/Properties.ts
 export interface PropertySearchDTO {
   id: number
@@ -38,6 +41,8 @@ export interface PropertyCreateDTO {
   listingType: "vendita" | "affitto"   // tipologia inserzione
   rooms: number                        // numero stanze
   energyClass: string                  // es. A, B, C...
+     idUser: number        // Nuovo campo obbligatorio
+    views?: number 
 }
 
 // PropertyUpdateDTO

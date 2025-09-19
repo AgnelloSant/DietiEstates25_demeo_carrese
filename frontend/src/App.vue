@@ -25,7 +25,7 @@
           <!-- Link per utenti loggati -->
           <template v-if="auth.user">
             <RouterLink to="/profile">Profilo</RouterLink>
-            <a href="#" @click.prevent="logout">Logout</a>
+            <a href="#" @click.prevent="confirmLogout">Logout</a>
             <RouterLink to="/analitics">Insights</RouterLink>
           </template>
 
