@@ -73,28 +73,62 @@ const property = ref<PropertyDetailDTO | null>(null)
 
 onMounted(async () => {
   try {
-    const { data } = await httpProperty.get<PropertyDetailDTO>(`/properties/${props.id}`)
-    await httpProperty.post(`/properties/updateviews/${props.id}`) 
-    property.value = data
 
-    // aspetta che Vue aggiorni il DOM
+    //  1. Prima carica i dati della proprietà
+    console.log("Caricamento proprietà con ID:", props.id)
+    const { data } = await httpProperty.get<PropertyDetailDTO>(`/properties/${props.id}`)
+    property.value = data
+    console.log("Proprietà caricata:", data)
+
+    // 2. Incrementa le views (in background, non bloccante)
+    try {
+      await httpProperty.post(`/properties/updateviews/${props.id}`)
+      console.log("Views incrementate per proprietà", props.id)
+    } catch (viewsError: unknown) {
+      // Non critico: se il conteggio views fallisce, la property si carica comunque
+      console.warn("Errore incremento views (non critico):", viewsError)
+    }
+
+    //  3. Inizializza la mappa solo se ci sono coordinate
     if (property.value?.latitude && property.value?.longitude) {
+      // Aspetta che Vue aggiorni il DOM
       await nextTick()
 
-      const map = L.map("map").setView([property.value.latitude, property.value.longitude], 14)
+      try {
+        const map = L.map("map").setView([property.value.latitude, property.value.longitude], 14)
 
-      L.tileLayer(`https://maps.geoapify.com/v1/tile/osm-bright/{z}/{x}/{y}.png?apiKey=c4dc78950f8f486cbf36cb126f4efda1`, {
-        attribution: "© OpenMapTiles © OpenStreetMap contributors",
-        maxZoom: 20
-      }).addTo(map)
+        L.tileLayer("https://maps.geoapify.com/v1/tile/osm-bright/{z}/{x}/{y}.png?apiKey=c4dc78950f8f486cbf36cb126f4efda1", {
+          attribution: "© OpenMapTiles © OpenStreetMap contributors",
+          maxZoom: 20
+        }).addTo(map)
 
-      L.marker([property.value.latitude, property.value.longitude]).addTo(map)
-        .bindPopup(`<b>${property.value.title}</b><br>${property.value.city}<br>€ ${property.value.price.toLocaleString()}`)
+        L.marker([property.value.latitude, property.value.longitude])
+          .addTo(map)
+          .bindPopup(`<b>${property.value.title}</b><br>${property.value.city}<br>€ ${property.value.price.toLocaleString()}`)
+        
+        console.log("Mappa inizializzata correttamente")
+      } catch (mapError: unknown) {
+        console.warn("Errore inizializzazione mappa:", mapError)
+      }
+    } else {
+      console.warn("Coordinate non disponibili per la mappa")
     }
-  } catch (err) {
-    console.error("Errore caricamento proprietà", err)
+
+  } catch (err: unknown) {
+    console.error("Errore caricamento proprietà:", err)
+    
+    //  Type guard per AxiosError
+    if (err && typeof err === 'object' && 'response' in err) {
+      const axiosError = err as any // Cast per accedere alle proprietà Axios
+      if (axiosError.response?.status === 404) {
+        console.error("Proprietà non trovata")
+      } else if (axiosError.response?.status === 500) {
+        console.error("Errore server durante il caricamento")
+      }
+    }
   }
 })
+
 
 </script>
 

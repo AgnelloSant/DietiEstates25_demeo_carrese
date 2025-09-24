@@ -76,6 +76,8 @@ export interface PropertyDetailDTO {
   listingType?: "vendita" | "affitto"
   rooms?: number
   energyClass?: string
+    idUser?: number        // Nuovo campo obbligatorio
+    views?: number 
 }
 
 export interface FavoriteDTO {

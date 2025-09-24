@@ -136,17 +136,20 @@ const { list } = storeToRefs(store)
 const error = ref("")
 
 // DTO per creare nuova proprietà
-const form = reactive<PropertyCreateDTO>({
+const form = reactive({
   title: "",
+  description: "",
   city: "",
-  address: "", // 👈 nuovo campo
+  address: "",
   area: 0,
   price: 0,
-  latitude: null, // verranno calcolate lato backend da Geoapify
-  longitude: null,
-  listingType: "vendita", // default
+  latitude: null as number | null,
+  longitude: null as number | null,
+  listingType: "vendita" as "vendita" | "affitto",
   rooms: 1,
-  energyClass: "A"
+  energyClass: "A",
+  idUser: 0,    // ✅ NUOVO: ID utente
+  views: 0      // ✅ NUOVO: Visualizzazioni (sempre 0 alla creazione)
 })
 
 // ➕ Crea nuova proprietà

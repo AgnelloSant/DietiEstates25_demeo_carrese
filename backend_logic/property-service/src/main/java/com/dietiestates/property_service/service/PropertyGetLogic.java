@@ -46,7 +46,9 @@ public class PropertyGetLogic {
             property.getListingType(),
             property.getRooms(),
             property.getEnergyClass(),
-            property.getAddress()
+            property.getAddress(),
+            property.getIdUser(),
+            property.getViews()
         );
     }
 

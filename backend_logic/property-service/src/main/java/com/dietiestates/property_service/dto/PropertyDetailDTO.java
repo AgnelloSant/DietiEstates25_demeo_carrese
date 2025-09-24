@@ -25,12 +25,13 @@ private Integer rooms;
 private String energyClass;
 
 private String address;
-
+   private Long idUser;      // ID dell'utente che crea la proprietà
+    private Long views;
 
 
     public PropertyDetailDTO(Long id, String title, String city, Double area, Double price, String description,
         String publishedAt, Double latitude, Double longitude, boolean nearSchool, boolean nearPark,
-        boolean nearTransport, String listingType, Integer rooms, String energyClass, String address) {
+        boolean nearTransport, String listingType, Integer rooms, String energyClass, String address, Long idUser,Long views) {
     this.id = id;
     this.title = title;
     this.city = city;
@@ -47,6 +48,8 @@ private String address;
     this.rooms = rooms;
     this.energyClass = energyClass;
     this.address = address;
+    this.idUser=idUser;
+    this.views=views;
 }
 
     // Getters & Setters
@@ -149,6 +152,22 @@ private String address;
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public Long getIdUser() {
+        return idUser;
+    }
+
+    public void setIdUser(Long idUser) {
+        this.idUser = idUser;
+    }
+
+    public Long getViews() {
+        return views;
+    }
+
+    public void setViews(Long views) {
+        this.views = views;
     }
 
 
