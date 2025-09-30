@@ -142,13 +142,13 @@
 <script setup lang="ts">
 import { reactive, ref, nextTick, watch } from "vue"
 import { usePropertyStore } from "@/stores/properties"
-import { useAuthStore } from "@/stores/authenticate" // ✅ NUOVO: Import auth store
+import { useAuthStore } from "@/stores/authenticate" // : Import auth store
 import { useToast } from "vue-toastification"
 import L from "leaflet"
 import "leaflet/dist/leaflet.css"
 
 const store = usePropertyStore()
-const authStore = useAuthStore() // ✅ NUOVO: Auth store
+const authStore = useAuthStore() // : Auth store
 const toast = useToast()
 
 // Step system
@@ -174,8 +174,8 @@ const form = reactive({
   listingType: "vendita" as "vendita" | "affitto",
   rooms: 1,
   energyClass: "A",
-  idUser: 0,    // ✅ NUOVO: ID utente
-  views: 0      // ✅ NUOVO: Visualizzazioni (sempre 0 alla creazione)
+  idUser: 0,    //  ID utente
+  views: 0      // : Visualizzazioni (sempre 0 alla creazione)
 })
 
 // --- Step control ---
@@ -263,8 +263,8 @@ async function publish() {
     form.price = 0
     form.latitude = null
     form.longitude = null
-    form.idUser = 0    // ✅ NUOVO: Reset
-    form.views = 0     // ✅ NUOVO: Reset
+    form.idUser = 0    // : Reset
+    form.views = 0     //  Reset
     addressInput.value = ""
     coords.value = null
     if (map) {
