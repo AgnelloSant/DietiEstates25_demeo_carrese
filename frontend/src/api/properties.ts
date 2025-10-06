@@ -40,6 +40,7 @@ export async function deleteProperty(id: number) {
   await httpProperty.delete(`/properties/delete/${id}`)
 }
 
+
 /*
   * 📅 Recupera prenotazioni per una proprietà
   * GET → /property-service/api/properties/getReservations/property
