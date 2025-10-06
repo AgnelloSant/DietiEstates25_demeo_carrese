@@ -4,7 +4,7 @@ import com.dietiestates.property_service.model.Property;
 import com.dietiestates.property_service.repository.PropertyRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+
 @Service
 public class PropertyUpdateLogic {
 
@@ -32,14 +32,22 @@ public class PropertyUpdateLogic {
         Property updatedProperty = propertyRepository.save(property);
 
         return new PropertyUpdateDTO(
-            updatedProperty.getTitle(),
+             updatedProperty.getTitle(),
             updatedProperty.getCity(),
             updatedProperty.getArea(),
             updatedProperty.getPrice(),
+            updatedProperty.getPublishedAt(),
+            updatedProperty.getLatitude(),
+            updatedProperty.getLongitude(),
+            updatedProperty.isNearSchool(),
+            updatedProperty.isNearPark(),
+            updatedProperty.isNearTransport(),
             updatedProperty.getListingType(),
             updatedProperty.getRooms(),
             updatedProperty.getEnergyClass(),
-            updatedProperty.getAddress()
+            updatedProperty.getAddress(),
+            updatedProperty.getIdUser(),
+            updatedProperty.getViews()
         );
     }
 

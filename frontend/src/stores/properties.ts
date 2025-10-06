@@ -3,7 +3,7 @@ import L, { Map as LeafletMap } from "leaflet"
 import { defineStore } from "pinia"
 import { searchProperties, createProperty, updateProperty, deleteProperty, createReservation, 
       getReservationsByProperty, getReservationsByUser, createBid, getBidsByProperty,
-      getBidsByUser, getBidsSummaryByUserOwned
+      getBidsByUser, getBidsSummaryByUserOwned,
     } from "@/api/properties"
 import { getFavourites, addFavourite } from "@/api/users" 
 import type { PropertySearchDTO, PropertyCreateDTO, PropertyUpdateDTO, CreateReservationDTO, CreateBidDTO } from "@/types/Properties"
@@ -12,11 +12,15 @@ import { create } from "domain"
 import type { PropertyDetailDTO } from "@/types/Properties"
 import { httpProperty } from "@/api/http"   // <-- se non c'è, importa il tuo client axios
 
+
+
 export const usePropertyStore = defineStore("properties", {
   state: () => ({
     list: [] as PropertySearchDTO[],
     loading: false as boolean,
     error: null as string | null,
+
+
 
     favList: [] as PropertySearchDTO[],
     favLoading: false as boolean,
@@ -24,6 +28,8 @@ export const usePropertyStore = defineStore("properties", {
     favPage: 1,
     favLimit: 20,
   }),
+
+
 
   actions: {
 async fetchList(filters?: { 
@@ -72,6 +78,7 @@ async fetchList(filters?: {
   }
 
 },
+
 
 
     // 🔹 Fetch dettaglio proprietà
