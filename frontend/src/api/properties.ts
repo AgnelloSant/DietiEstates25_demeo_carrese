@@ -1,7 +1,7 @@
 // src/api/properties.ts
 import { httpProperty } from "./http";
 import type { PropertySearchDTO, PropertyCreateDTO, PropertyUpdateDTO, 
-  CreateReservationDTO, CreateBidDTO } from "@/types/Properties";
+  CreateReservationDTO, CreateBidDTO} from "@/types/Properties";
 import type { AxiosResponse } from "axios";
 
 // 🔍 Ricerca
@@ -38,6 +38,7 @@ export async function updateProperty(id: number, payload: PropertyUpdateDTO) {
 export async function deleteProperty(id: number) {
   await httpProperty.delete(`/properties/delete/${id}`)
 }
+
 
 /*
   * 📅 Recupera prenotazioni per una proprietà

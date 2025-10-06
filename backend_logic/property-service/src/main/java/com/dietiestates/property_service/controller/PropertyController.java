@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
 import java.util.List;
 
 
@@ -28,6 +29,7 @@ public class PropertyController {
     private final ReservationService reservationService;
     private final BidService bidService;
 
+
     @Autowired
     public PropertyController(
         PropertySearchLogic propertySearchLogic,
@@ -37,6 +39,7 @@ public class PropertyController {
         PropertyGetLogic propertyGetLogic, 
         ReservationService reservationService,
         BidService bidService
+    
     ) {
         this.propertySearchLogic = propertySearchLogic;
         this.propertyCreateLogic = propertyCreateLogic;
@@ -45,6 +48,7 @@ public class PropertyController {
         this.propertyGetLogic= propertyGetLogic;
         this.reservationService = reservationService;
         this.bidService = bidService;
+      
     }
 
     // --- Ricerca proprietà ---
@@ -70,7 +74,9 @@ public ResponseEntity<List<PropertySearchDTO>> searchProperties(
     );
 
     return ResponseEntity.ok(results);
+
 }
+
 
 
 //ricerca tramite mappa 
@@ -217,10 +223,6 @@ public ResponseEntity<PropertyDetailDTO> getProperty(@PathVariable Long id) {
     }
 
     
-
-
-
-
 
 
 

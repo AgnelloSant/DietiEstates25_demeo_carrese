@@ -47,14 +47,21 @@ export interface PropertyCreateDTO {
 
 // PropertyUpdateDTO
 export interface PropertyUpdateDTO {
-  title?: string
-  city?: string
-  area?: number
-  price?: number
+  title: string
+  city: string
    address: string
-  listingType?: "vendita" | "affitto"
-  rooms?: number
-  energyClass?: string
+  area: number
+  price: number
+  latitude?: number | null
+  longitude?: number | null
+  nearSchool?: boolean
+  nearPark?: boolean
+  nearTransport?: boolean
+  listingType: "vendita" | "affitto"   // tipologia inserzione
+  rooms: number                        // numero stanze
+  energyClass: string                  // es. A, B, C...
+     idUser: number        // Nuovo campo obbligatorio
+    views?: number 
 }
 
 // PropertyDetailDTO
