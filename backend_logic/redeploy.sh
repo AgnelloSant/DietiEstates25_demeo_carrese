@@ -38,11 +38,13 @@ build_eureka() {
 
 build_user() {
   echo "🛠  Build $USER_IMAGE"
+  ( cd shared && mvn clean install -DskipTests )
   docker build -t "$USER_IMAGE" -f user-service/Dockerfile .
 }
 
 build_prop() {
   echo "🛠  Build $PROP_IMAGE"
+  ( cd shared && mvn clean install -DskipTests )
   docker build -t "$PROP_IMAGE" -f property-service/Dockerfile .
 }
 
@@ -65,28 +67,39 @@ run_user() {
   echo "♻️  Restart container $USER_NAME"
   docker rm -f "$USER_NAME" >/dev/null 2>&1 || true
 
+  # ✅ Leggiamo i file Base64 e li passiamo come env var
+  JWT_PRIV_B64="$(cat "$KEYS_DIR/private.pem.b64" | tr -d '\n')"
+  JWT_PUB_B64="$(cat "$KEYS_DIR/public.pem.b64" | tr -d '\n')"
+
   docker run -d --name "$USER_NAME" \
     --network "$NET" \
     -p ${USER_PORT}:${USER_PORT} \
     --env-file user-service/.env \
-    -v "${KEYS_DIR}/private.pem":/run/secrets/jwt_private.pem:ro \
-    -v "${KEYS_DIR}/public.pem":/run/secrets/jwt_public.pem:ro \
+    -e JWT_PRIVATE_PEM_B64="$JWT_PRIV_B64" \
+    -e JWT_PUBLIC_PEM_B64="$JWT_PUB_B64" \
     "${USER_ENV[@]}" \
     "$USER_IMAGE"
 }
-
 
 
 run_prop() {
   ensure_network
   echo "♻️  Restart container $PROP_NAME"
   docker rm -f "$PROP_NAME" >/dev/null 2>&1 || true
+
+  KEYS_DIR="$(cd "$(dirname "$0")" && pwd)/.gitignore"
+
+  # Legge direttamente la chiave base64
+  JWT_B64="$(cat "$KEYS_DIR/public.pem.b64" | tr -d '\n')"
+
   docker run -d --name "$PROP_NAME" \
     --network "$NET" \
     -p ${PROP_PORT}:${PROP_PORT} \
+    -e JWT_PUBLIC_PEM_B64="$JWT_B64" \
     "${PROP_ENV[@]}" \
     "$PROP_IMAGE"
 }
+
 
 # COMANDI COMPOSTI
 build_all() { build_eureka; build_user; build_prop; }
@@ -123,13 +136,6 @@ Usage:
   ./redeploy.sh logs    <container-name>
   ./redeploy.sh ps
   ./redeploy.sh stop
-
-Esempi:
-  ./redeploy.sh redeploy user        # rebuild + restart user-service
-  ./redeploy.sh redeploy prop        # rebuild + restart property-service
-  ./redeploy.sh redeploy all         # rebuild + restart tutti
-  ./redeploy.sh logs user-service    # segui i log dello user-service
-  ./redeploy.sh ps                   # vedi stato container
 EOF
 }
 

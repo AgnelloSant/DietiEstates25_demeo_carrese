@@ -9,7 +9,9 @@ import com.dietiestates.shared.dto.PropertySearchDTO;
 
 import com.dietiestates.shared.dto.IdsRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties.Jwt;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -136,17 +138,25 @@ public ResponseEntity<PropertyDetailDTO> getProperty(@PathVariable Long id) {
 
 //OPERAZIONI SU ANNUNCI 
 
-    //Prenotazioni
+    // Prenotazioni
 
     @PostMapping("/reservations/new")
-    public ResponseEntity<Boolean> newReservation(@RequestBody ReservationCreateDTO reservationCreateDTO) {
+    public ResponseEntity<Boolean> newReservation(
+            @RequestBody ReservationCreateDTO reservationCreateDTO,
+            @AuthenticationPrincipal Object principal) {
 
-        return ResponseEntity.ok(reservationService.createReservation(
-            reservationCreateDTO.getIdProp(), 
-            reservationCreateDTO.getIdUser(), 
-            reservationCreateDTO.getDate()
-        ));
+        if (principal == null || "anonymousUser".equals(principal)) {
+            return ResponseEntity.status(401).build();
+        }
+        Long userId = Long.valueOf(principal.toString());
 
+        return ResponseEntity.ok(
+            reservationService.createReservation(
+                reservationCreateDTO.getIdProp(), 
+                userId,  // 👈 preso dal token, non dal body
+                reservationCreateDTO.getDate()
+            )
+        );
     }
 
     @GetMapping("/reservations/getbyproperty/{id}")
@@ -154,69 +164,100 @@ public ResponseEntity<PropertyDetailDTO> getProperty(@PathVariable Long id) {
         return ResponseEntity.ok(reservationService.getReservationsByPropertyId(id));
     } 
 
-    @GetMapping("/reservations/getbyuser/{id}")
-    public ResponseEntity<List<Reservation>> getUserReservations(@PathVariable Long id) {
-        return ResponseEntity.ok(reservationService.getReservationsByUserId(id));
+    @GetMapping("/reservations/getbyuser/me")
+    public ResponseEntity<List<Reservation>> getUserReservations(@AuthenticationPrincipal Object principal) {
+        if (principal == null || "anonymousUser".equals(principal)) {
+            return ResponseEntity.status(401).build();
+        }
+        Long userId = Long.valueOf(principal.toString());
+        return ResponseEntity.ok(reservationService.getReservationsByUserId(userId));
     }
 
     @DeleteMapping("/reservations/delete/{id}")
     public ResponseEntity<Boolean> deleteReservation(@PathVariable Long id) {
-        
         return ResponseEntity.ok(reservationService.deleteReservation(id));
     }
 
-    @GetMapping("/reservations/countByUser/{idUser}")
-    public ResponseEntity<Long> countReservationsByUser(@PathVariable Long idUser) {
-        return ResponseEntity.ok(reservationService.countReservationsByUser(idUser));
+    @GetMapping("/reservations/count/me")
+    public ResponseEntity<Long> countReservationsByUser(@AuthenticationPrincipal Object principal) {
+        if (principal == null || "anonymousUser".equals(principal)) {
+            return ResponseEntity.status(401).build();
+        }
+        Long userId = Long.valueOf(principal.toString());
+        return ResponseEntity.ok(reservationService.countReservationsByUser(userId));
     }
 
-    @GetMapping("/reservation/countByProperty/{idProperty}")
-    public ResponseEntity<Long> countReservationsByProperty(@PathVariable Long idProp){ 
-        return ResponseEntity.ok(reservationService.countReservationByProperty(idProp));
+    @GetMapping("/reservations/countByProperty/{idProperty}")
+    public ResponseEntity<Long> countReservationsByProperty(@PathVariable Long idProperty){ 
+        return ResponseEntity.ok(reservationService.countReservationByProperty(idProperty));
     }
 
-    //Offerte
+
+    // Offerte
 
     @GetMapping("/bids/getbyproperty/{id}")
     public ResponseEntity<List<Bid>> getBid(@PathVariable Long id) {
         return ResponseEntity.ok(bidService.getBidsByPropertyId(id));
     }
 
-    @GetMapping("/bids/getbyuser/{id}")
-    public ResponseEntity<List<Bid>> getUserBids(@PathVariable Long id) {
-        return ResponseEntity.ok(bidService.getBidsByUserId(id));
-   }
+    @GetMapping("/bids/countByProperty/{id}")
+    public ResponseEntity<Long> countBidsByProperty(@PathVariable Long id){ 
+        return ResponseEntity.ok(bidService.countBidsByPropertyId(id)); 
+    }
 
-    @PostMapping("/bids/new/{id}")
-    public ResponseEntity<Boolean> newBid(@RequestBody BidCreateDTO bidCreateDTO) {
-        return ResponseEntity.ok(bidService.placeBid(bidCreateDTO));
-    }   
+    @GetMapping("/bids/getbyuser")
+    public ResponseEntity<List<Bid>> getUserBids(@AuthenticationPrincipal Object principal) {
+        if (principal == null || "anonymousUser".equals(principal)) {
+            return ResponseEntity.status(401).build();
+        }
+        Long userId = Long.valueOf(principal.toString());
+        return ResponseEntity.ok(bidService.getBidsByUserId(userId));
+    }
+
+    @PostMapping("/bids/new")
+    public ResponseEntity<Boolean> newBid(
+            @RequestBody BidCreateDTO bidCreateDTO,
+            @AuthenticationPrincipal Object principal) {
+
+        if (principal == null || "anonymousUser".equals(principal)) {
+            return ResponseEntity.status(401).build();
+        }
+        Long userId = Long.valueOf(principal.toString());
+        return ResponseEntity.ok(bidService.placeBid(bidCreateDTO, userId));
+    }
 
     @DeleteMapping("/bids/delete/{id}")
     public ResponseEntity<Boolean> deleteOffer(@PathVariable Long id) {
         return ResponseEntity.ok(bidService.deleteBid(id));
     }
 
-    @GetMapping("/bids/countByUser/{idUser}")
-    public ResponseEntity<Long> countBidsByUser(@PathVariable Long idUser) {
-        return ResponseEntity.ok(bidService.countBidsByUserId(idUser));
+    @GetMapping("/bids/count/me")
+    public ResponseEntity<Long> countBidsByUser(@AuthenticationPrincipal Object principal) {
+        if (principal == null || "anonymousUser".equals(principal)) {
+            return ResponseEntity.status(401).build();
+        }
+        Long userId = Long.valueOf(principal.toString());
+        return ResponseEntity.ok(bidService.countBidsByUserId(userId));
     }
 
-    @GetMapping("bids/getsummary/{id}")
-    public ResponseEntity<List<BidSummaryDTO>> getBidSummary(@PathVariable Long id){
 
-        return ResponseEntity.ok(bidService.getBidsSummaryByUser(id));
+    @GetMapping("/bids/getsummary")
+    public ResponseEntity<List<BidSummaryDTO>> getBidSummary(@AuthenticationPrincipal Object principal) {
+        if (principal == null || "anonymousUser".equals(principal)) {
+            return ResponseEntity.status(401).build();
+        }
+        Long userId = Long.valueOf(principal.toString());
+        System.out.println("ID utente: " + userId);
+        return ResponseEntity.ok(bidService.getBidsSummaryByUser(userId));
     }
 
-    @GetMapping("bids/getlast/{id}")
+    @GetMapping("/bids/getlast/{idProp}")
     public ResponseEntity<String> getLastBid(@PathVariable Long idProp){
         Bid bid = bidService.getDateLastBid(idProp); 
-        String date = bid.getPublishedAt();
-
+        String date = bid != null ? bid.getPublishedAt() : null;
         return ResponseEntity.ok(date); 
     }
 
-    
 
 
 

@@ -1,7 +1,6 @@
-package com.dietiestates.user_service.auth;
+package com.dietiestates.shared.security;
 
 import org.springframework.stereotype.Component;
-
 
 import java.security.KeyFactory;
 import java.security.PrivateKey;

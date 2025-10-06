@@ -18,15 +18,18 @@ public class Reservation {
     private Long idProp;
     @Column(name = "user_id", nullable = false)
     private Long idUser; 
-    @Column(name = "reservation_date", nullable = false)
+    @Column(name = "date", nullable = false)
     private String date; 
+    @Column(name="time")
+    private String time; 
 
     public Reservation() {
     }
-    public Reservation(Long idProp, Long idUser, String date) {
+    public Reservation(Long idProp, Long idUser, String date, String time) {
         this.idProp = idProp;
         this.idUser = idUser;
         this.date = date;
+        this.time = time; 
     }
 
     public Long getId() {
@@ -54,6 +57,11 @@ public class Reservation {
     public void setDate(String date) {
         this.date = date;
     } 
-    
+    public String getTime(){ 
+        return time; 
+    }
+    public void setTime(String time){ 
+        this.time = time;
+    }
 
 }

@@ -11,8 +11,6 @@ import com.dietiestates.user_service.service.LoginLogic;
 import com.dietiestates.user_service.service.PswChangeLogic;
 import com.dietiestates.user_service.service.RegistrationLogic;
 import com.dietiestates.user_service.auth.AuthService;
-import com.dietiestates.user_service.auth.JwtProperties;
-import com.dietiestates.shared.dto.PropertySearchDTO;
 import com.dietiestates.shared.dto.PropertySearchDTO;
 
 import jakarta.servlet.http.Cookie;
@@ -24,6 +22,7 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import com.dietiestates.shared.security.JwtProperties;
 
 import java.util.List;
 import java.util.Map;
@@ -152,11 +151,11 @@ public class UserController {
     }
 
     @PostMapping("/addfavourite")
-    public ResponseEntity<Boolean> addFavourite(@AuthenticationPrincipal String principal, @RequestBody FavouriteListRequest favRequest) {
+    public ResponseEntity<Boolean> addFavourite(@AuthenticationPrincipal String userId, @RequestBody FavouriteListRequest favRequest) {
 
-        Long userId = Long.valueOf(principal); 
         Long propId = favRequest.getIdProp();
-        favouritesLogic.addFavouriteProperty(userId, propId);
+        Long userid = Long.valueOf(userId); 
+        favouritesLogic.addFavouriteProperty(userid, propId);
         return ResponseEntity.ok(true);
     }
 

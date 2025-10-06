@@ -1,4 +1,4 @@
-package com.dietiestates.user_service.auth;
+package com.dietiestates.shared.security;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -47,3 +47,4 @@ public class JwtProperties {
     public int getJwksMaxAgeSeconds() { return jwksMaxAgeSeconds; }
     public void setJwksMaxAgeSeconds(int jwksMaxAgeSeconds) { this.jwksMaxAgeSeconds = jwksMaxAgeSeconds; } 
 }
+

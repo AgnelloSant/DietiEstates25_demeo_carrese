@@ -24,11 +24,15 @@ public interface BidRepository extends JpaRepository<Bid, Long>{
     String getDateLastBid(@Param("idProp") Long property_id); 
  */
 
-    long countByPropertyId(Long propertyId);
+    @Query(value = "SELECT COUNT(b) FROM Bids b WHERE b.property_id = :property_id", nativeQuery = true)
+    Long countByPropertyId(@Param("property_id") Long propertyId);
 
-    @Query("SELECT AVG(b.amount) FROM Bid b WHERE b.propertyId = :propertyId")
+    @Query(value = "SELECT AVG(b.amount) FROM Bid b WHERE b.propertyId = :propertyId")
     Double findAvgByPropertyId(Long propertyId);
 
     @Query("SELECT MAX(b.publishedAt) FROM Bid b WHERE b.propertyId = :propertyId")
     LocalDateTime findLastDateByProperty(Long propertyId);
+
+    
+    
 }

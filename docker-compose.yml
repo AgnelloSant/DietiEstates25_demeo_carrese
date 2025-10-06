@@ -30,6 +30,7 @@ services:
   property-service:
     build: ./backend_logic
     dockerfile: ./property-service/Dockerfile
+    volumes: ./secrets/jwt_public.pem:/run/secrets/jwt_public.pem:ro
     environment:
       SERVER_PORT: 8082
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka

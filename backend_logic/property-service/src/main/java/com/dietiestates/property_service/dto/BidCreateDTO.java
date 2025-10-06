@@ -1,15 +1,15 @@
 package com.dietiestates.property_service.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class BidCreateDTO {
+    @JsonProperty("id_prop")
     private Long propertyId;
-    private Long userId;
     private Double amount;
 
     public BidCreateDTO() {}
-    public BidCreateDTO(Long propertyId, Long userId, Double amount) {
+    public BidCreateDTO(Long propertyId, Double amount) {
         this.propertyId = propertyId;
-        this.userId = userId;
         this.amount = amount;
     }
     public Long getPropertyId() {
@@ -17,12 +17,6 @@ public class BidCreateDTO {
     }
     public void setPropertyId(Long propertyId) {
         this.propertyId = propertyId;
-    }
-    public Long getUserId() {
-        return userId;
-    }
-    public void setUserId(Long userId) {
-        this.userId = userId;
     }
     public Double getAmount() {
         return amount;

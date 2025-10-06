@@ -12,6 +12,8 @@ import Toast, { POSITION, type PluginOptions } from "vue-toastification"
 import "./assets/styles.css"
 import "vue-toastification/dist/index.css"
 import "leaflet/dist/leaflet.css"
+import '@fortawesome/fontawesome-free/css/all.min.css';
+
 
 
 const app = createApp(App)

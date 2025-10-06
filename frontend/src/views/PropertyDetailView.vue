@@ -2,37 +2,74 @@
   <div v-if="property" class="detail-container">
     <!-- 🏠 Immagine -->
     <div class="detail-image">
-      <img
-        :src="property.imageUrl || '/placeholder-house.jpg'"
-        alt="Foto immobile"
-      />
+      <img :src="property.imageUrl || '/placeholder-house.jpg'" alt="Foto immobile" />
     </div>
 
     <!-- 📋 Info principali -->
     <div class="detail-info">
-      <h1 class="detail-title">{{ property.title }}</h1>
+      <div class="detail-header">
+        <h1 class="detail-title">{{ property.title }}</h1>
+        <button class="favorite-btn" @click="toggleFavorite(property.id)">
+          <i class="fa-solid fa-heart"></i>
+        </button>
+      </div>
       <p class="detail-city"><i class="fa-solid fa-location-dot"></i> {{ property.city }}</p>
       <p class="detail-area"><strong>{{ property.area }} m²</strong></p>
       <p class="detail-price">€ {{ property.price.toLocaleString() }}</p>
-<p class="detail-extra"><b>Tipo:</b> {{ property.listingType }}</p>
-<p class="detail-extra"><b>Stanze:</b> {{ property.rooms }}</p>
-<p class="detail-extra"><b>Classe energetica:</b> {{ property.energyClass }}</p>
-<p class="detail-extra"><b>Indirizzo:</b> {{ property.address }}</p>
-
-      <!-- descrizione -->
-      <p v-if="property.description" class="detail-description">
-        {{ property.description }}
-      </p>
-
-      <!-- data pubblicazione -->
+      <p class="detail-extra"><b>Tipo:</b> {{ property.listingType }}</p>
+      <p class="detail-extra"><b>Stanze:</b> {{ property.rooms }}</p>
+      <p class="detail-extra"><b>Classe energetica:</b> {{ property.energyClass }}</p>
+      <p class="detail-extra"><b>Indirizzo:</b> {{ property.address }}</p>
+      <p v-if="property.description" class="detail-description">{{ property.description }}</p>
       <p v-if="property.publishedAt" class="detail-date">
         Pubblicato il {{ new Date(property.publishedAt).toLocaleDateString() }}
       </p>
     </div>
-    <h3>Effettua una prenotazione</h3>
+
+    <!-- 🔘 Bottoni azione -->
+    <div class="button-row">
+      <button @click="showReservationForm = true" class="btn">Effettua una prenotazione</button>
+      <button @click="vendorProfile" class="btn">Dati venditore</button>
+      <button @click="showBidForm = true" class="btn">Piazza un'offerta</button>
+    </div>
+
+
+    <!-- POPUP PRENOTAZIONE -->
+    <div v-if="showReservationForm" class="modal-overlay">
+      <div class="modal-content">
+        <h3 class="font-bold mb-4">Scegli giorno e ora</h3>
+        <div  class="input-row">
+          <input type="date" v-model="selectedDate" />
+          <input type="time" v-model="selectedTime" />
+        </div>
+        <div class="button-row">
+          <button @click="showReservationForm = false" class="btn">
+            Annulla
+          </button>
+          <button @click="confirmReservation" class="btn">
+            Conferma
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!--POPUP OFFERTA-->
+    <div v-if="showBidForm" class="modal-overlay">
+      <div class="modal-content" style="max-width: 400px;">
+        <h3 class="font-bold mb-4">Quanto vuoi offrire?</h3>
+        <div class="input-row">
+          <input  type="number" v-model.number="offerAmount" min="1"></input>
+          <span class="hint">Consigliato: {{ ((property.price*95)/100).toLocaleString() }}</span>
+        </div>
+        <div class="button-row">
+          <button @click="showBidForm = false" class="btn">Annulla</button>
+          <button class="btn" @click="confirmBid">Invia</button>
+        </div>
+      </div>
+    </div>
 
     <!-- ✅ Vantaggi zona -->
-    <div class="advantages" v-if="property.nearSchool || property.nearPark || property.nearTransport">
+    <div v-if="property.nearSchool || property.nearPark || property.nearTransport" class="advantages">
       <h3>Vantaggi della zona</h3>
       <ul>
         <li v-if="property.nearSchool">🏫 Vicino a scuole</li>
@@ -42,7 +79,11 @@
     </div>
 
     <!-- 🌍 Mappa -->
-    <div v-if="property.latitude && property.longitude" id="map" style="height: 400px; border-radius: 12px; margin-top: 1.5rem;"></div>
+    <div
+      v-if="property.latitude && property.longitude"
+      id="map"
+      style="height: 400px; border-radius: 12px; margin-top: 1.5rem"
+    ></div>
     <p v-else class="detail-coords">📍 Coordinate non disponibili</p>
   </div>
 
@@ -51,85 +92,113 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, nextTick } from 'vue'
-import { httpProperty } from '@/api/http'
-import type { PropertyDetailDTO } from '@/types/Properties'
+import { onMounted, ref, nextTick, watch} from "vue"
+import { httpProperty } from "@/api/http"
+import type { PropertyDetailDTO } from "@/types/Properties"
+import { usePropertyStore } from "@/stores/properties"
+import { useToast } from "vue-toastification"
+
+
 
 // 🗺️ Leaflet
 import L from "leaflet"
 import "leaflet/dist/leaflet.css"
+import { text } from "stream/consumers"
 
-//  icone Leaflet (CDN)
-delete (L.Icon.Default.prototype as any)._getIconUrl;
+delete (L.Icon.Default.prototype as any)._getIconUrl
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png",
   iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png",
-  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
-});
+  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png"
+})
 
-// id dalla route
+// Props route
 const props = defineProps<{ id: string }>()
 const property = ref<PropertyDetailDTO | null>(null)
 
+// State
+const showReservationForm = ref(false)
+const showBidForm = ref(false)
+const selectedDate = ref("")
+const selectedTime = ref("")
+const offerAmount = ref<number | null>(null)
+
+const propertyStore = usePropertyStore()
+const toast = useToast()
+
+// Caricamento property
 onMounted(async () => {
-  try {
+  const { data } = await httpProperty.get<PropertyDetailDTO>(`/properties/${props.id}`)
+  property.value = data
 
-    //  1. Prima carica i dati della proprietà
-    console.log("Caricamento proprietà con ID:", props.id)
-    const { data } = await httpProperty.get<PropertyDetailDTO>(`/properties/${props.id}`)
-    property.value = data
-    console.log("Proprietà caricata:", data)
-
-    // 2. Incrementa le views (in background, non bloccante)
-    try {
-      await httpProperty.post(`/properties/updateviews/${props.id}`)
-      console.log("Views incrementate per proprietà", props.id)
-    } catch (viewsError: unknown) {
-      // Non critico: se il conteggio views fallisce, la property si carica comunque
-      console.warn("Errore incremento views (non critico):", viewsError)
-    }
-
-    //  3. Inizializza la mappa solo se ci sono coordinate
-    if (property.value?.latitude && property.value?.longitude) {
-      // Aspetta che Vue aggiorni il DOM
-      await nextTick()
-
-      try {
-        const map = L.map("map").setView([property.value.latitude, property.value.longitude], 14)
-
-        L.tileLayer("https://maps.geoapify.com/v1/tile/osm-bright/{z}/{x}/{y}.png?apiKey=c4dc78950f8f486cbf36cb126f4efda1", {
-          attribution: "© OpenMapTiles © OpenStreetMap contributors",
-          maxZoom: 20
-        }).addTo(map)
-
-        L.marker([property.value.latitude, property.value.longitude])
-          .addTo(map)
-          .bindPopup(`<b>${property.value.title}</b><br>${property.value.city}<br>€ ${property.value.price.toLocaleString()}`)
-        
-        console.log("Mappa inizializzata correttamente")
-      } catch (mapError: unknown) {
-        console.warn("Errore inizializzazione mappa:", mapError)
-      }
-    } else {
-      console.warn("Coordinate non disponibili per la mappa")
-    }
-
-  } catch (err: unknown) {
-    console.error("Errore caricamento proprietà:", err)
-    
-    //  Type guard per AxiosError
-    if (err && typeof err === 'object' && 'response' in err) {
-      const axiosError = err as any // Cast per accedere alle proprietà Axios
-      if (axiosError.response?.status === 404) {
-        console.error("Proprietà non trovata")
-      } else if (axiosError.response?.status === 500) {
-        console.error("Errore server durante il caricamento")
-      }
-    }
+  if (property.value?.latitude && property.value?.longitude) {
+    await nextTick()
+    const map = L.map("map").setView([property.value.latitude, property.value.longitude], 14)
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map)
+    L.marker([property.value.latitude, property.value.longitude]).addTo(map)
   }
 })
 
+watch(showReservationForm, (isOpen) => {
+  if (isOpen) {
+    document.body.style.overflow = "hidden"
+  } else {
+    document.body.style.overflow = ""
+  }
+})
 
+watch(showBidForm, (isOpen) => { 
+  if(isOpen) { 
+    document.body.style.overflow = "hidden"
+  }else{ 
+    document.body.style.overflow = ""
+  }
+})
+
+// Conferma prenotazione
+async function confirmReservation() {
+  if (!selectedDate.value || !selectedTime.value) {
+    toast.warning("⚠️ Seleziona data e ora")
+    return
+  }
+  try {
+    await propertyStore.createAReservation({
+      id_prop: Number(props.id),
+      date: selectedDate.value,
+      time: selectedTime.value
+    })
+    showReservationForm.value = false
+    toast.success("✅ Prenotazione registrata con successo!")
+  } catch (err) {
+    console.error("Errore prenotazione:", err)
+    toast.error("❌ Errore durante la prenotazione")
+  }
+}
+
+async function confirmBid(){ 
+  if(!offerAmount.value){ 
+    toast.warning("Inserire un importo prima di procedere!")
+    return
+  }
+  try{
+    await propertyStore.createABid({
+      id_prop: Number(props.id),
+      amount: offerAmount.value
+    })
+    showBidForm.value = false
+    toast.success("Offerta registrata con successo!")
+  }catch(err){ 
+    toast.error("Errore nell'inserimento dell'offerta")
+  }
+}
+
+function vendorProfile() {
+  // TODO: Apri profilo venditore
+}
+
+function toggleFavorite(idprop: number) {
+  propertyStore.addToFavourites(idprop)
+}
 </script>
 
 <style scoped>
@@ -143,7 +212,29 @@ onMounted(async () => {
   padding: 2rem;
   border-radius: 16px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-  font-family: "Inter", sans-serif;
+}
+
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.favorite-btn {
+  background: #0c5db1;
+  border: none;
+  cursor: pointer;
+  font-size: 1.5rem;
+  color: #ccc;
+}
+.favorite-btn:hover {
+  color: #e63946;
+}
+
+.button-row {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
 }
 
 .detail-image img {
@@ -161,20 +252,17 @@ onMounted(async () => {
 .detail-title {
   font-size: 2rem;
   font-weight: 700;
-  margin-bottom: 0.3rem;
   color: #0c5db1;
 }
 
 .detail-city {
   font-size: 1.1rem;
   color: #555;
-  margin-bottom: 0.5rem;
 }
 
 .detail-area,
 .detail-price {
   font-size: 1.2rem;
-  margin: 0.3rem 0;
 }
 
 .detail-price {
@@ -185,7 +273,6 @@ onMounted(async () => {
 .detail-description {
   font-size: 1rem;
   line-height: 1.6;
-  margin: 1rem 0;
   color: #333;
 }
 
@@ -201,7 +288,6 @@ onMounted(async () => {
   border-radius: 8px;
   background: #f9f9f9;
 }
-
 .advantages h3 {
   margin-bottom: 10px;
   color: #0c5db1;
@@ -213,9 +299,45 @@ onMounted(async () => {
   font-size: 1.2rem;
 }
 
-.detail-coords {
-  font-size: 0.95rem;
-  color: #666;
-  margin-top: 8px;
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+.modal-content {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 300px;
+}
+
+
+.input-row {
+  display: flex;
+  justify-content: space-between; 
+  gap: 1rem;  
+  margin-bottom: 15px;                   
+}
+
+.input-row input {
+  flex: 1;           
+  min-width: 0;       
+}
+
+.hint{ 
+  color: #6b7280;
+  opacity: 0.7;
+  font-style: italic;
+
+}
+
 </style>

@@ -7,7 +7,10 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @EnableFeignClients(basePackages = "com.dietiestates.user_service.client")
 @EnableDiscoveryClient
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {
+    "com.dietiestates.user_service",
+    "com.dietiestates.shared"
+})
 public class UserServiceApplication {
 
 	public static void main(String[] args) {

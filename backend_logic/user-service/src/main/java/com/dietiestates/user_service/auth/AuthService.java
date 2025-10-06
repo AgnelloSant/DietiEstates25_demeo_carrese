@@ -3,6 +3,7 @@ package com.dietiestates.user_service.auth;
 import io.jsonwebtoken.Claims;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
+import com.dietiestates.shared.security.JwtProperties;
 
 import java.time.Duration;
 import java.time.Instant;

@@ -13,7 +13,7 @@ export async function getFavourites (): Promise<AxiosResponse<PropertySearchDTO[
 }
 
 
-export const addFavourite = (payload: { idUser:number; idProp:number}) => { 
+export const addFavourite = (payload: { idProp:number }) => { 
   const token = localStorage.getItem("token")
 
   return httpUS.post<void>("/addfavourite", payload, { 
