@@ -25,7 +25,8 @@
           <!-- Link per utenti loggati -->
           <template v-if="auth.user">
             <RouterLink to="/profile">Profilo</RouterLink>
-            <a href="#" @click.prevent="confirmLogout">Logout</a>
+            <!-- Prima mostra il popup, poi fa logout -->
+            <a href="#" @click.prevent="showLogoutConfirm = true">Logout</a>
             <RouterLink to="/analitics">Insights</RouterLink>
           </template>
 
@@ -33,7 +34,6 @@
           <template v-else>
             <RouterLink to="/login">Login</RouterLink>
             <RouterLink to="/register">Registrati</RouterLink>
-            
           </template>
         </nav>
       </div>
@@ -48,18 +48,19 @@
       <div class="container">© {{ new Date().getFullYear() }} Dieti Estates</div>
     </footer>
 
-    <!-- 🔹 Popup Logout -->
+    <!--  Popup Logout -->
     <div v-if="showLogoutConfirm" class="modal-overlay">
       <div class="modal">
         <h3>Sei sicuro di voler uscire?</h3>
         <div class="modal-actions">
+          <!--: Chiama la funzione di conferma -->
           <button @click="confirmLogout" class="btn-danger">Sì</button>
           <button @click="showLogoutConfirm = false" class="btn-secondary">No</button>
         </div>
       </div>
     </div>
 
-    <!-- 🔹 Popup Pubblica se non loggato -->
+    <!-- Popup Pubblica -->
     <div v-if="showLoginPrompt" class="modal-overlay">
       <div class="modal">
         <h3>Vuoi pubblicare un annuncio?</h3>
@@ -86,16 +87,18 @@ import { useRouter } from "vue-router";
 const auth = useAuthStore();
 const router = useRouter();
 
+//  Variabili reattive per i popup
 const showLogoutConfirm = ref(false);
 const showLoginPrompt = ref(false);
 
+//  : Funzione che effettua il logout confermato
 const confirmLogout = () => {
   auth.logout();
   showLogoutConfirm.value = false;
   router.push("/");
 };
 
-// 🔹 Click su "Pubblica"
+// Click su "Pubblica"
 const handlePublishClick = () => {
   if (!auth.user) {
     showLoginPrompt.value = true;
@@ -173,7 +176,7 @@ const handlePublishClick = () => {
   padding: 0 16px;
 }
 
-/* 🔹 Stili Modal */
+/*  Stili Modal del popup - Z-index ottimizzato */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -184,7 +187,7 @@ const handlePublishClick = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 999;
+  z-index: 10000; /*  Aumentato per essere sopra tutto */
 }
 
 .modal {
@@ -223,6 +226,7 @@ const handlePublishClick = () => {
   border: none;
   border-radius: 6px;
   cursor: pointer;
+  text-decoration: none; /*  Per i RouterLink */
 }
 .btn-secondary:hover {
   background: #ddd;
@@ -235,6 +239,7 @@ const handlePublishClick = () => {
   border: none;
   border-radius: 6px;
   cursor: pointer;
+  text-decoration: none; /* Per i RouterLink */
 }
 .btn-primary:hover {
   background: #094a88;
