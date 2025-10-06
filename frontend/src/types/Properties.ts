@@ -41,6 +41,8 @@ export interface PropertyCreateDTO {
   listingType: "vendita" | "affitto"   // tipologia inserzione
   rooms: number                        // numero stanze
   energyClass: string                  // es. A, B, C...
+
+  //TODO rivedere logica creazione nuovo annuncio
      idUser: number        // Nuovo campo obbligatorio
     views?: number 
 }
@@ -76,6 +78,8 @@ export interface PropertyDetailDTO {
   listingType?: "vendita" | "affitto"
   rooms?: number
   energyClass?: string
+
+  //TODO: Rivedere uso dell'id
     idUser?: number        // Nuovo campo obbligatorio
     views?: number 
 }
@@ -88,13 +92,20 @@ export interface FavoriteDTO {
 
 export interface CreateReservationDTO {
   id_prop: number
-  id_user: number
   date: string
+  time: string
 }
 
 export interface CreateBidDTO {
   id_prop: number
-  id_user: number
   amount: number
+}
+
+export interface BidSummaryDTO{
+  id_prop: number
+  propTitle: string
+  count: number
+  avgPrice: number
+  lastDate: Date
 }
 

@@ -2,11 +2,17 @@
 FROM maven:3.9-eclipse-temurin-17 AS build
 WORKDIR /workspace
 
+# 1️⃣ Build del modulo 'shared'
 COPY shared/pom.xml shared/pom.xml
 COPY shared/src shared/src
-RUN mvn -q -DskipTests -f shared/pom.xml clean install
+RUN mvn -f shared/pom.xml clean install -DskipTests
 
-# 2) ora user-service può risolvere la dipendenza 'shared'
+# 🔹 (Fix) copia il jar di shared nel repository locale Maven
+# garantisce che user-service lo trovi anche in un nuovo layer
+RUN mkdir -p /root/.m2/repository/com/dietiestates/shared && \
+    cp -r /workspace/shared/target/* /root/.m2/repository/com/dietiestates/shared/
+
+# 2️⃣ Build del modulo 'user-service'
 COPY user-service/pom.xml user-service/pom.xml
 RUN mvn -q -DskipTests -f user-service/pom.xml dependency:go-offline
 COPY user-service/src user-service/src

@@ -30,6 +30,7 @@
       </tbody>
     </table>
 
+
     <!-- MODALE DETTAGLI OFFERTE -->
     <div v-if="selectedBids" class="modal-overlay" @click.self="closeDetails">
       <div class="modal">
@@ -59,23 +60,20 @@ const stats = ref({
 })
 const selectedBids = ref<any[] | null>(null)
 
-// Id dell'owner (in futuro lo prenderai dal JWT o auth store)
-const ownerId = 2
 
 onMounted(async () => {
   // 🔹 Riepilogo offerte
-  const resSummary = await propertyStore.fetchBidsSummaryByUserOwned(ownerId)
-  // NB: la tua azione ora fa solo console.log
-  // conviene farla ritornare res.data nel futuro → qui lo salvo in stato
-  if (resSummary?.data) {
-    bidsSummary.value = resSummary.data
-    stats.value.bids = resSummary.data.reduce((acc: number, cur: any) => acc + cur.count, 0)
+  const resSummary = await propertyStore.fetchBidsSummaryByUserOwned()
+ 
+  if (resSummary) {
+    bidsSummary.value = resSummary
+    stats.value.bids = resSummary.reduce((acc: number, cur: any) => acc + cur.count, 0)
   }
 
   // 🔹 Prenotazioni totali dell'owner
-  const resBookings = await propertyStore.fetchReservationsByUser(ownerId)
-  if (resBookings?.data) {
-    stats.value.bookings = resBookings.data.length
+  const resBookings = await propertyStore.fetchReservationsByUser()
+  if (resBookings) {
+    stats.value.bookings = resBookings.length
   }
 })
 

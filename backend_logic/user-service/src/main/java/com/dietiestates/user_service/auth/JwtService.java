@@ -9,6 +9,9 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.Map;
 
+import com.dietiestates.shared.security.JwtProperties;
+import com.dietiestates.shared.security.RsaKeyLoader;
+
 @Service
 public class JwtService {
   private final JwtProperties props;

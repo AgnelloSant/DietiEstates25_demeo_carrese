@@ -1,7 +1,8 @@
 // src/api/properties.ts
 import { httpProperty } from "./http";
-import type { PropertySearchDTO, PropertyCreateDTO, PropertyUpdateDTO, 
-  CreateReservationDTO, CreateBidDTO } from "@/types/Properties";
+import { type PropertySearchDTO, type PropertyCreateDTO, type PropertyUpdateDTO, 
+  type CreateReservationDTO, type CreateBidDTO, 
+  BidSummaryDTO} from "@/types/Properties";
 import type { AxiosResponse } from "axios";
 
 // 🔍 Ricerca
@@ -41,16 +42,16 @@ export async function deleteProperty(id: number) {
 
 /*
   * 📅 Recupera prenotazioni per una proprietà
-  * GET → /property-service/api/properties/getReservations/property/{id}
-  * GET → /property-service/api/properties/getReservations/user/{id}
+  * GET → /property-service/api/properties/getReservations/property
+  * GET → /property-service/api/properties/getReservations/user
   */
   export async function getReservationsByProperty(id: number) {
     const { data } = await httpProperty.get(`/properties/reservations/getbyproperty/${id}`);
     return data;
   }
 
-  export async function getReservationsByUser(id: number) {
-    const { data } = await httpProperty.get(`/properties/reservations/getbyuser/${id}`);
+  export async function getReservationsByUser() {
+    const { data } = await httpProperty.get(`/properties/reservations/getbyuser/me`);
     return data;
   }
 
@@ -65,10 +66,10 @@ export async function deleteProperty(id: number) {
 
   export async function getStats(id: number) {
      var propertyBookings = await httpProperty.get(`/properties/reservations/countByProperty/${id}`);
-    var propertyBids = await httpProperty.get(`/properties/bids/countByProperty/${id}`);
+    // var propertyBids = await httpProperty.get(`/properties/bids/countByProperty/${id}`);
       const data = {
         bookings: propertyBookings.data,
-        bids: propertyBids.data
+       // bids: propertyBids.data
       };
 
     return data;
@@ -84,13 +85,13 @@ export async function deleteProperty(id: number) {
   return data;
 }
 
-export async function getBidsByUser(id: number) {
-  const { data } = await httpProperty.get(`/properties/bids/getbyuser/${id}`);
+export async function getBidsByUser() {
+  const { data } = await httpProperty.get(`/properties/bids/getbyuser`);
   return data;
 }
 
-export async function getBidsSummaryByUserOwned(idUser: number) {
-  const { data } = await httpProperty.get(`/properties/bids/getsummary/${idUser}`);
+export async function getBidsSummaryByUserOwned() {
+  const { data } = await httpProperty.get(`/properties/bids/getsummary`);
   return data;
 }
 
@@ -99,6 +100,15 @@ export async function getBidsSummaryByUserOwned(idUser: number) {
   * POST → /property-service/api/properties/newBid/{id}
   */
  export async function createBid(payload: CreateBidDTO) {
-  const { data } = await httpProperty.post<boolean>(`/properties/bids/new`, payload);
+  const token = localStorage.getItem("token"); 
+
+  const { data } = await httpProperty.post<boolean>(
+    `/properties/bids/new`, 
+    payload,
+    { 
+      headers:{ Authorization: `Bearer ${token}`,
+        },
+    }
+   );
   return data;
 }

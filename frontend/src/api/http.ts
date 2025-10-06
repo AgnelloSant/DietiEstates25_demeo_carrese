@@ -31,5 +31,11 @@ httpUS.interceptors.request.use(c => {
   }
   return c
 })
-httpProperty.interceptors.response.use(r => r, e => Promise.reject(e))
+httpProperty.interceptors.response.use(r => { 
+  const token = localStorage.getItem("token")
+  if(token){ 
+    r.headers.Authorization = `Bearer ${token}`
+  }
+  return r
+})
 httpUS.interceptors.response.use(r => r, e => Promise.reject(e))

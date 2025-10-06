@@ -2,8 +2,10 @@ package com.dietiestates.property_service.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.dietiestates.property_service.dto.BidSummaryDTO;
@@ -17,16 +19,19 @@ import com.dietiestates.property_service.repository.PropertyRepository;
 
 @Service
 public class BidService {
-    private BidRepository bidRepository;
-    private PropertyRepository PropertyRepository;
+
+    private  BidRepository bidRepository;
+
+    @Autowired
+    private  PropertyRepository PropertyRepository;
 
     public BidService(BidRepository bidRepository) {
         this.bidRepository = bidRepository;
     }
 
-    public Boolean placeBid(BidCreateDTO bidCreateDTO) {
+    public Boolean placeBid(BidCreateDTO bidCreateDTO, Long userId) {
+
         Long propertyId = bidCreateDTO.getPropertyId();
-        Long userId = bidCreateDTO.getUserId();
         Double amount = bidCreateDTO.getAmount();
 
         Bid newBid = new Bid(propertyId, userId, amount);
@@ -59,6 +64,9 @@ public class BidService {
         return bidRepository.findTopByPropertyIdOrderByPublishedAtDesc(idProp); 
     }
 
+    public Long countBidsByPropertyId(Long idProp){
+        return bidRepository.countByPropertyId(idProp); 
+    }
 
     public List<BidSummaryDTO> getBidsSummaryByUser(Long userId) {
         List<Property> properties;
@@ -73,6 +81,8 @@ public class BidService {
                 LocalDateTime lastDate = bidRepository.findLastDateByProperty(propertyId);
 
                 BidSummaryDTO dto = new BidSummaryDTO(propertyId, property.getTitle(), count, avg, lastDate);
+                System.out.println("Numero proprietà:" + count + "\nOfferta media: " + avg +
+                "Last Date: " + lastDate);
                 summaries.add(dto);
                 return summaries;
             }
@@ -81,7 +91,7 @@ public class BidService {
             return null; 
         }
 
-        return null;
+        return Collections.emptyList();
 
 
        

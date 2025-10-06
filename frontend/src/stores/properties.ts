@@ -131,7 +131,7 @@ async fetchListByBounds(lat: number, lon: number, radiusKm: number) {
 
     async addToFavourites(idProp: number) {
       try {
-        await addFavourite({ idUser: 2, idProp })
+        await addFavourite({ idProp })
         const justAdded = this.list.find((p) => p.id === idProp)
         if (justAdded && !this.favList.some((p) => p.id === idProp)) {
           this.favList = [justAdded, ...this.favList]
@@ -168,9 +168,9 @@ async fetchListByBounds(lat: number, lon: number, radiusKm: number) {
     }
   },
   
-  async fetchReservationsByUser(idUser: number) {
+  async fetchReservationsByUser() {
     try {
-      const res = await getReservationsByUser(idUser)
+      const res = await getReservationsByUser()
       console.log("Prenotazioni per utente", res.data)
       return res.data
     } catch (e) {
@@ -205,9 +205,9 @@ async fetchListByBounds(lat: number, lon: number, radiusKm: number) {
       }
     },
     
-    async fetchBidsByUser(idUser: number) {
+    async fetchBidsByUser() {
       try {
-        const res = await getBidsByUser(idUser)
+        const res = await getBidsByUser()
         console.log("Offerte per utente", res.data)
         return res.data
       } catch (e) {
@@ -216,9 +216,9 @@ async fetchListByBounds(lat: number, lon: number, radiusKm: number) {
       }
     },    
 
-    async fetchBidsSummaryByUserOwned(idUser: number) {
+    async fetchBidsSummaryByUserOwned() {
       try {
-        const res = await getBidsSummaryByUserOwned(idUser)
+        const res = await getBidsSummaryByUserOwned()
         console.log("Riepilogo offerte per utente proprietario", res)
         return res.data
       } catch (e) {
