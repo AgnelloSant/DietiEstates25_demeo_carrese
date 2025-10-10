@@ -6,10 +6,13 @@ import com.dietiestates.user_service.dto.LoginResponse;
 import com.dietiestates.user_service.dto.PswChangeRequest;
 import com.dietiestates.user_service.dto.PublicUserDTO;
 import com.dietiestates.user_service.dto.RegisterRequest;
+import com.dietiestates.user_service.dto.UpdateProfileRequest;
+import com.dietiestates.user_service.model.User;
 import com.dietiestates.user_service.service.FavouritesLogic;
 import com.dietiestates.user_service.service.LoginLogic;
 import com.dietiestates.user_service.service.PswChangeLogic;
 import com.dietiestates.user_service.service.RegistrationLogic;
+import com.dietiestates.user_service.service.UpdateProfileLogic;
 import com.dietiestates.user_service.auth.AuthService;
 import com.dietiestates.shared.dto.PropertySearchDTO;
 
@@ -38,6 +41,7 @@ public class UserController {
     private final FavouritesLogic favouritesLogic;
     private final AuthService authService;
     private final JwtProperties jwtProps;
+private final UpdateProfileLogic updateProfileLogic;
 
     public UserController(
             LoginLogic loginLogic,
@@ -45,7 +49,8 @@ public class UserController {
             PswChangeLogic pswChangeLogic,
             FavouritesLogic favouritesLogic,
             AuthService authService,
-            JwtProperties jwtProps
+            JwtProperties jwtProps,
+            UpdateProfileLogic updateProfileLogic
     ) {
         this.loginLogic = loginLogic;
         this.registerLogic = registerLogic;
@@ -53,6 +58,7 @@ public class UserController {
         this.favouritesLogic = favouritesLogic;
         this.authService = authService;
         this.jwtProps = jwtProps;
+        this.updateProfileLogic=updateProfileLogic;
     }
 
 
@@ -83,6 +89,59 @@ public class UserController {
             .header(HttpHeaders.SET_COOKIE, result.tokens().refreshCookie().toString())
             .body(response);
     }
+
+
+//  Ottieni profilo completo
+@GetMapping("/profile")
+public ResponseEntity<?> getProfile(@AuthenticationPrincipal String userId) {
+    if (userId == null || "anonymousUser".equals(userId)) {
+        return ResponseEntity.status(401).build();
+    }
+    
+    Long uid = Long.valueOf(userId);
+    var userOpt = updateProfileLogic.getUserProfile(uid);
+    
+    if (userOpt.isEmpty()) {
+        return ResponseEntity.status(404).body(Map.of("error", "User not found"));
+    }
+    
+    User user = userOpt.get();
+    
+    // Ritorna DTO pulito (senza password)
+    Map<String, Object> profile = Map.of(
+        "id", user.getId(),
+        "name", user.getName() != null ? user.getName() : "",
+        "email", user.getEmail(),
+        "phone", user.getPhone() != null ? user.getPhone() : "",
+        "role", user.getRole(),
+        "provider", user.getProvider() != null ? user.getProvider() : "local"
+    );
+    
+    return ResponseEntity.ok(profile);
+}
+
+//  Aggiorna profilo
+@PutMapping("/profile")
+public ResponseEntity<?> updateProfile(
+    @AuthenticationPrincipal String userId,
+    @RequestBody UpdateProfileRequest request
+) {
+    if (userId == null || "anonymousUser".equals(userId)) {
+        return ResponseEntity.status(401).build();
+    }
+    
+    Long uid = Long.valueOf(userId);
+    boolean success = updateProfileLogic.updateProfile(uid, request);
+    
+    if (!success) {
+        return ResponseEntity.status(400).body(Map.of("error", "Update failed"));
+    }
+    
+    return ResponseEntity.ok(Map.of("message", "Profile updated successfully"));
+}
+
+
+
 
     // === REFRESH ===
     @PostMapping("/refresh")

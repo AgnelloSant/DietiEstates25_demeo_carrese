@@ -13,29 +13,84 @@ export const httpUS = axios.create({
   timeout: 10000,
 })
 
-// Interceptor minimi (puoi ampliarli in futuro)
-httpProperty.interceptors.request.use(c => {
-  //const store = useAuthStore()
-  const token = localStorage.getItem("token")
-  if(token){ 
-    c.headers.Authorization = `Bearer ${token}`
-  }
-  return c
-})
+//  INTERCEPTOR REQUEST: Aggiungi JWT 
 
-httpUS.interceptors.request.use(c => {
-  //const store = useAuthStore()
+/**
+ * Aggiunge automaticamente header Authorization con JWT ad ogni richiesta
+ */
+const addAuthHeader = (config: any) => {
   const token = localStorage.getItem("token")
-  if(token){ 
-    c.headers.Authorization = `Bearer ${token}`
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+    console.log('🔑 JWT aggiunto alla richiesta:', config.url)
   }
-  return c
-})
-httpProperty.interceptors.response.use(r => { 
-  const token = localStorage.getItem("token")
-  if(token){ 
-    r.headers.Authorization = `Bearer ${token}`
+  return config
+}
+
+httpProperty.interceptors.request.use(addAuthHeader)
+httpUS.interceptors.request.use(addAuthHeader)
+
+//  INTERCEPTOR RESPONSE: Gestisci 401 (token scaduto) 
+
+/**
+ * Se ricevi 401 Unauthorized:
+ * 1. Prova a refreshare il token
+ * 2. Se refresh OK → Riprova richiesta originale
+ * 3. Se refresh FAIL → Logout e redirect a /login
+ */
+httpUS.interceptors.response.use(
+  (response) => response,  // Se tutto OK, passa la risposta
+  
+  async (error) => {
+    const originalRequest = error.config
+
+    // Se errore è 401 e non abbiamo già provato a refreshare
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true  // Flag per evitare loop infinito
+      
+      console.warn('⚠️ Token scaduto (401), provo refresh...')
+
+      try {
+        // Chiama endpoint refresh (manda refresh token via cookie HttpOnly)
+        const refreshResponse = await httpUS.post('/refresh')
+        const newToken = refreshResponse.data.accessToken
+        
+        console.log('✅ Token refreshato con successo')
+
+        // Salva nuovo token
+        localStorage.setItem('token', newToken)
+
+        // Aggiorna header della richiesta originale
+        originalRequest.headers.Authorization = `Bearer ${newToken}`
+
+        // Riprova la richiesta originale con nuovo token
+        return httpUS(originalRequest)
+
+      } catch (refreshError) {
+        // Refresh fallito → Token refresh scaduto o revocato
+        console.error('❌ Refresh fallito, logout forzato')
+        
+        // Pulisci tutto
+        localStorage.clear()
+        
+        // Redirect a login
+        window.location.href = '/login?session_expired=true'
+        
+        return Promise.reject(refreshError)
+      }
+    }
+
+    // Se non è 401 o refresh già fallito, propaga errore
+    return Promise.reject(error)
   }
-  return r
-})
-httpUS.interceptors.response.use(r => r, e => Promise.reject(e))
+)
+
+// Property service: stesso handler 401
+httpProperty.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    // Stessa logica di httpUS (puoi estrarre in funzione shared)
+    // ... (copia codice sopra)
+    return Promise.reject(error)
+  }
+)

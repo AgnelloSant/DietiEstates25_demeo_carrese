@@ -41,3 +41,16 @@ export interface PswChangeRequest {
 export interface LogoutRequest{ 
   
 }
+export interface UpdateProfileRequest {
+  name: string
+  phone: string
+}
+
+export interface UserProfile {
+  id: number
+  name: string
+  email: string
+  phone: string
+  role: string
+  provider: string  // "local", "google", "facebook", "github"
+}
