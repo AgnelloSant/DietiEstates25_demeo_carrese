@@ -8,7 +8,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.3.4</version>
-        <relativePath/> <!-- importantissimo -->
+        <relativePath/>
     </parent>
 
     <groupId>com.dietiestates</groupId>
@@ -47,10 +47,8 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
-        
-        
 
-         <!-- Database -->
+        <!-- Database -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
@@ -84,7 +82,7 @@
             <scope>test</scope>
         </dependency>
 
-
+        <!-- JWT -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
@@ -102,13 +100,10 @@
             <version>0.12.5</version>
             <scope>runtime</scope>
         </dependency>
-
-
     </dependencies>
 
     <dependencyManagement>
         <dependencies>
-            <!-- BOM di Spring Cloud -->
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>

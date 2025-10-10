@@ -31,7 +31,7 @@ export const useAuthStore = defineStore("auth", {
   },
 
   actions: {
-    // LOGIN
+    // ========== LOGIN CLASSICO (email/password) ==========
     async loginUser(payload: LoginRequest) {
       try {
         const res = await login(payload)
@@ -50,7 +50,46 @@ export const useAuthStore = defineStore("auth", {
       }
     },
 
-    // REGISTRAZIONE
+    //LOGIN OAUTH2 (Google/Facebook) 
+    /**
+     * Chiamato da OAuth2Callback quando torna il token da Google/Facebook.
+     * Salva il token JWT e cerca di recuperare i dati utente.
+     * 
+     * @param token - JWT access token ricevuto dal backend OAuth2
+     */
+    async loginWithOAuth(token: string) {
+      try {
+        // Salva il token
+        this.token = token
+        localStorage.setItem("token", token)
+
+        //  decodifica JWT per estrarre info utente
+        // (se il JWT contiene userId, email, role nel payload)
+        try {
+          const payload = JSON.parse(atob(token.split('.')[1]))
+          
+          // Se il JWT contiene questi campi, li usiamo
+          if (payload.sub && payload.role) {
+            this.user = {
+              id: parseInt(payload.sub),  // userId dal JWT
+              email: payload.email || '',
+              role: payload.role || 'USER',
+              name: payload.name || ''
+            }
+            localStorage.setItem("user", JSON.stringify(this.user))
+          }
+        } catch (decodeError) {
+          console.warn("Impossibile decodificare JWT, user rimane null fino al fetch")
+        }
+
+        return true
+      } catch (err) {
+        console.error("Login OAuth2 fallito", err)
+        return false
+      }
+    },
+
+    // REGISTRAZIONE 
     async registerUser(payload: RegisterRequest) {
       try {
         await register(payload)
@@ -61,7 +100,7 @@ export const useAuthStore = defineStore("auth", {
       }
     },
 
-    // CAMBIO PASSWORD
+    // CAMBIO PASSWORD 
     async updatePassword(payload: PswChangeRequest) {
       try {
         await changePassword(payload)
@@ -72,12 +111,14 @@ export const useAuthStore = defineStore("auth", {
       }
     },
 
-    // LOGOUT
+    //  LOGOUT
     logout() {
       this.user = null
       this.token = null
       localStorage.removeItem("user")
       localStorage.removeItem("token")
     },
+
+ 
   },
 })
