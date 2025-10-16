@@ -1,33 +1,33 @@
 <template>
-  <div v-if="property" class="detail-container">
+  <div v-if="property" class="def-container">
     <!-- 🏠 Immagine -->
     <div class="detail-image">
       <img :src="property.imageUrl || '/placeholder-house.jpg'" alt="Foto immobile" />
     </div>
 
     <!-- 📋 Info principali -->
-    <div class="detail-info">
+    <div class="info-container">
       <div class="detail-header">
-        <h1 class="detail-title">{{ property.title }}</h1>
+        <h1 class="title">{{ property.title }}</h1>
         <button class="favorite-btn" @click="toggleFavorite(property.id)">
           <i class="fa-solid fa-heart"></i>
         </button>
       </div>
       <p class="detail-city"><i class="fa-solid fa-location-dot"></i> {{ property.city }}</p>
-      <p class="detail-area"><strong>{{ property.area }} m²</strong></p>
-      <p class="detail-price">€ {{ property.price.toLocaleString() }}</p>
+      <p class="bold-text"><strong>{{ property.area }} m²</strong></p>
+      <p class="green-text">€ {{ property.price.toLocaleString() }}</p>
       <p class="detail-extra"><b>Tipo:</b> {{ property.listingType }}</p>
       <p class="detail-extra"><b>Stanze:</b> {{ property.rooms }}</p>
       <p class="detail-extra"><b>Classe energetica:</b> {{ property.energyClass }}</p>
       <p class="detail-extra"><b>Indirizzo:</b> {{ property.address }}</p>
-      <p v-if="property.description" class="detail-description">{{ property.description }}</p>
-      <p v-if="property.publishedAt" class="detail-date">
+      <p v-if="property.description" class="italic-text">{{ property.description }}</p>
+      <p v-if="property.publishedAt" class="text-info">
         Pubblicato il {{ new Date(property.publishedAt).toLocaleDateString() }}
       </p>
     </div>
 
     <!-- 🔘 Bottoni azione -->
-    <div class="button-row">
+    <div class="row-container">
       <button @click="showReservationForm = true" class="btn">Effettua una prenotazione</button>
       <button @click="vendorProfile" class="btn">Dati venditore</button>
       <button @click="showBidForm = true" class="btn">Piazza un'offerta</button>
@@ -36,13 +36,13 @@
 
     <!-- POPUP PRENOTAZIONE -->
     <div v-if="showReservationForm" class="modal-overlay">
-      <div class="modal-content">
-        <h3 class="font-bold mb-4">Scegli giorno e ora</h3>
+      <div class="modal modal--medium">
+        <h2 class="title">Scegli giorno e ora</h2>
         <div  class="input-row">
           <input type="date" v-model="selectedDate" />
           <input type="time" v-model="selectedTime" />
         </div>
-        <div class="button-row">
+        <div class="row-container">
           <button @click="showReservationForm = false" class="btn">
             Annulla
           </button>
@@ -55,13 +55,13 @@
 
     <!--POPUP OFFERTA-->
     <div v-if="showBidForm" class="modal-overlay">
-      <div class="modal-content" style="max-width: 400px;">
-        <h3 class="font-bold mb-4">Quanto vuoi offrire?</h3>
+      <div class="modal modal--small" style="max-width: 400px;">
+        <h2 class="title">Quanto vuoi offrire?</h2>
         <div class="input-row">
           <input  type="number" v-model.number="offerAmount" min="1"></input>
           <span class="hint">Consigliato: {{ ((property.price*95)/100).toLocaleString() }}</span>
         </div>
-        <div class="button-row">
+        <div class="row-container">
           <button @click="showBidForm = false" class="btn">Annulla</button>
           <button class="btn" @click="confirmBid">Invia</button>
         </div>
@@ -202,6 +202,7 @@ function toggleFavorite(idprop: number) {
 </script>
 
 <style scoped>
+
 .detail-container {
   max-width: 1000px;
   margin: 2rem auto;
@@ -231,12 +232,6 @@ function toggleFavorite(idprop: number) {
   color: #e63946;
 }
 
-.button-row {
-  display: flex;
-  justify-content: space-around;
-  width: 100%;
-}
-
 .detail-image img {
   width: 100%;
   height: 420px;
@@ -244,41 +239,9 @@ function toggleFavorite(idprop: number) {
   border-radius: 12px;
 }
 
-.detail-info {
-  padding: 1rem 0;
-  border-bottom: 1px solid #eee;
-}
-
-.detail-title {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #0c5db1;
-}
-
-.detail-city {
+ .detail-city {
   font-size: 1.1rem;
   color: #555;
-}
-
-.detail-area,
-.detail-price {
-  font-size: 1.2rem;
-}
-
-.detail-price {
-  font-weight: bold;
-  color: #28a745;
-}
-
-.detail-description {
-  font-size: 1rem;
-  line-height: 1.6;
-  color: #333;
-}
-
-.detail-date {
-  font-size: 0.9rem;
-  color: #777;
 }
 
 .advantages {
@@ -291,35 +254,13 @@ function toggleFavorite(idprop: number) {
 .advantages h3 {
   margin-bottom: 10px;
   color: #0c5db1;
-}
+} 
 
 .loading {
   text-align: center;
   margin-top: 3rem;
   font-size: 1.2rem;
 }
-
-/* Modal */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.modal-content {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 15px;
-  width: 90%;
-  max-width: 600px;
-  max-height: 300px;
-}
-
 
 .input-row {
   display: flex;

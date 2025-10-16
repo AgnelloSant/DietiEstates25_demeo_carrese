@@ -1,6 +1,6 @@
 <!-- src/App.vue -->
 <template>
-  <div class="app">
+  <div class="max-content-container">
     <header class="header">
       <div class="container header-inner">
         <RouterLink to="/" class="logo">Dieti Estates</RouterLink>
@@ -40,7 +40,7 @@
     </header>
 
     <!-- Contenuto della pagina corrente -->
-    <main class="container">
+    <main class="page-container">
       <RouterView />
     </main>
 
@@ -177,19 +177,6 @@ const handlePublishClick = () => {
 }
 
 /*  Stili Modal del popup - Z-index ottimizzato */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10000; /*  Aumentato per essere sopra tutto */
-}
-
 .modal {
   background: white;
   padding: 2rem;
