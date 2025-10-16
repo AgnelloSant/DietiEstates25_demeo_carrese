@@ -1,6 +1,6 @@
 <template>
   <div v-if="visible" class="modal-overlay">
-    <div class="modal">
+    <div class="modal modal--small">
       <h3 class="modal-title">{{ title }}</h3>
       <p class="modal-message">{{ message }}</p>
 
@@ -26,17 +26,8 @@ defineEmits<{
 </script>
 
 <style scoped>
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 999;
-}
 
-.modal {
+/* .modal {
   background: white;
   border-radius: 12px;
   padding: 1.5rem;
@@ -60,7 +51,7 @@ defineEmits<{
   display: flex;
   justify-content: flex-end;
   gap: 0.5rem;
-}
+} */
 
 @keyframes fadeIn {
   from { transform: translateY(-10px); opacity: 0; }

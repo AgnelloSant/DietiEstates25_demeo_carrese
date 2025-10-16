@@ -14,17 +14,13 @@
         </div>
         
         <div class="hero-main">
-          <div class="hero-badge">
-            <span>Dieti Estates</span>
-            <span class="pulse-dot"></span>
-          </div>
-          
+         
           <h1 class="hero-title">
             Dove i <span class="gradient-text">sogni</span> 
             <br>diventano <span class="gradient-text">casa</span>
           </h1>
           
-          <p class="hero-subtitle">
+          <p class="subtitle">
             Scopri la più grande selezione di immobili curata personalmente per te. 
             Ogni casa racconta una storia, qual è la tua?
           </p>
@@ -60,10 +56,10 @@
     </header>
 
     <!-- Filtri -->
+    <div class="page-container">
     <div class="filters-section">
-      <div class="container">
-        <div class="filters-card">
-          <h3>Trova la tua casa ideale</h3>
+        <div class="page-header">
+          <h3 class="page-title">Trova la tua casa ideale</h3>
           <FiltersBar
             :city="city"
             :minArea="minArea"
@@ -74,17 +70,17 @@
             @search="search"
           />
         </div>
-      </div>
+      
     </div>
 
     <!-- Preferiti -->
-    <section class="favourites-section" v-if="isLoggedIn">
-      <div class="container">
+    <section class="section" v-if="isLoggedIn">
+      <div class="wide-content-container">
         <div class="section-header">
           <h2>I tuoi preferiti
             <small v-if="!store.favLoading && !store.favError">({{ store.favList.length }})</small>
           </h2>
-          <button class="refresh-btn" @click="refreshFavs">
+          <button class="special-btn" @click="refreshFavs">
             <span class="refresh-icon">↻</span>
             Aggiorna
           </button>
@@ -117,15 +113,15 @@
     </section>
 
     <!-- Annunci in evidenza -->
-    <section class="featured-section" ref="annunciSection">
-      <div class="container">
+    <section class="section" ref="annunciSection">
+      <div class="wide-content-container">
         <div class="section-header">
           <div>
             <h2>Annunci in evidenza</h2>
             <p class="section-subtitle">Selezionati personalmente dal nostro team</p>
           </div>
           <div class="pagination-controls" v-if="!store.loading && totalPages > 1">
-            <span class="page-info">Pagina {{ currentPage }} di {{ totalPages }}</span>
+            <span class="text-info">Pagina {{ currentPage }} di {{ totalPages }}</span>
             <div class="page-buttons">
               <button class="page-btn" :disabled="currentPage === 1" @click="goToPage(currentPage - 1)">
                 ←
@@ -193,6 +189,7 @@
 
       </div>
     </section>
+  </div>
   </div>
 </template>
 
@@ -312,27 +309,9 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1rem;
-}
-
-/* Hero magico */
-.hero-magical {
-  position: relative;
-  min-height: 100vh;
-  background: linear-gradient(135deg, 
-    #667eea 0%, 
-    #764ba2 35%,
-    #f093fb 65%,
-    #f5576c 100%
-  );
-  display: flex;
-  align-items: center;
-  overflow: hidden;
-  color: white;
-}
+/* 
+  Welcome page, utilizzato solamente qui inutile dunque migrarlo in css
+ */
 
 .particles-bg {
   position: absolute;
@@ -410,31 +389,6 @@ onMounted(() => {
   60% { transform: translateY(-10px); }
 }
 
-.hero-main {
-  position: relative;
-}
-
-.hero-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 0.5rem 1rem;
-  border-radius: 50px;
-  font-size: 0.9rem;
-  margin-bottom: 2rem;
-}
-
-.pulse-dot {
-  width: 8px;
-  height: 8px;
-  background: #00ff88;
-  border-radius: 50%;
-  animation: pulse 2s infinite;
-}
-
 @keyframes pulse {
   0% { transform: scale(0.8); opacity: 1; }
   50% { transform: scale(1.2); opacity: 0.5; }
@@ -456,46 +410,12 @@ onMounted(() => {
   background-clip: text;
 }
 
-.hero-subtitle {
-  font-size: 1.2rem;
-  line-height: 1.6;
-  opacity: 0.9;
-  margin-bottom: 2rem;
-  max-width: 500px;
-}
-
 .hero-stats-inline {
   display: flex;
   gap: 1.5rem;
   margin-bottom: 3rem;
 }
 
-.stat-bubble {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  padding: 1rem 1.5rem;
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  transition: transform 0.3s ease;
-}
-
-.stat-bubble:hover {
-  transform: translateY(-5px);
-}
-
-.stat-number {
-  font-size: 1.8rem;
-  font-weight: 800;
-  color: #ffd700;
-}
-
-.stat-label {
-  font-size: 0.9rem;
-  opacity: 0.8;
-}
 
 .hero-cta {
   display: flex;
@@ -653,154 +573,24 @@ onMounted(() => {
 /* Sections */
 .filters-section {
   padding: 3rem 0;
-  background: #f8fafc;
   margin-top: -1px;
-}
-
-.filters-card {
-  background: white;
-  border-radius: 20px;
-  padding: 2rem;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.filters-card h3 {
-  text-align: center;
-  margin-bottom: 2rem;
-  color: #1e293b;
-  font-size: 1.5rem;
-}
-
-.favourites-section, .featured-section {
-  padding: 4rem 0;
-}
-
-.favourites-section {
-  background: white;
-}
-
-.featured-section {
-  background: #f8fafc;
-}
-
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  margin-bottom: 2rem;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.section-header h2 {
-  font-size: 2rem;
-  color: #1e293b;
-  margin: 0;
-}
-
-.section-subtitle {
-  color: #64748b;
-  margin: 0.5rem 0 0;
-}
-
-.refresh-btn {
-  background: none;
-  border: 2px solid #0c5db1;
-  color: #0c5db1;
-  padding: 0.5rem 1rem;
-  border-radius: 10px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-weight: 600;
-  transition: all 0.3s ease;
-}
-
-.refresh-btn:hover {
-  background: #0c5db1;
-  color: white;
+  margin-left: 5%;
+  margin-right: 5%;
+  margin-bottom: -6%;
 }
 
 .refresh-icon {
   transition: transform 0.3s ease;
 }
 
-.refresh-btn:hover .refresh-icon {
-  transform: rotate(180deg);
-}
-
-/* Skeletons */
 .fav-skeleton, .fav-carousel {
   display: flex;
   gap: 1.5rem;
+  max-width: 100%;
   overflow-x: auto;
+  box-sizing: border-box;
   scroll-snap-type: x mandatory;
   padding-bottom: 1rem;
-}
-
-.skeleton-card, .skeleton-property {
-  background: linear-gradient(90deg, #f2f4f7 25%, #e9edf3 37%, #f2f4f7 63%);
-  background-size: 400% 100%;
-  animation: shimmer 1.5s ease-in-out infinite;
-  border-radius: 16px;
-}
-
-.skeleton-card {
-  min-width: 260px;
-  height: 180px;
-}
-
-.skeleton-property {
-  height: 320px;
-}
-
-@keyframes shimmer {
-  0% { background-position: 100% 0; }
-  100% { background-position: -100% 0; }
-}
-
-.fav-item {
-  min-width: 280px;
-  scroll-snap-align: start;
-}
-
-/* Properties grid */
-.properties-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 2rem;
-  margin-bottom: 3rem;
-}
-
-.property-item {
-  transition: transform 0.3s ease;
-}
-
-.property-item:hover {
-  transform: translateY(-5px);
-}
-
-/* States */
-.error-state, .empty-state {
-  text-align: center;
-  padding: 3rem 1rem;
-}
-
-.error-state h3, .empty-state h3 {
-  color: #1e293b;
-  margin-bottom: 1rem;
-}
-
-.error-state p, .empty-state p {
-  color: #64748b;
-  margin-bottom: 1.5rem;
-}
-
-.empty-icon {
-  font-size: 4rem;
-  margin-bottom: 1rem;
 }
 
 .retry-btn, .reset-btn {
@@ -819,15 +609,11 @@ onMounted(() => {
 }
 
 /* Pagination */
+
 .pagination-controls {
   display: flex;
   align-items: center;
   gap: 1rem;
-}
-
-.page-info {
-  color: #64748b;
-  font-size: 0.9rem;
 }
 
 .page-buttons {
@@ -910,11 +696,6 @@ onMounted(() => {
     flex-direction: column;
     gap: 1rem;
   }
-  
-  .section-header {
-    flex-direction: column;
-    align-items: stretch;
-    text-align: center;
-  }
+ 
 }
 </style>

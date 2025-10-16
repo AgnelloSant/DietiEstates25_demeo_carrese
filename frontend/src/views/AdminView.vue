@@ -1,22 +1,22 @@
 <template>
-  <div class="admin-container">
+  <div class="page-container">
     <!-- ✨ Header con titolo e stats -->
-    <div class="admin-header">
-      <h1 class="admin-title">Dashboard Admin - Dieti Estates</h1>
+    <div class="page-header">
+      <h1 class="page-title">Dashboard Admin - Dieti Estates</h1>
       <div class="stats-bar">
-        <div class="stat-card">
+        <div class="stat-bubble">
           <span class="stat-number">{{ list.length }}</span>
           <span class="stat-label">Proprietà Totali</span>
         </div>
-        <div class="stat-card">
+        <div class="stat-bubble">
           <span class="stat-number">{{ venditeCount }}</span>
           <span class="stat-label">In Vendita</span>
         </div>
-        <div class="stat-card">
+        <div class="stat-bubble">
           <span class="stat-number">{{ affittiCount }}</span>
           <span class="stat-label">In Affitto</span>
         </div>
-        <div class="stat-card">
+        <div class="stat-bubble">
           <span class="stat-number">€{{ averagePrice.toLocaleString('it-IT') }}</span>
           <span class="stat-label">Prezzo Medio</span>
         </div>
@@ -40,7 +40,7 @@
           <option value="affitto">Affitto</option>
         </select>
 
-        <select v-model="sortBy" class="sort-select">
+        <select v-model="sortBy" class="filter-select">
           <option value="price">Prezzo</option>
           <option value="area">Superficie</option>
           <option value="title">Nome A-Z</option>
@@ -50,9 +50,10 @@
           {{ sortOrder === 'desc' ? '↓' : '↑' }}
         </button>
 
+        <!-- cambiato toggleSelectionMode in toggleMode  -->
         <button 
-          @click="toggleSelectionMode" 
-          class="selection-toggle-btn"
+          @click="toggleMode" 
+          class="special-btn"
           :class="{ active: selectionMode }"
         >
           {{ selectionMode ? 'Annulla Selezione' : 'Seleziona Multipla' }}
@@ -181,7 +182,7 @@
 
     <!-- 🔧 MODALE DI MODIFICA -->
     <div v-if="showEditModal" class="modal-overlay" @click.self="closeEditModal">
-      <div class="edit-modal">
+      <div class="modal modal--xl">
         <div class="modal-header">
           <h2>Modifica Proprietà</h2>
           <button @click="closeEditModal" class="close-btn">✖</button>
@@ -397,7 +398,7 @@ const hasNearbyServices = (property: PropertySearchDTO) => {
 }
 
 // Funzioni esistenti
-const toggleSelectionMode = () => {
+const toggleMode = () => {
   selectionMode.value = !selectionMode.value
   if (!selectionMode.value) {
     selectedProperties.value = []
@@ -560,35 +561,12 @@ onMounted(() => {
 <style scoped>
 /* Tutti gli stili esistenti rimangono identici, aggiungo solo quelli per la modale */
 
-.admin-container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 2rem;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  min-height: 100vh;
-}
-
-.admin-header {
-  text-align: center;
-  margin-bottom: 3rem;
-}
-
-.admin-title {
-  font-size: 2.5rem;
-  font-weight: 800;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  margin-bottom: 1.5rem;
-}
-
 .stats-bar {
   display: flex;
   gap: 1rem;
   justify-content: center;
   flex-wrap: wrap;
-}
+} 
 
 .stat-card {
   background: white;
@@ -606,11 +584,13 @@ onMounted(() => {
 }
 
 .stat-number {
-  display: block;
   font-size: 1.8rem;
   font-weight: 800;
-  color: #667eea;
-}
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+} 
 
 .stat-label {
   display: block;
@@ -620,17 +600,7 @@ onMounted(() => {
 }
 
 /* ✅ STILI MODALE DI MODIFICA */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10000;
-  backdrop-filter: blur(4px);
-}
-
+/* 
 .edit-modal {
   background: white;
   border-radius: 16px;
@@ -665,7 +635,7 @@ onMounted(() => {
   margin: 0;
   color: #1f2937;
   font-size: 1.5rem;
-}
+} */
 
 .close-btn {
   background: none;
@@ -772,30 +742,6 @@ onMounted(() => {
   align-items: center;
 }
 
-.search-container {
-  flex: 1;
-  min-width: 300px;
-}
-
-.search-input, .filter-select, .sort-select {
-  padding: 0.8rem 1.2rem;
-  border: none;
-  border-radius: 12px;
-  background: white;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-  font-size: 0.95rem;
-  transition: box-shadow 0.3s ease;
-}
-
-.search-input {
-  width: 100%;
-}
-
-.search-input:focus, .filter-select:focus, .sort-select:focus {
-  outline: none;
-  box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
-}
-
 .sort-toggle-btn {
   background: white;
   border: none;
@@ -815,27 +761,7 @@ onMounted(() => {
   box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
 }
 
-.selection-toggle-btn {
-  background: white;
-  border: 2px solid #667eea;
-  color: #667eea;
-  padding: 0.8rem 1.5rem;
-  border-radius: 12px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  white-space: nowrap;
-}
-
-.selection-toggle-btn:hover {
-  background: #667eea;
-  color: white;
-}
-
-.selection-toggle-btn.active {
-  background: #667eea;
-  color: white;
-}
+/* STILI CONTAINER ELIMINA SELEZIONE  */
 
 .bulk-actions {
   background: rgba(239, 68, 68, 0.1);
@@ -882,37 +808,8 @@ onMounted(() => {
   background: #b91c1c;
 }
 
-.properties-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-  gap: 2rem;
-  margin-bottom: 2rem;
-}
-
-.property-card {
-  background: white;
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  cursor: pointer;
-  position: relative;
-  border: 2px solid transparent;
-}
-
-.property-card:hover {
-  transform: translateY(-10px) scale(1.02);
-  box-shadow: 0 20px 60px rgba(102, 126, 234, 0.25);
-}
-
-.property-card.selected {
-  border-color: #667eea;
-  box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
-}
-
-.property-card.selection-mode {
-  cursor: pointer;
-}
+/* 
+ */
 
 .selection-checkbox {
   position: absolute;
@@ -1161,11 +1058,6 @@ onMounted(() => {
     padding: 1rem;
   }
   
-  .properties-grid {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-  
   .stats-bar {
     gap: 0.5rem;
   }
@@ -1183,10 +1075,6 @@ onMounted(() => {
     min-width: unset;
   }
   
-  .admin-title {
-    font-size: 2rem;
-  }
-  
   .bulk-actions {
     flex-direction: column;
     text-align: center;
@@ -1200,5 +1088,5 @@ onMounted(() => {
   .form-row {
     flex-direction: column;
   }
-}
+} 
 </style>

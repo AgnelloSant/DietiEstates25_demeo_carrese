@@ -1,4 +1,5 @@
 <template>
+  <header class="hero-magical">
   <div class="register-container">
     <div class="register-card">
       
@@ -7,8 +8,8 @@
         <div class="logo-circle">
           <span class="logo-icon">🏠</span>
         </div>
-        <h1>Crea Account</h1>
-        <p class="subtitle">Unisciti a Dieti Estates</p>
+        <h1 class="page-title">Crea Account</h1>
+        <p class="page-subtitle">Unisciti a Dieti Estates</p>
       </div>
 
       <!-- Pulsanti Social -->
@@ -47,22 +48,22 @@
       <form @submit.prevent="handleRegister" class="register-form">
         <div class="form-group">
           <label>Nome completo</label>
-          <input v-model="form.name" type="text" placeholder="Mario Rossi" required />
+          <input class="full-line-input" form.name type="text" placeholder="Mario Rossi" required />
         </div>
 
         <div class="form-group">
           <label>Email</label>
-          <input v-model="form.email" type="email" placeholder="mario@esempio.com" required />
+          <input class="full-line-input" v-model="form.email" type="email" placeholder="mario@esempio.com" required />
         </div>
 
         <div class="form-group">
           <label>Password</label>
-          <input v-model="form.password" type="password" placeholder="••••••••" required />
+          <input class="full-line-input" v-model="form.password" type="password" placeholder="••••••••" required />
         </div>
 
         <div class="form-group">
           <label>Telefono (opzionale)</label>
-          <input v-model="form.phone" type="tel" placeholder="+39 123 456 7890" />
+          <input class="full-line-input" v-model="form.phone" type="tel" placeholder="+39 123 456 7890" />
         </div>
 
         <button type="submit" class="btn-primary" :disabled="registering">
@@ -84,6 +85,7 @@
 
     </div>
   </div>
+  </header>
 </template>
 
 <script setup lang="ts">
@@ -140,17 +142,7 @@ const loginWithGitHub = () => {
 </script>
 
 <style scoped>
-.login-container,
-.register-container {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 2rem;
-}
 
-.login-card,
 .register-card {
   background: white;
   border-radius: 24px;
@@ -172,115 +164,7 @@ const loginWithGitHub = () => {
   }
 }
 
-/* ========== HEADER ========== */
-
-.login-header,
-.register-header {
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-.logo-circle {
-  width: 80px;
-  height: 80px;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 1.5rem;
-  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
-}
-
-.logo-icon {
-  font-size: 2.5rem;
-}
-
-.login-header h1,
-.register-header h1 {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #1e293b;
-  margin: 0 0 0.5rem;
-}
-
-.subtitle {
-  color: #64748b;
-  font-size: 1rem;
-  margin: 0;
-}
-
 /* ========== PULSANTI SOCIAL ========== */
-
-.social-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
-
-.social-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  padding: 0.9rem 1.5rem;
-  border: 2px solid #e2e8f0;
-  border-radius: 12px;
-  background: white;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  color: #1e293b;
-}
-
-.social-btn:hover {
-  border-color: transparent;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-}
-
-/* Google */
-.google-btn {
-  border-color: #e2e8f0;
-}
-
-.google-btn:hover {
-  background: #ffffff;
-  border-color: #4285f4;
-  box-shadow: 0 8px 24px rgba(66, 133, 244, 0.2);
-}
-
-/* Facebook */
-.facebook-btn {
-  border-color: #e2e8f0;
-}
-
-.facebook-btn:hover {
-  background: #1877f2;
-  color: white;
-  border-color: #1877f2;
-}
-
-.facebook-btn:hover .social-icon path {
-  fill: white;
-}
-
-/* GitHub */
-.github-btn {
-  border-color: #e2e8f0;
-}
-
-.github-btn:hover {
-  background: #181717;
-  color: white;
-  border-color: #181717;
-}
-
-.github-btn:hover .social-icon path {
-  fill: white;
-}
 
 /* Icone con animazione */
 .social-icon {
@@ -294,27 +178,6 @@ const loginWithGitHub = () => {
   transform: scale(1.1) rotate(5deg);
 }
 
-/* ========== SEPARATORE ========== */
-
-.divider {
-  display: flex;
-  align-items: center;
-  text-align: center;
-  margin: 2rem 0;
-  color: #94a3b8;
-  font-size: 0.9rem;
-}
-
-.divider::before,
-.divider::after {
-  content: '';
-  flex: 1;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.divider span {
-  padding: 0 1rem;
-}
 
 /* ========== FORM ========== */
 

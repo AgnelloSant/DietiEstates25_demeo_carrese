@@ -33,7 +33,7 @@
 
     <!-- MODALE DETTAGLI OFFERTE -->
     <div v-if="selectedBids" class="modal-overlay" @click.self="closeDetails">
-      <div class="modal">
+      <div class="modal modal--medium">
         <h3>Dettagli offerte</h3>
         <ul>
           <li v-for="b in selectedBids" :key="b.id">
@@ -115,7 +115,7 @@ const closeDetails = () => {
   border: 1px solid #ddd;
   padding: 10px;
 }
-.modal-overlay {
+/* .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -131,5 +131,5 @@ const closeDetails = () => {
   padding: 20px;
   border-radius: 10px;
   width: 400px;
-}
+} */
 </style>

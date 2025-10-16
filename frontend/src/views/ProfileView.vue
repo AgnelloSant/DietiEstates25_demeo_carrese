@@ -1,12 +1,12 @@
 <template>
-  <div class="profile-container">
+  <div class="max-page-container">
     <!-- Header con Avatar -->
-    <div class="profile-header">
+    <div class="page-header">
       <div class="avatar-circle">
         <span class="avatar-text">{{ initials }}</span>
       </div>
-      <h1>Il tuo Profilo</h1>
-      <p class="subtitle">Gestisci le tue informazioni personali</p>
+      <h1 class="page-title">Il tuo Profilo</h1>
+      <p class="page-subtitle">Gestisci le tue informazioni personali</p>
     </div>
 
     <!-- Loading -->
@@ -16,24 +16,24 @@
     </div>
 
     <!-- Profilo caricato -->
-    <div v-else class="profile-content">
+    <div v-else class="multi-content">
       
       <!-- Card Info Utente -->
-      <div class="info-card">
+      <div class="basic-card">
         <div class="card-header">
           <h2>📋 Informazioni Personali</h2>
           <button 
             v-if="!editMode" 
             @click="enableEdit" 
-            class="btn-edit"
+            class="btn-secondary"
           >
             ✏️ Modifica
           </button>
         </div>
 
-        <div class="info-grid">
+        <div class="card-content">
           <!-- Nome -->
-          <div class="info-item">
+          <div class="card-item">
             <label>👤 Nome</label>
             <input 
               v-if="editMode" 
@@ -42,18 +42,18 @@
               placeholder="Inserisci il tuo nome"
               class="edit-input"
             />
-            <p v-else class="info-value">{{ profile.name || 'Non specificato' }}</p>
+            <p v-else class="card-item">{{ profile.name || 'Non specificato' }}</p>
           </div>
 
           <!-- Email (non editabile) -->
-          <div class="info-item">
+          <div class="card-item">
             <label>📧 Email</label>
-            <p class="info-value">{{ profile.email }}</p>
+            <p class="card-item">{{ profile.email }}</p>
             <span class="badge" :class="providerClass">{{ providerLabel }}</span>
           </div>
 
           <!-- Telefono -->
-          <div class="info-item">
+          <div class="card-item">
             <label>📞 Telefono</label>
             <input 
               v-if="editMode" 
@@ -62,30 +62,30 @@
               placeholder="+39 123 456 7890"
               class="edit-input"
             />
-            <p v-else class="info-value">{{ profile.phone || 'Non specificato' }}</p>
+            <p v-else class="card-item">{{ profile.phone || 'Non specificato' }}</p>
           </div>
 
           <!-- Ruolo (non editabile) -->
-          <div class="info-item">
+          <div class="card-item">
             <label>🔑 Ruolo</label>
-            <p class="info-value">
+            <p class="card-item">
               <span class="role-badge">{{ profile.role }}</span>
             </p>
           </div>
         </div>
 
         <!-- Pulsanti edit mode -->
-        <div v-if="editMode" class="edit-actions">
-          <button @click="saveProfile" class="btn-save" :disabled="saving">
+        <div v-if="editMode" class="centred-line">
+          <button @click="saveProfile" class="btn-principal" :disabled="saving">
             <span v-if="!saving">Salva</span>
             <span v-else>⏳ Salvataggio...</span>
           </button>
-          <button @click="cancelEdit" class="btn-cancel">❌Annulla</button>
+          <button @click="cancelEdit" class="btn-secondary">❌Annulla</button>
         </div>
       </div>
 
       <!-- Card Cambio Password (solo per utenti local) -->
-      <div v-if="profile.provider === 'local'" class="password-card">
+      <div v-if="profile.provider === 'local'" class="basic-card">
         <div class="card-header">
           <h2>Sicurezza</h2>
         </div>
@@ -125,10 +125,10 @@
       </div>
 
       <!-- Messaggi feedback -->
-      <div v-if="successMessage" class="alert alert-success">
+      <div v-if="successMessage" class="success">
         ✅ {{ successMessage }}
       </div>
-      <div v-if="errorMessage" class="alert alert-error">
+      <div v-if="errorMessage" class="error-message">
         ⚠️ {{ errorMessage }}
       </div>
 
@@ -301,16 +301,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.profile-container {
-  max-width: 800px;
-  margin: 2rem auto;
-  padding: 0 1.5rem;
-}
-
-.profile-header {
-  text-align: center;
-  margin-bottom: 3rem;
-}
 
 .avatar-circle {
   width: 100px;
@@ -328,18 +318,6 @@ onMounted(() => {
   font-size: 2.5rem;
   font-weight: 700;
   color: white;
-}
-
-.profile-header h1 {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #1e293b;
-  margin: 0 0 0.5rem;
-}
-
-.subtitle {
-  color: #64748b;
-  font-size: 1rem;
 }
 
 .loading-state {
@@ -361,88 +339,18 @@ onMounted(() => {
   to { transform: rotate(360deg); }
 }
 
-.profile-content {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-}
-
-.info-card,
-.password-card {
-  background: white;
-  border-radius: 16px;
-  padding: 2rem;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: 2px solid #f1f5f9;
-}
-
-.card-header h2 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #1e293b;
-  margin: 0;
-}
-
-.btn-edit {
-  background: #f1f5f9;
-  color: #475569;
-  border: none;
-  padding: 0.6rem 1.2rem;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.btn-edit:hover {
-  background: #e2e8f0;
-  transform: translateY(-2px);
-}
-
-.info-grid {
-  display: grid;
-  gap: 1.5rem;
-}
-
-.info-item {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.info-item label {
-  font-size: 0.9rem;
+.card-item label {
+  font-size: 1rem;
   font-weight: 600;
   color: #64748b;
+
 }
 
-.info-value {
-  font-size: 1.1rem;
-  color: #1e293b;
-  margin: 0;
-}
-
-.edit-input {
-  width: 100%;
-  padding: 0.9rem 1rem;
-  border: 2px solid #e2e8f0;
-  border-radius: 12px;
+.card-item p{ 
   font-size: 1rem;
-  transition: all 0.3s ease;
-}
-
-.edit-input:focus {
-  outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  color: #475569;
+  font-weight: 500;
+  
 }
 
 .badge {
@@ -451,7 +359,6 @@ onMounted(() => {
   border-radius: 20px;
   font-size: 0.85rem;
   font-weight: 600;
-  margin-top: 0.5rem;
 }
 
 .badge-local {
@@ -483,49 +390,6 @@ onMounted(() => {
   font-weight: 600;
 }
 
-.edit-actions {
-  display: flex;
-  gap: 1rem;
-  margin-top: 2rem;
-  padding-top: 1.5rem;
-  border-top: 2px solid #f1f5f9;
-}
-
-.btn-save,
-.btn-cancel {
-  flex: 1;
-  padding: 0.9rem;
-  border: none;
-  border-radius: 12px;
-  font-size: 1rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.btn-save {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-}
-
-.btn-save:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 32px rgba(102, 126, 234, 0.4);
-}
-
-.btn-save:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.btn-cancel {
-  background: #f1f5f9;
-  color: #475569;
-}
-
-.btn-cancel:hover {
-  background: #e2e8f0;
-}
 
 .password-form {
   display: flex;
@@ -559,28 +423,6 @@ onMounted(() => {
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
-.btn-primary {
-  padding: 1rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  border-radius: 12px;
-  font-size: 1.1rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.btn-primary:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 32px rgba(102, 126, 234, 0.4);
-}
-
-.btn-primary:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
 .oauth-notice {
   background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
   border-radius: 16px;
@@ -602,24 +444,6 @@ onMounted(() => {
   margin-top: 0.5rem;
   font-size: 0.9rem;
   opacity: 0.8;
-}
-
-.alert {
-  padding: 1rem 1.5rem;
-  border-radius: 12px;
-  font-weight: 600;
-}
-
-.alert-success {
-  background: #d1fae5;
-  color: #065f46;
-  border: 2px solid #10b981;
-}
-
-.alert-error {
-  background: #fee2e2;
-  color: #991b1b;
-  border: 2px solid #ef4444;
 }
 
 @media (max-width: 640px) {

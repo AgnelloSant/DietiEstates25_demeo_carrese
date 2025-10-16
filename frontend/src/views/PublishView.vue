@@ -1,6 +1,6 @@
 <template>
-  <div class="publish-container">
-    <h1>📝 Pubblica un nuovo annuncio</h1>
+  <div class="page-header">
+    <h1 class="page-title"> Pubblica un nuovo annuncio</h1>
 
     <!-- 🔹 Indicatore progresso -->
     <div class="steps-indicator">
@@ -14,9 +14,10 @@
       </span>
     </div>
 
+
     <!-- Step 1: Info base -->
     <div v-if="step === 1" class="step">
-      <h2>📌 Informazioni di base</h2>
+      <h2 class="page-subtitle">📌 Informazioni di base</h2>
       <input v-model="form.title" placeholder="🏠 Titolo annuncio" required />
       <textarea
         v-model="form.description"
@@ -29,7 +30,7 @@
 
       <div class="nav-buttons">
         <button
-          class="btn-next"
+          class="btn-primary"
           :disabled="!form.title || !form.description || !form.city"
           @click="nextStep"
         >
@@ -40,9 +41,9 @@
 
     <!-- Step 2: Indirizzo -->
     <div v-if="step === 2" class="step">
-      <h2>📍 Indirizzo</h2>
+      <h2 class="page-subtitle">📍 Indirizzo</h2>
       <input v-model="addressInput" placeholder="Via Roma 10, Napoli" required />
-      <button class="btn" @click="resolveAddress">Trova sulla mappa</button>
+      <button class="third-btn" @click="resolveAddress">Trova sulla mappa</button>
 
       <div v-if="coords" id="map" class="map-preview"></div>
       <p v-if="coords" class="success">
@@ -50,8 +51,8 @@
       </p>
 
       <div class="nav-buttons">
-        <button class="btn-prev" @click="prevStep">⬅️ Indietro</button>
-        <button class="btn-next" :disabled="!coords" @click="nextStep">
+        <button class="btn-primary" @click="prevStep">⬅️ Indietro</button>
+        <button class="btn-primary" :disabled="!coords" @click="nextStep">
           Avanti ➡️
         </button>
       </div>
@@ -59,7 +60,7 @@
 
     <!-- Step 3: Dettagli tecnici -->
     <div v-if="step === 3" class="step">
-      <h2>📏 Dettagli immobile</h2>
+      <h2 class="page-subtitle">📏 Dettagli immobile</h2>
       <input
         v-model.number="form.area"
         type="number"
@@ -96,9 +97,9 @@
       </select>
 
       <div class="nav-buttons">
-        <button class="btn-prev" @click="prevStep">⬅️ Indietro</button>
+        <button class="btn-primary" @click="prevStep">⬅️ Indietro</button>
         <button
-          class="btn-next"
+          class="btn-primary"
           :disabled="!form.area || !form.price || !form.rooms || !form.energyClass"
           @click="nextStep"
         >
@@ -111,7 +112,7 @@
     <div v-if="step === 4" class="step">
       <h2>✅ Riepilogo finale</h2>
 
-      <div class="summary-container">
+      <div class="container">
         <!-- 📋 Dati -->
         <ul class="summary">
           <li><b>Titolo:</b> {{ form.title }}</li>
@@ -130,12 +131,12 @@
       </div>
 
       <div class="nav-buttons">
-        <button class="btn-prev" @click="prevStep">⬅️ Indietro</button>
+        <button class="btn-primary" @click="prevStep">⬅️ Indietro</button>
         <button class="btn-publish" @click="publish">🚀 Pubblica</button>
       </div>
     </div>
 
-    <p v-if="error" class="error">{{ error }}</p>
+    <p v-if="error" class="error-message">{{ error }}</p>
   </div>
 </template>
 
@@ -167,12 +168,12 @@ const form = reactive({
   description: "",
   city: "",
   address: "",
-  area: 0,
-  price: 0,
+  area: null as number | null,
+  price: null as number | null,
   latitude: null as number | null,
   longitude: null as number | null,
   listingType: "vendita" as "vendita" | "affitto",
-  rooms: 1,
+  rooms: null as number | null,
   energyClass: "A",
   idUser: 0,    //  ID utente
   views: 0      // : Visualizzazioni (sempre 0 alla creazione)
@@ -189,7 +190,6 @@ function prevStep() {
   if (step.value > 1) step.value--
 }
 
-// --- Geoapify: risolvi indirizzo in coordinate ---
 async function resolveAddress() {
   try {
     const res = await fetch(
@@ -225,7 +225,6 @@ async function resolveAddress() {
   }
 }
 
-// --- Mini-mappa nel riepilogo ---
 watch(step, async (newStep) => {
   if (newStep === 4 && coords.value) {
     await nextTick()
@@ -239,7 +238,7 @@ watch(step, async (newStep) => {
   }
 })
 
-// --- Pubblica annuncio ---
+
 async function publish() {
   try {
     //  Usa authStore.user?.id 
@@ -279,15 +278,7 @@ async function publish() {
 </script>
 
 <style scoped>
-.publish-container {
-  max-width: 800px;
-  margin: 2rem auto;
-  padding: 2rem;
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-  font-family: "Inter", sans-serif;
-}
+
 
 /* Step indicator */
 .steps-indicator {
@@ -330,42 +321,6 @@ textarea {
   min-height: 80px;
 }
 
-.btn,
-.btn-next,
-.btn-prev,
-.btn-publish {
-  padding: 0.8rem 1.4rem;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-}
-.btn {
-  background: #0c5db1;
-  color: white;
-}
-.btn:disabled,
-.btn-next:disabled {
-  background: #bbb;
-  cursor: not-allowed;
-}
-.btn-next {
-  background: #28a745;
-  color: white;
-}
-.btn-prev {
-  background: #f1f1f1;
-  color: #333;
-}
-.btn-publish {
-  background: #ff5722;
-  color: white;
-  width: 100%;
-}
-.btn-publish:hover {
-  background: #e64a19;
-}
-
 /* Map preview */
 .map-preview,
 .map-summary {
@@ -375,11 +330,7 @@ textarea {
 }
 
 /* Summary */
-.summary-container {
-  display: flex;
-  gap: 1.5rem;
-  flex-wrap: wrap;
-}
+
 .summary {
   list-style: none;
   padding: 0;
