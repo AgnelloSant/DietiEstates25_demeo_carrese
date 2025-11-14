@@ -3,7 +3,7 @@ import L, { Map as LeafletMap } from "leaflet"
 import { defineStore } from "pinia"
 import { searchProperties, createProperty, updateProperty, deleteProperty, createReservation, 
       getReservationsByProperty, getReservationsByUser, createBid, getBidsByProperty,
-      getBidsByUser, getBidsSummaryByUserOwned,
+      getBidsByUser, getBidsSummaryByUserOwned, getMonthlyTrend
     } from "@/api/properties"
 import { getFavourites, addFavourite } from "@/api/users" 
 import type { PropertySearchDTO, PropertyCreateDTO, PropertyUpdateDTO, CreateReservationDTO, CreateBidDTO } from "@/types/Properties"
@@ -204,8 +204,9 @@ async fetchListByBounds(lat: number, lon: number, radiusKm: number) {
     async fetchBidsByProperty(idProp: number) {
       try {
         const res = await getBidsByProperty(idProp)
-        console.log("Offerte per proprietà", res.data)
-        return res.data
+        console.log("Offerte per proprietà", res)
+        console.log(".data", res.data)
+        return res
       } catch (e) {
         console.error("Errore nel recupero delle offerte per proprietà", e)
         return null
@@ -215,8 +216,8 @@ async fetchListByBounds(lat: number, lon: number, radiusKm: number) {
     async fetchBidsByUser() {
       try {
         const res = await getBidsByUser()
-        console.log("Offerte per utente", res.data)
-        return res.data
+        console.log("Offerte per utente", res)
+        return res
       } catch (e) {
         console.error("Errore nel recupero delle offerte per utente", e)
         return null
@@ -227,10 +228,21 @@ async fetchListByBounds(lat: number, lon: number, radiusKm: number) {
       try {
         const res = await getBidsSummaryByUserOwned()
         console.log("Riepilogo offerte per utente proprietario", res)
-        return res.data
+        return res
       } catch (e) {
         console.error("Errore nel recupero del riepilogo delle offerte per utente proprietario", e)
         return null
+      }
+    },
+
+    async fetchTrend() { 
+      try {
+        const res = await getMonthlyTrend() 
+        console.log("Andamento mensile offerte per proprietà", res) 
+        return res 
+      } catch (e) { 
+        console.error("Errore nel recupero dell'andamento mensile delle offerte per proprietà", e) 
+        return null 
       }
     },
 
