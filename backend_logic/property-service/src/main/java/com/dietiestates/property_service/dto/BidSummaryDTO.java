@@ -3,11 +3,16 @@ package com.dietiestates.property_service.dto;
 import java.time.LocalDateTime;
 
 public class BidSummaryDTO {
+
     private Long propertyId;
     private String propertyTitle;
     private long count;
     private Double avgPrice;
     private LocalDateTime lastDate;
+
+    public BidSummaryDTO(){ 
+        
+    }
 
     public BidSummaryDTO(Long propertyId, String propertyTitle, long count, Double avgPrice, LocalDateTime lastDate) {
         this.propertyId = propertyId;

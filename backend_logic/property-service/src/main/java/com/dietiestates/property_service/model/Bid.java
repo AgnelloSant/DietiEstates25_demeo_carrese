@@ -1,5 +1,9 @@
 package com.dietiestates.property_service.model;
 
+import java.time.LocalDateTime;
+
+import org.springframework.cglib.core.Local;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -16,12 +20,12 @@ public class Bid {
     @Column(name = "user_id", nullable = false)
     private Long userId;
     private Double amount;
-    private String publishedAt; 
+    private LocalDateTime publishedAt; 
 
     public Bid() {
     }
 
-    public Bid(Long id, Long idProperty, Long idUser, Double amount, String publishedAt) {
+    public Bid(Long id, Long idProperty, Long idUser, Double amount, LocalDateTime publishedAt) {
         this.id = id;
         propertyId = idProperty;
         userId = idUser;
@@ -59,10 +63,10 @@ public class Bid {
     public void setAmount(Double amount) {
         this.amount = amount;
     }
-    public void setPublishedAt(String publishedAt) {
+    public void setPublishedAt(LocalDateTime publishedAt) {
         this.publishedAt = publishedAt;
     }
-    public String getPublishedAt() {
+    public LocalDateTime getPublishedAt() {
         return publishedAt;
     }
 

@@ -46,7 +46,6 @@ List<Property> searchByBounds(
     @Param("radiusKm") double radiusKm
 );
 
-
   List<Property> findByIdUser(Long idUser);
   
   @Query(value = "UPDATE properties SET views = views + 1 WHERE id = :propertyId", nativeQuery = true)
