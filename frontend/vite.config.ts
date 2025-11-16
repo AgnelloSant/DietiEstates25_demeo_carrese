@@ -23,4 +23,8 @@ server: {
       "@": path.resolve(__dirname, "src"),
     },
   },
+    build: {
+    outDir: 'dist',  // ✅ Output va SOLO in dist
+    emptyOutDir: true
+  }
 })

@@ -28,3 +28,8 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+
+
+src/**/*.vue.js
+src/**/*.js.map
+*.tsbuildinfo

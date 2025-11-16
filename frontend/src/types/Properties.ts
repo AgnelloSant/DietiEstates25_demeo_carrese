@@ -31,15 +31,15 @@ export interface PropertyCreateDTO {
   title: string
   city: string
    address: string
-  area: number
-  price: number
+  area: number | null
+  price: number | null
   latitude?: number | null
   longitude?: number | null
   nearSchool?: boolean
   nearPark?: boolean
   nearTransport?: boolean
   listingType: "vendita" | "affitto"   // tipologia inserzione
-  rooms: number                        // numero stanze
+  rooms: number | null                      // numero stanze
   energyClass: string                  // es. A, B, C...
 
   //TODO rivedere logica creazione nuovo annuncio

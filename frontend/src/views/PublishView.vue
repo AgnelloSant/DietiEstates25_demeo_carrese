@@ -120,7 +120,7 @@
           <li><b>Città:</b> {{ form.city }}</li>
           <li><b>Indirizzo:</b> {{ form.address }}</li>
           <li><b>Superficie:</b> {{ form.area }} m²</li>
-          <li><b>Prezzo:</b> € {{ form.price.toLocaleString() }}</li>
+          <li><b>Prezzo:</b> € {{ form.price?.toLocaleString() ?? "" }}</li>
           <li><b>Tipo:</b> {{ form.listingType }}</li>
           <li><b>Stanze:</b> {{ form.rooms }}</li>
           <li><b>Classe energetica:</b> {{ form.energyClass }}</li>
