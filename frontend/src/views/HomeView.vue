@@ -1,63 +1,85 @@
 <template>
   <div class="home">
-    <!-- Hero magico con particelle animate -->
-    <header class="hero-magical">
-      <div class="particles-bg">
-        <div class="particle" v-for="n in 15" :key="n" :style="getParticleStyle(n)"></div>
+    <!-- Hero professionale centrato -->
+    <header class="hero-professional">
+      <!-- Sfondo animato con gradiente fluido -->
+      <div class="hero-background">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
       </div>
       
-      <div class="hero-content">
-        <div class="floating-elements">
-          <div class="house-icon">🏠</div>
-          <div class="location-pin">📍</div>
-          <div class="key-icon">🔑</div>
-        </div>
-        
-        <div class="hero-main">
-         
-          <h1 class="hero-title">
-            Dove i <span class="gradient-text">sogni</span> 
-            <br>diventano <span class="gradient-text">casa</span>
+      <div class="hero-content-center">
+        <div class="hero-text-center">
+          <h1 class="hero-title-main">
+            Trova la casa dei tuoi <span class="accent-gradient">sogni</span>
           </h1>
           
-          <p class="subtitle">
-            Scopri la più grande selezione di immobili curata personalmente per te. 
-            Ogni casa racconta una storia, qual è la tua?
+          <p class="hero-description">
+            Piattaforma completa per la ricerca e pubblicazione di immobili. 
+            Strumenti avanzati, processo semplice, risultati concreti.
           </p>
           
-          <div class="hero-stats-inline">
-            <div class="stat-bubble" v-for="stat in stats" :key="stat.label">
-              <span class="stat-number">{{ stat.number }}</span>
-              <span class="stat-label">{{ stat.label }}</span>
+          <!-- Features/Benefits invece di stats falsi -->
+          <div class="hero-features">
+            <div class="feature-item">
+              <div class="feature-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <path d="m21 21-4.35-4.35"></path>
+                </svg>
+              </div>
+              <div class="feature-text">
+                <div class="feature-title">Ricerca Avanzata</div>
+                <div class="feature-desc">Filtri intelligenti</div>
+              </div>
+            </div>
+            
+            <div class="feature-item">
+              <div class="feature-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+              </div>
+              <div class="feature-text">
+                <div class="feature-title">Sicuro e Affidabile</div>
+                <div class="feature-desc">Dati protetti</div>
+              </div>
+            </div>
+            
+            <div class="feature-item">
+              <div class="feature-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+              </div>
+              <div class="feature-text">
+                <div class="feature-title">Notifiche Real-Time</div>
+                <div class="feature-desc">Sempre aggiornato</div>
+              </div>
             </div>
           </div>
           
-          <div class="hero-cta">
-            <button @click="scrollToAnnunci" class="cta-primary">
-              <span>Inizia il viaggio</span>
-              <div class="cta-arrow">↓</div>
+          <!-- CTA -->
+          <div class="hero-cta-center">
+            <button @click="scrollToAnnunci" class="btn-hero-primary">
+              Esplora immobili
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
             </button>
-            <a href="/publish" class="cta-ghost">Pubblica annuncio</a>
+            <a href="/publish" class="btn-hero-secondary">
+              Pubblica annuncio
+            </a>
           </div>
-        </div>
-      </div>
-      
-      <div class="hero-visual">
-        <div class="floating-house">
-          <div class="house-base"></div>
-          <div class="house-roof"></div>
-          <div class="house-window"></div>
-          <div class="house-door"></div>
-        </div>
-        <div class="floating-clouds">
-          <div class="cloud" v-for="n in 3" :key="n"></div>
         </div>
       </div>
     </header>
 
     <!-- Filtri -->
     <div class="page-container">
-    <div class="filters-section">
+      <div class="filters-section">
         <div class="page-header">
           <h3 class="page-title">Trova la tua casa ideale</h3>
           <FiltersBar
@@ -70,126 +92,125 @@
             @search="search"
           />
         </div>
-      
-    </div>
-
-    <!-- Preferiti -->
-    <section class="section" v-if="isLoggedIn">
-      <div class="wide-content-container">
-        <div class="section-header">
-          <h2>I tuoi preferiti
-            <small v-if="!store.favLoading && !store.favError">({{ store.favList.length }})</small>
-          </h2>
-          <button class="special-btn" @click="refreshFavs">
-            <span class="refresh-icon">↻</span>
-            Aggiorna
-          </button>
-        </div>
-
-        <div v-if="store.favLoading" class="fav-skeleton">
-          <div v-for="n in 3" :key="n" class="skeleton-card"></div>
-        </div>
-
-        <div v-else-if="store.favError" class="error-state">
-          <p>{{ store.favError }}</p>
-        </div>
-
-        <div v-else-if="store.favList.length" class="fav-carousel">
-          <PropertyCard
-            v-for="p in store.favList"
-            :key="`fav-${p.id}`"
-            :property="p"
-            :compact="true"
-            class="fav-item"
-          />
-        </div>
-
-        <div v-else class="empty-state">
-          <div class="empty-icon">💙</div>
-          <p>Nessun preferito salvato</p>
-          <small>Clicca sul cuore degli annunci per salvarli qui</small>
-        </div>
       </div>
-    </section>
 
-    <!-- Annunci in evidenza -->
-    <section class="section" ref="annunciSection">
-      <div class="wide-content-container">
-        <div class="section-header">
-          <div>
-            <h2>Annunci in evidenza</h2>
-            <p class="section-subtitle">Selezionati personalmente dal nostro team</p>
+      <!-- Preferiti -->
+      <section class="section" v-if="isLoggedIn">
+        <div class="wide-content-container">
+          <div class="section-header">
+            <h2>I tuoi preferiti
+              <small v-if="!store.favLoading && !store.favError">({{ store.favList.length }})</small>
+            </h2>
+            <button class="special-btn" @click="refreshFavs">
+              <span class="refresh-icon">↻</span>
+              Aggiorna
+            </button>
           </div>
-          <div class="pagination-controls" v-if="!store.loading && totalPages > 1">
-            <span class="text-info">Pagina {{ currentPage }} di {{ totalPages }}</span>
-            <div class="page-buttons">
-              <button class="page-btn" :disabled="currentPage === 1" @click="goToPage(currentPage - 1)">
-                ←
-              </button>
-              <button class="page-btn" :disabled="currentPage === totalPages" @click="goToPage(currentPage + 1)">
-                →
-              </button>
+
+          <div v-if="store.favLoading" class="fav-skeleton">
+            <div v-for="n in 3" :key="n" class="skeleton-card"></div>
+          </div>
+
+          <div v-else-if="store.favError" class="error-state">
+            <p>{{ store.favError }}</p>
+          </div>
+
+          <div v-else-if="store.favList.length" class="fav-carousel">
+            <PropertyCard
+              v-for="p in store.favList"
+              :key="`fav-${p.id}`"
+              :property="p"
+              :compact="true"
+              class="fav-item"
+            />
+          </div>
+
+          <div v-else class="empty-state">
+            <div class="empty-icon">💙</div>
+            <p>Nessun preferito salvato</p>
+            <small>Clicca sul cuore degli annunci per salvarli qui</small>
+          </div>
+        </div>
+      </section>
+
+      <!-- Annunci in evidenza -->
+      <section class="section" ref="annunciSection">
+        <div class="wide-content-container">
+          <div class="section-header">
+            <div>
+              <h2>Annunci in evidenza</h2>
+              <p class="section-subtitle">Selezionati personalmente dal nostro team</p>
+            </div>
+            <div class="pagination-controls" v-if="!store.loading && totalPages > 1">
+              <span class="text-info">Pagina {{ currentPage }} di {{ totalPages }}</span>
+              <div class="page-buttons">
+                <button class="page-btn" :disabled="currentPage === 1" @click="goToPage(currentPage - 1)">
+                  ←
+                </button>
+                <button class="page-btn" :disabled="currentPage === totalPages" @click="goToPage(currentPage + 1)">
+                  →
+                </button>
+              </div>
             </div>
           </div>
+
+          <!-- Loading skeleton -->
+          <div v-if="store.loading" class="properties-grid">
+            <div v-for="n in pageSize" :key="n" class="skeleton-property"></div>
+          </div>
+
+          <!-- Error state -->
+          <div v-else-if="store.error" class="error-state">
+            <h3>Oops! Qualcosa è andato storto</h3>
+            <p>{{ store.error }}</p>
+            <button @click="store.fetchList()" class="retry-btn">Riprova</button>
+          </div>
+
+          <!-- Properties grid -->
+          <div v-else-if="pagedList.length" class="properties-grid">
+            <PropertyCard
+              v-for="p in pagedList"
+              :key="p.id"
+              :property="p"
+              @add-fav="store.addToFavourites"
+              class="property-item"
+            />
+          </div>
+
+          <!-- Empty state -->
+          <div v-else class="empty-state">
+            <div class="empty-icon">🏡</div>
+            <h3>Nessun immobile trovato</h3>
+            <p>Prova a modificare i filtri di ricerca</p>
+            <button @click="resetFilters" class="reset-btn">Reset filtri</button>
+          </div>
+
+          <!-- Pagination full -->
+          <nav v-if="!store.loading && totalPages > 1" class="pagination-full">
+            <button class="page-btn" :disabled="currentPage === 1" @click="goToPage(currentPage - 1)">
+              Precedente
+            </button>
+
+            <div class="page-numbers">
+              <button
+                v-for="page in visiblePages"
+                :key="page"
+                class="page-number"
+                :class="{ active: page === currentPage }"
+                @click="goToPage(page)"
+              >
+                {{ page }}
+              </button>
+            </div>
+
+            <button class="page-btn" :disabled="currentPage === totalPages" @click="goToPage(currentPage + 1)">
+              Successivo
+            </button>
+          </nav>
+
         </div>
-
-        <!-- Loading skeleton -->
-        <div v-if="store.loading" class="properties-grid">
-          <div v-for="n in pageSize" :key="n" class="skeleton-property"></div>
-        </div>
-
-        <!-- Error state -->
-        <div v-else-if="store.error" class="error-state">
-          <h3>Oops! Qualcosa è andato storto</h3>
-          <p>{{ store.error }}</p>
-          <button @click="store.fetchList()" class="retry-btn">Riprova</button>
-        </div>
-
-        <!-- Properties grid -->
-        <div v-else-if="pagedList.length" class="properties-grid">
-          <PropertyCard
-            v-for="p in pagedList"
-            :key="p.id"
-            :property="p"
-            @add-fav="store.addToFavourites"
-            class="property-item"
-          />
-        </div>
-
-        <!-- Empty state -->
-        <div v-else class="empty-state">
-          <div class="empty-icon">🏡</div>
-          <h3>Nessun immobile trovato</h3>
-          <p>Prova a modificare i filtri di ricerca</p>
-          <button @click="resetFilters" class="reset-btn">Reset filtri</button>
-        </div>
-
-    <!-- Pagination full -->
-<nav v-if="!store.loading && totalPages > 1" class="pagination-full">
-  <button class="page-btn" :disabled="currentPage === 1" @click="goToPage(currentPage - 1)">
-    Precedente
-  </button>
-
-  <div class="page-numbers">
-    <button
-      v-for="page in visiblePages"
-      :key="page"
-      class="page-number"
-      :class="{ active: page === currentPage }"
-      @click="goToPage(page)"
-    >
-      {{ page }}
-    </button>
-  </div>
-
-  <button class="page-btn" :disabled="currentPage === totalPages" @click="goToPage(currentPage + 1)">
-    Successivo
-  </button>
-</nav>
-
-      </div>
-    </section>
-  </div>
+      </section>
+    </div>
   </div>
 </template>
 
@@ -216,13 +237,6 @@ const energyClass = ref<string>("")
 // Paginazione
 const currentPage = ref(1)
 const pageSize = ref(10)
-
-// Hero stats
-const stats = ref([
-  { number: '2K+', label: 'Proprietà' },
-  { number: '500+', label: 'Clienti felici' },
-  { number: '15', label: 'Anni esperienza' }
-])
 
 // Computed
 const totalPages = computed(() => {
@@ -251,14 +265,6 @@ const visiblePages = computed(() => {
 })
 
 // Methods
-const getParticleStyle = (n: number) => {
-  return {
-    left: `${Math.random() * 100}%`,
-    animationDelay: `${Math.random() * 3}s`,
-    animationDuration: `${3 + Math.random() * 4}s`
-  }
-}
-
 const scrollToAnnunci = () => {
   annunciSection.value?.scrollIntoView({ 
     behavior: 'smooth', 
@@ -269,7 +275,6 @@ const scrollToAnnunci = () => {
 const goToPage = (page: number) => {
   if (page >= 1 && page <= totalPages.value) {
     currentPage.value = page
-    // Scroll dolce senza essere troppo invadente
     window.scrollTo({ 
       top: annunciSection.value?.offsetTop! - 100, 
       behavior: 'smooth' 
@@ -309,270 +314,264 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* 
-  Welcome page, utilizzato solamente qui inutile dunque migrarlo in css
- */
+/* ============================================
+   🌟 HERO PROFESSIONALE CENTRATO
+   ============================================ */
 
-.particles-bg {
+.hero-professional {
+  position: relative;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  color: white;
+  padding: 2rem;
+}
+
+/* Sfondo con sfere gradient animate */
+.hero-background {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   overflow: hidden;
   z-index: 1;
 }
 
-.particle {
+.gradient-orb {
   position: absolute;
-  width: 4px;
-  height: 4px;
-  background: rgba(255, 255, 255, 0.3);
   border-radius: 50%;
-  animation: float linear infinite;
+  filter: blur(100px);
+  opacity: 0.25;
+  animation: float-orb 20s ease-in-out infinite;
 }
 
-@keyframes float {
-  0% { transform: translateY(100vh) translateX(0); opacity: 0; }
-  10% { opacity: 1; }
-  90% { opacity: 1; }
-  100% { transform: translateY(-10vh) translateX(100px); opacity: 0; }
+.orb-1 {
+  width: 600px;
+  height: 600px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  top: -15%;
+  left: -10%;
+  animation-delay: 0s;
 }
 
-.hero-content {
+.orb-2 {
+  width: 500px;
+  height: 500px;
+  background: linear-gradient(135deg, #f093fb, #f5576c);
+  top: 30%;
+  right: -10%;
+  animation-delay: 7s;
+}
+
+.orb-3 {
+  width: 400px;
+  height: 400px;
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+  bottom: -15%;
+  left: 25%;
+  animation-delay: 14s;
+}
+
+@keyframes float-orb {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(40px, -40px) scale(1.15); }
+  66% { transform: translate(-30px, 30px) scale(0.85); }
+}
+
+/* Content centrato */
+.hero-content-center {
   position: relative;
   z-index: 2;
-  display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
-  gap: 3rem;
-  align-items: center;
-  width: 100%;
-  max-width: 1200px;
+  max-width: 900px;
   margin: 0 auto;
-  padding: 0 2rem;
+  text-align: center;
 }
 
-.floating-elements {
-  position: absolute;
-  top: -50px;
-  right: 10%;
-  z-index: 1;
+.hero-text-center {
+  animation: fadeInUp 0.8s ease-out;
 }
 
-.floating-elements > div {
-  position: absolute;
-  font-size: 2rem;
-  animation: bounce 3s infinite;
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.house-icon { 
-  top: 0; 
-  left: 0; 
-  animation-delay: 0s; 
-}
-
-.location-pin { 
-  top: -20px; 
-  left: 60px; 
-  animation-delay: 1s; 
-}
-
-.key-icon { 
-  top: 40px; 
-  left: 30px; 
-  animation-delay: 2s; 
-}
-
-@keyframes bounce {
-  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-  40% { transform: translateY(-20px); }
-  60% { transform: translateY(-10px); }
-}
-
-@keyframes pulse {
-  0% { transform: scale(0.8); opacity: 1; }
-  50% { transform: scale(1.2); opacity: 0.5; }
-  100% { transform: scale(0.8); opacity: 1; }
-}
-
-.hero-title {
-  font-size: clamp(2.5rem, 5vw, 4rem);
+/* Title principale */
+.hero-title-main {
+  font-size: clamp(2.5rem, 7vw, 5.5rem);
   font-weight: 800;
   line-height: 1.1;
   margin-bottom: 1.5rem;
-  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  letter-spacing: -0.03em;
 }
 
-.gradient-text {
-  background: linear-gradient(135deg, #ffd700, #ffed4e);
+.accent-gradient {
+  background: linear-gradient(135deg, #667eea, #f093fb, #ffd89b);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  animation: gradient-shift 3s ease infinite;
+  background-size: 200% 200%;
 }
 
-.hero-stats-inline {
-  display: flex;
-  gap: 1.5rem;
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Description */
+.hero-description {
+  font-size: 1.25rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 4rem;
+  max-width: 650px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Features (sostituzione delle stats false) */
+.hero-features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
   margin-bottom: 3rem;
+  padding: 3rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-
-.hero-cta {
+.feature-item {
   display: flex;
+  align-items: center;
   gap: 1rem;
-  align-items: center;
-}
-
-.cta-primary {
-  background: linear-gradient(135deg, #ffd700, #ffed4e);
-  color: #1a202c;
-  border: none;
-  padding: 1rem 2rem;
-  border-radius: 50px;
-  font-weight: 700;
-  font-size: 1.1rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: all 0.3s ease;
-  box-shadow: 0 8px 30px rgba(255, 215, 0, 0.3);
-}
-
-.cta-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 40px rgba(255, 215, 0, 0.4);
-}
-
-.cta-arrow {
-  animation: bounce-arrow 2s infinite;
-}
-
-@keyframes bounce-arrow {
-  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-  40% { transform: translateY(3px); }
-  60% { transform: translateY(1px); }
-}
-
-.cta-ghost {
-  color: rgba(255, 255, 255, 0.9);
-  text-decoration: none;
-  font-weight: 600;
-  padding: 1rem 2rem;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: 50px;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   transition: all 0.3s ease;
 }
 
-.cta-ghost:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.5);
+.feature-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-5px);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
-/* Hero visual */
-.hero-visual {
-  position: relative;
+.feature-icon {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
 }
 
-.floating-house {
+.feature-icon svg {
+  color: white;
+}
+
+.feature-text {
+  text-align: left;
+  flex: 1;
+}
+
+.feature-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  color: white;
+}
+
+.feature-desc {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* CTA Actions */
+.hero-cta-center {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-hero-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.2rem 2.8rem;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
   position: relative;
-  animation: float-house 6s ease-in-out infinite;
+  overflow: hidden;
 }
 
-@keyframes float-house {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-20px) rotate(2deg); }
+.btn-hero-primary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #764ba2, #667eea);
+  opacity: 0;
+  transition: opacity 0.4s ease;
 }
 
-.house-base {
-  width: 120px;
-  height: 80px;
-  background: linear-gradient(145deg, #4facfe 0%, #00f2fe 100%);
-  border-radius: 8px;
+.btn-hero-primary:hover::before {
+  opacity: 1;
+}
+
+.btn-hero-primary:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 18px 45px rgba(102, 126, 234, 0.5);
+}
+
+.btn-hero-primary svg {
   position: relative;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  transition: transform 0.3s ease;
 }
 
-.house-roof {
-  width: 0;
-  height: 0;
-  border-left: 70px solid transparent;
-  border-right: 70px solid transparent;
-  border-bottom: 50px solid #ff6b6b;
-  position: absolute;
-  top: -45px;
-  left: -10px;
+.btn-hero-primary:hover svg {
+  transform: translateX(6px);
 }
 
-.house-window, .house-door {
-  position: absolute;
-  background: #ffd700;
-  border-radius: 4px;
+.btn-hero-secondary {
+  padding: 1.2rem 2.5rem;
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 14px;
+  transition: all 0.3s ease;
+  display: inline-block;
 }
 
-.house-window {
-  width: 20px;
-  height: 20px;
-  top: 15px;
-  right: 20px;
-}
-
-.house-door {
-  width: 25px;
-  height: 40px;
-  bottom: 0;
-  left: 20px;
-  border-radius: 4px 4px 0 0;
-}
-
-.floating-clouds {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-}
-
-.cloud {
-  position: absolute;
+.btn-hero-secondary:hover {
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 50px;
-  opacity: 0.3;
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-3px);
 }
 
-.cloud:nth-child(1) {
-  width: 60px;
-  height: 20px;
-  top: 20%;
-  right: 10%;
-  animation: float-cloud 8s linear infinite;
-}
+/* ============================================
+   📋 SEZIONI RESTO PAGINA
+   ============================================ */
 
-.cloud:nth-child(2) {
-  width: 40px;
-  height: 15px;
-  top: 40%;
-  right: 60%;
-  animation: float-cloud 10s linear infinite reverse;
-}
-
-.cloud:nth-child(3) {
-  width: 80px;
-  height: 25px;
-  top: 60%;
-  right: 20%;
-  animation: float-cloud 12s linear infinite;
-}
-
-@keyframes float-cloud {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(50px); }
-}
-
-/* Sections */
 .filters-section {
-  padding: 3rem 0;
+  padding: 4rem 0 2rem;
   margin-top: -1px;
   margin-left: 5%;
   margin-right: 5%;
@@ -665,26 +664,39 @@ onMounted(() => {
   color: white;
 }
 
-/* Responsive */
+/* ============================================
+   📱 RESPONSIVE
+   ============================================ */
+
 @media (max-width: 768px) {
-  .hero-content {
-    grid-template-columns: 1fr;
-    text-align: center;
-    gap: 2rem;
+  .hero-professional {
     padding: 2rem 1rem;
   }
   
-  .hero-visual {
-    order: -1;
+  .hero-title-main {
+    font-size: 2.5rem;
   }
   
-  .hero-stats-inline {
-    justify-content: center;
+  .hero-description {
+    font-size: 1.05rem;
+    margin-bottom: 2.5rem;
   }
   
-  .hero-cta {
+  .hero-features {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 2rem 0;
+  }
+  
+  .hero-cta-center {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .btn-hero-primary,
+  .btn-hero-secondary {
+    width: 100%;
     justify-content: center;
-    flex-wrap: wrap;
   }
   
   .properties-grid {
@@ -696,6 +708,5 @@ onMounted(() => {
     flex-direction: column;
     gap: 1rem;
   }
- 
 }
 </style>

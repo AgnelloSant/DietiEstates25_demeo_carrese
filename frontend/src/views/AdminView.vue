@@ -102,7 +102,6 @@
           
           <div class="status-badges">
             <span class="badge popular" v-if="isPopular(property)">Popolare</span>
-            <span class="badge premium" v-if="isPremium(property)">Premium</span>
           </div>
         </div>
 
