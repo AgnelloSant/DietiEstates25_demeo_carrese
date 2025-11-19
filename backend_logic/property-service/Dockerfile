@@ -16,6 +16,12 @@ RUN mvn -q -DskipTests -f property-service/pom.xml package
 # --- run ---
 FROM eclipse-temurin:17-jre
 WORKDIR /app
+
+# *************************************************************
+# Aggiunto: Copia la chiave pubblica dalla Root nella cartella /app
+# *************************************************************
+COPY config/public.pem.b64 /app/public.pem.b64
+
 COPY --from=build /workspace/property-service/target/*.jar app.jar
 EXPOSE 8082
 ENTRYPOINT ["java","-jar","/app/app.jar"]
