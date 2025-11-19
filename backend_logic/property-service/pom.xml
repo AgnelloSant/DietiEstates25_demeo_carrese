@@ -30,6 +30,14 @@
             <version>1.0.2</version>
         </dependency>
 
+<dependency>
+    <groupId>org.projectlombok</groupId>
+    <artifactId>lombok</artifactId>
+    <version>1.18.32</version> <!-- o una recente -->
+    <scope>provided</scope>
+</dependency>
+
+
         <!-- Spring Boot starters -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

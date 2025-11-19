@@ -1,5 +1,9 @@
 package com.dietiestates.user_service.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter @Setter 
 public class PswChangeRequest {
     private String oldPsw; 
     private String newPsw; 
@@ -20,24 +24,6 @@ public class PswChangeRequest {
 
     }
 
-    public String getOldPsw() {
-        return oldPsw;
-    }
-    public void setOldPsw(String oldPsw) {
-        this.oldPsw = oldPsw;
-    }
-    public String getNewPsw() {
-        return newPsw;
-    }
-    public void setNewPsw(String newPsw) {
-        this.newPsw = newPsw;
-    }
-    public String getEmail() {
-        return email;
-    }
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
+  
     
 }
