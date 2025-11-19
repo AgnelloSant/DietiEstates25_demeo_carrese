@@ -96,6 +96,11 @@ export async function getBidsSummaryByUserOwned() {
   return data;
 }
 
+export async function getMonthlyTrend() {
+  const { data } = await httpProperty.get(`/properties/bids/getmonthlytrend`); 
+  return data; 
+}
+
 /*
   * 💸 Crea una nuova offerta
   * POST → /property-service/api/properties/newBid/{id}

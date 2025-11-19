@@ -116,3 +116,8 @@ export interface BidSummaryDTO{
   lastDate: Date
 }
 
+export interface BidDailyCount {  
+  dateLabel: string;
+  offerCount: number;
+}
+
