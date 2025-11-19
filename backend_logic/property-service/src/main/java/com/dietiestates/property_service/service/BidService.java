@@ -4,8 +4,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import com.dietiestates.property_service.dto.BidSummaryDTO;
@@ -14,7 +16,7 @@ import com.dietiestates.property_service.dto.BidCreateDTO;
 import com.dietiestates.property_service.model.Bid;
 import com.dietiestates.property_service.repository.BidRepository;
 import com.dietiestates.property_service.repository.PropertyRepository;
-
+import com.dietiestates.property_service.dto.BidTrendDTO;
 
 
 @Service
@@ -69,34 +71,47 @@ public class BidService {
     }
 
     public List<BidSummaryDTO> getBidsSummaryByUser(Long userId) {
-        List<Property> properties;
+        //Prende le offerte alle proprietà dell'utente loggato. 
+
         try {
-                properties = PropertyRepository.findByIdUser(userId);
-                List<BidSummaryDTO> summaries = new ArrayList<>();
-                for (Property property : properties) {
+            List<Property> properties = PropertyRepository.findByIdUser(userId);
+            List<BidSummaryDTO> summaries = new ArrayList<>();
+
+            for (Property property : properties) {
                 Long propertyId = property.getId();
+                BidSummaryDTO dto = new BidSummaryDTO();
 
                 long count = bidRepository.countByPropertyId(propertyId);
                 Double avg = bidRepository.findAvgByPropertyId(propertyId);
-                LocalDateTime lastDate = bidRepository.findLastDateByProperty(propertyId);
+                LocalDateTime lastDate = bidRepository.findMaxPublishedAtByPropertyId(propertyId);
 
-                BidSummaryDTO dto = new BidSummaryDTO(propertyId, property.getTitle(), count, avg, lastDate);
-                System.out.println("Numero proprietà:" + count + "\nOfferta media: " + avg +
-                "Last Date: " + lastDate);
+                dto.setPropertyId(propertyId);
+                dto.setAvgPrice(avg);
+                dto.setCount(count);
+                dto.setPropertyTitle(property.getTitle());
+                dto.setLastDate(lastDate);   
+
+                System.out.println("Id proprieta: "+ propertyId + "\nNumero offerte: " + count + "\nOfferta media: " + avg +
+                "\nLast Date: " + lastDate);
                 summaries.add(dto);
-                return summaries;
             }
+            
+            return summaries;
         } catch (Exception e) {
             e.printStackTrace();
             return null; 
         }
-
-        return Collections.emptyList();
-
-
-       
-        
     }
+
+    public List<BidTrendDTO> findDailyOfferCount(Long userId) {
+        List<Object[]> rawData = bidRepository.findDailyOfferCountByOwner(userId);
+        System.out.println("Raw Data Daily Offer Count: " + rawData);
+        return rawData.stream()
+        .map(row -> new BidTrendDTO((String) row[0], ((Number) row[1]).longValue()))
+        .collect(Collectors.toList());
+    }
+
+
 
     
 }

@@ -9,6 +9,7 @@ import lombok.*;
 
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class BidSummaryDTO {
+
     private Long propertyId;
     private String propertyTitle;
     private long count;

@@ -6,6 +6,12 @@
       <div class="stat-card">Offerte ricevute: {{ stats.bids }}</div>
     </div>
 
+
+    <div class="wide-content-container"> 
+      <BidChart v-if="trendChartData.labels.length > 0" :chart-data="trendChartData" />
+        <div v-else>caricamento dati..</div>
+    </div>
+
     <!-- TABELLA BID SUMMARY -->
     <table class="bids-table">
       <thead>
@@ -22,7 +28,9 @@
           <td>{{ row.propertyTitle }}</td>
           <td>{{ row.count }}</td>
           <td>{{ row.avgPrice }}</td>
-          <td>{{ row.lastDate }}</td>
+          <td>
+            {{formatPublishedAt( row.lastDate )}}
+          </td>
           <td>
             <button @click="showBidDetails(row.propertyId)">Dettagli</button>
           </td>
@@ -30,48 +38,105 @@
       </tbody>
     </table>
 
-
-    <!-- MODALE DETTAGLI OFFERTE -->
-    <div v-if="selectedBids" class="modal-overlay" @click.self="closeDetails">
-      <div class="modal modal--medium">
+  <div v-if="isDialogVisible" class="modal-overlay" @click.self="closeDetails">
+    <div class="modal modal--medium">
         <h3>Dettagli offerte</h3>
-        <ul>
-          <li v-for="b in selectedBids" :key="b.id">
-            {{ b.publishedAt }} — {{ b.amount }}
-          </li>
-        </ul>
-        <button @click="closeDetails">Chiudi</button>
-      </div>
+
+        <div class="bid-header">
+            <strong class="text-info">Importo</strong>
+            <strong class="text-info">Data</strong>
+            <strong class="text-info">Azioni</strong>
+        </div>
+
+        <div v-if="selectedBids && selectedBids.length > 0" class="bid-list">
+            <div v-for="b in selectedBids" :key="b.id" class="bid-row">
+                <div class="white-text">€ {{ b.amount.toFixed(2) }}</div> 
+                
+                <div class="white-text">{{ formatPublishedAt(b.publishedAt) }}</div>
+                
+                <div class="bid-actions">
+                    <button @click="acceptBid(b.id)" class="btn-accept">Accetta</button>
+                    <button @click="rejectBid(b.id)" class="btn-bulk-delete"> Rifiuta </button>
+                </div>
+            </div>
+        </div>
+        <div v-else class="empty-state">
+            Nessuna offerta trovata per questa proprietà.
+        </div>
+
+        <button @click="closeDetails" class="btn btn-close">Chiudi</button>
     </div>
-  </div>
+</div>
+</div>
+
+
+
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue"
 import { usePropertyStore } from "@/stores/properties"
+import BidChart from "@/components/BidChart.vue"
+import { BidDailyCount } from "@/types/Properties"
 
 const propertyStore = usePropertyStore()
 
-// Stato locale della dashboard
 const bidsSummary = ref<any[]>([])
 const stats = ref({
   bookings: 0,
   bids: 0
 })
 const selectedBids = ref<any[] | null>(null)
+const isDialogVisible = ref(false)
 
+const trendChartData = ref({
+    labels: [], 
+    datasets: [{
+        label: 'Offerte giornaliere',
+        data: [],
+        backgroundColor: '#42b983', 
+        borderColor: '#42b983',
+    }],
+});
+
+const formatTrendDataForChartJS = (trendData: BidDailyCount[]) => {
+    trendChartData.value = {
+        labels: trendData.map(d => d.dateLabel),
+        datasets: [{
+            label: 'Conteggio Offerte Ricevute',
+            backgroundColor: 'rgba(54, 162, 235, 0.5)', 
+            borderColor: '#36A2EB',
+            data: trendData.map(d => d.offerCount),
+            tension: 0.4,
+            fill: true
+        }],
+    };
+};
+
+const loadChartData = async () => {
+    console.log("Inizio caricamento dati trend...");
+    
+    const dailyCountData = await propertyStore.fetchTrend();
+
+    if (dailyCountData && dailyCountData.length > 0) {
+        formatTrendDataForChartJS(dailyCountData);
+        console.log("Dati del trend caricati con successo.");
+    } else {
+        console.log("Nessun dato di trend ricevuto.");
+    }
+};
 
 onMounted(async () => {
-  // 🔹 Riepilogo offerte
   const resSummary = await propertyStore.fetchBidsSummaryByUserOwned()
- 
+
   if (resSummary) {
     bidsSummary.value = resSummary
     stats.value.bids = resSummary.reduce((acc: number, cur: any) => acc + cur.count, 0)
   }
 
-  // 🔹 Prenotazioni totali dell'owner
   const resBookings = await propertyStore.fetchReservationsByUser()
+  await loadChartData();
+
   if (resBookings) {
     stats.value.bookings = resBookings.length
   }
@@ -79,13 +144,40 @@ onMounted(async () => {
 
 const showBidDetails = async (propertyId: number) => {
   const res = await propertyStore.fetchBidsByProperty(propertyId)
-  if (res?.data) {
-    selectedBids.value = res.data
+  if (res && res.length > 0) {
+    selectedBids.value = res
+    console.log(selectedBids.value)
+    isDialogVisible.value = true
+  }else{ 
+    selectedBids.value = []
+    isDialogVisible.value = false
   }
 }
 
+const formatPublishedAt = (dateTimeString: string) => {
+    if (!dateTimeString) return '-';
+    const [datePart, timePart] = dateTimeString.split('T');
+
+    const formattedDate = datePart.split('-').reverse().join('/'); // Giorno/Mese/Anno
+    const formattedTime = timePart.substring(0, 5);
+
+    //return `${datePart} ${timePart.substring(0, 5)}`; 
+
+    return `${formattedDate} ${formattedTime}`;
+};
+
+const acceptBid = async (bidId: number) => { 
+  console.log(`Accetta Offerta ID: ${bidId}`)
+  //TODO: logica per accettare un offerta 
+}
+
+const rejectBid = async (bidId: number) => { 
+  console.log(`Rifiuta Offerta ID: ${bidId}`)
+//TODO: Logica per rifiutare
+}
+
 const closeDetails = () => {
-  selectedBids.value = null
+  isDialogVisible.value = false
 }
 </script>
 
@@ -115,21 +207,5 @@ const closeDetails = () => {
   border: 1px solid #ddd;
   padding: 10px;
 }
-/* .modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0,0,0,0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.modal {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  width: 400px;
-} */
+
 </style>

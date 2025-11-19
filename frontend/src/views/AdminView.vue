@@ -792,24 +792,6 @@ onMounted(() => {
   font-size: 0.8rem;
 }
 
-.btn-bulk-delete {
-  background: #dc2626;
-  color: white;
-  border: none;
-  padding: 0.8rem 1.5rem;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: background 0.3s ease;
-}
-
-.btn-bulk-delete:hover {
-  background: #b91c1c;
-}
-
-/* 
- */
-
 .selection-checkbox {
   position: absolute;
   top: 1rem;

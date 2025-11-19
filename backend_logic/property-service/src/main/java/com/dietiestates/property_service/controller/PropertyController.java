@@ -13,7 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 
@@ -259,9 +260,30 @@ public ResponseEntity<PropertyDetailDTO> getProperty(@PathVariable Long id) {
     @GetMapping("/bids/getlast/{idProp}")
     public ResponseEntity<String> getLastBid(@PathVariable Long idProp){
         Bid bid = bidService.getDateLastBid(idProp); 
-        String date = bid != null ? bid.getPublishedAt() : null;
-        return ResponseEntity.ok(date); 
+        if (bid == null || bid.getPublishedAt() == null) {
+            return ResponseEntity.notFound().build(); 
+        }
+        
+        LocalDateTime publishedAt = bid.getPublishedAt();
+        String dateString = publishedAt.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        
+        return ResponseEntity.ok(dateString); 
     }
+
+    @GetMapping("/bids/getmonthlytrend")
+    public ResponseEntity<List<BidTrendDTO>> getMonthlyTrend(@AuthenticationPrincipal Object principal) {
+
+        if (principal == null || "anonymousUser".equals(principal)) {
+            return ResponseEntity.status(401).build();
+        }
+        Long userId = Long.valueOf(principal.toString());
+
+        List<BidTrendDTO> trendData = bidService.findDailyOfferCount(userId);
+
+        System.out.println("Trend Data: " + trendData);
+
+        return ResponseEntity.ok(trendData); 
+    } 
 
 
 
