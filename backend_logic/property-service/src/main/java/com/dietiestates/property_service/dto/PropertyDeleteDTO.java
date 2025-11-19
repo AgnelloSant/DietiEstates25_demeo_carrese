@@ -1,15 +1,13 @@
 package com.dietiestates.property_service.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class PropertyDeleteDTO {
     private Long id;
 
-    public PropertyDeleteDTO() {}
 
-    public PropertyDeleteDTO(Long id) {
-        this.id = id;
-    }
-
-    // Getter e Setter
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
 }

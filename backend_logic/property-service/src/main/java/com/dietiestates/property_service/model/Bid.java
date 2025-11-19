@@ -4,7 +4,11 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
+
+@Getter @Setter 
 @Entity
 @Table(name = "bids")
 public class Bid {
@@ -35,37 +39,6 @@ public class Bid {
         this.amount = amount;
     }
 
-    public Long getId() {
-        return id;
-    }
-    public void setId(Long id) {
-        this.id = id;
-    }
-    public Long getIdProperty() {
-        return propertyId;
-    }
-    public void setIdProperty(Long idProperty) {
-        propertyId = idProperty;
-    }
-    public Long getIdUser() {
-        return userId;
-    }
-    public void setIdUser(Long idUser) {
-        userId = idUser;
-    }
-    public Double getAmount() {
-        return amount;
-    }
-    public void setAmount(Double amount) {
-        this.amount = amount;
-    }
-    public void setPublishedAt(String publishedAt) {
-        this.publishedAt = publishedAt;
-    }
-    public String getPublishedAt() {
-        return publishedAt;
-    }
-
-
+   
 
 }
