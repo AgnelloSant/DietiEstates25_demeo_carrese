@@ -62,7 +62,7 @@ run_eureka() {
 run_user() {
   ensure_network
 
-  KEYS_DIR="$(cd "$(dirname "$0")" && pwd)/.gitignore"
+  KEYS_DIR="$(cd "$(dirname "$0")" && pwd)/config"
 
   echo "♻️  Restart container $USER_NAME"
   docker rm -f "$USER_NAME" >/dev/null 2>&1 || true
@@ -84,21 +84,23 @@ run_user() {
 
 run_prop() {
   ensure_network
+
+  KEYS_DIR="$(cd "$(dirname "$0")" && pwd)/config"
+  JWT_PUB_B64="$(cat "$KEYS_DIR/public.pem.b64" | tr -d '\n')"
+
   echo "♻️  Restart container $PROP_NAME"
   docker rm -f "$PROP_NAME" >/dev/null 2>&1 || true
-
-  KEYS_DIR="$(cd "$(dirname "$0")" && pwd)/.gitignore"
-
-  # Legge direttamente la chiave base64
-  JWT_B64="$(cat "$KEYS_DIR/public.pem.b64" | tr -d '\n')"
 
   docker run -d --name "$PROP_NAME" \
     --network "$NET" \
     -p ${PROP_PORT}:${PROP_PORT} \
-    -e JWT_PUBLIC_PEM_B64="$JWT_B64" \
+    --env-file property-service/.env \
+    -e JWT_PUBLIC_PEM_B64="$JWT_PUB_B64" \
     "${PROP_ENV[@]}" \
     "$PROP_IMAGE"
 }
+
+
 
 
 # COMANDI COMPOSTI
