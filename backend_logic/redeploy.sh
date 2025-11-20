@@ -62,7 +62,7 @@ run_eureka() {
 run_user() {
   ensure_network
 
-  KEYS_DIR="$(cd "$(dirname "$0")" && pwd)/.gitignore"
+  KEYS_DIR="$(cd "$(dirname "$0")" && pwd)/config"
 
   echo "♻️  Restart container $USER_NAME"
   docker rm -f "$USER_NAME" >/dev/null 2>&1 || true
@@ -87,7 +87,7 @@ run_prop() {
   echo "♻️  Restart container $PROP_NAME"
   docker rm -f "$PROP_NAME" >/dev/null 2>&1 || true
 
-  KEYS_DIR="$(cd "$(dirname "$0")" && pwd)/.gitignore"
+  KEYS_DIR="$(cd "$(dirname "$0")" && pwd)/config"
 
   # Legge direttamente la chiave base64
   JWT_B64="$(cat "$KEYS_DIR/public.pem.b64" | tr -d '\n')"
