@@ -63,6 +63,7 @@ run_user() {
   ensure_network
 
   KEYS_DIR="$(cd "$(dirname "$0")" && pwd)/config"
+  KEYS_DIR="$(cd "$(dirname "$0")" && pwd)/config"
 
   echo "♻️  Restart container $USER_NAME"
   docker rm -f "$USER_NAME" >/dev/null 2>&1 || true
