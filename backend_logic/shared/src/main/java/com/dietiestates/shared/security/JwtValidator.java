@@ -1,25 +1,30 @@
 package com.dietiestates.shared.security;
-import java.security.PublicKey;
-
-import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import lombok.Getter;
+import lombok.Setter;
 
-@Component
+import java.security.PublicKey;
+
+@Getter
+@Setter
 public class JwtValidator {
+  //L'ho reso una classe pura che riceve tutto nel costruttore, non sa dove si trovano gli altri file
   private final PublicKey pub;
-  private final JwtProperties props;
+  private final String issuer;
+  private final String audience;
 
-  public JwtValidator(JwtProperties props, RsaKeyLoader loader) {
-    this.props = props;
-    this.pub  = loader.loadPublic(props.getPublicPem());
+  public JwtValidator(PublicKey pub, String issuer, String audience) {
+    this.pub = pub;
+    this.issuer = issuer;
+    this.audience = audience;
   }
 
   public Claims verify(String token) {
     return Jwts.parser()
-        .requireIssuer(props.getIss())
-        .requireAudience(props.getAud())
+        .requireIssuer(issuer)      
+        .requireAudience(audience) 
         .clockSkewSeconds(60)
         .verifyWith(pub)
         .build()
@@ -27,4 +32,3 @@ public class JwtValidator {
         .getPayload();
   }
 }
-

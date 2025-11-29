@@ -3,16 +3,24 @@ import axios from 'axios'
 
 // property-service (porta 8082, context-path /property-service)
 export const httpProperty = axios.create({
-  baseURL: '/property-service/api',
-  timeout: 10000,
-})
+  // baseURL: '/property-service/api',
+  // timeout: 10000,
+  baseURL: import.meta.env.VITE_API_PROPERTY_URL || 'http://localhost:8082',
+  headers: {
+    'Content-Type': 'application/json'
+  } 
+  
+});
 
 // user-service (porta 8081) — esposto via proxy /user-api
 export const httpUS = axios.create({
-  baseURL: '/api/v1/user',
-  timeout: 10000,
-})
-
+  // baseURL: '/api/v1/user',
+  // timeout: 10000,
+  baseURL: import.meta.env.VITE_API_USER_URL || 'http://localhost:8081',
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
 //  INTERCEPTOR REQUEST: Aggiungi JWT 
 
 /**

@@ -2,7 +2,6 @@ services:
   eureka-server:
     build: ./backend_logic/eureka-server
     environment:
-      # Porta del server Eureka
       SERVER_PORT: 8761
     ports:
       - "8761:8761"
@@ -10,15 +9,24 @@ services:
   user-service:
     build: ./backend_logic
     dockerfile: ./user-service/Dockerfile
+    # 1. AGGIUNTO IL VOLUME: Mappa la cartella locale ./config dentro /app/config nel container
+    volumes:
+      - ./config:/app/config:ro
     environment:
-      # Forza la porta del servizio
       SERVER_PORT: 8081
-      # Registrazione su Eureka (DNS interno: eureka-server)
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka
       EUREKA_CLIENT_REGISTER_WITH_EUREKA: "true"
       EUREKA_CLIENT_FETCH_REGISTRY: "true"
 
-      # DB esterno (valori presi dal file .env accanto a questo compose)
+      # 2. CONFIGURAZIONE CHIAVI: Diciamo a Java dove cercare i file DENTRO il container
+      # Il prefisso 'file:' è fondamentale per il tuo RsaKeyLoader!
+      JWT_PUBLIC_PEM: file:/app/config/public.pem
+      JWT_PRIVATE_PEM: file:/app/config/private.pem
+      
+      # Configurazioni JWT aggiuntive (se non sono nel file properties o vuoi sovrascriverle)
+      JWT_ISS: "dietiestates"
+      JWT_AUD: "dietiestates-app"
+
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
@@ -30,13 +38,18 @@ services:
   property-service:
     build: ./backend_logic
     dockerfile: ./property-service/Dockerfile
-    volumes: ./secrets/jwt_public.pem:/run/secrets/jwt_public.pem:ro
+    # Uniformiamo anche qui: usa config invece di secrets se le chiavi sono lì
+    volumes:
+      - ./config:/app/config:ro
     environment:
       SERVER_PORT: 8082
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka
       EUREKA_CLIENT_REGISTER_WITH_EUREKA: "true"
       EUREKA_CLIENT_FETCH_REGISTRY: "true"
 
+      # Anche Property Service deve sapere dove leggere la chiave pubblica
+      JWT_PUBLIC_PEM: file:/app/config/public.pem
+      
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}

@@ -33,17 +33,18 @@ ensure_network() {
 build_eureka() {
   echo "🛠  Build $EUREKA_IMAGE"
   docker build -t "$EUREKA_IMAGE" -f eureka-server/Dockerfile eureka-server/
-  docker build -t "$EUREKA_IMAGE" -f eureka-server/Dockerfile eureka-server/
 }
 
 build_user() {
   echo "🛠  Build $USER_IMAGE"
+  # Fondamentale: ricompila shared prima di user
   ( cd shared && mvn clean install -DskipTests )
   docker build -t "$USER_IMAGE" -f user-service/Dockerfile .
 }
 
 build_prop() {
   echo "🛠  Build $PROP_IMAGE"
+  # Fondamentale: ricompila shared prima di prop
   ( cd shared && mvn clean install -DskipTests )
   docker build -t "$PROP_IMAGE" -f property-service/Dockerfile .
 }
@@ -62,51 +63,48 @@ run_eureka() {
 run_user() {
   ensure_network
 
-  KEYS_DIR="$(cd "$(dirname "$0")" && pwd)/config"
-  KEYS_DIR="$(cd "$(dirname "$0")" && pwd)/config"
+  # Definiamo la cartella config (che deve contenere public.pem e private.pem)
+  KEYS_DIR="$ROOT_DIR/config"
 
   echo "♻️  Restart container $USER_NAME"
   docker rm -f "$USER_NAME" >/dev/null 2>&1 || true
 
-  # ✅ Leggiamo i file Base64 e li passiamo come env var
-  JWT_PRIV_B64="$(cat "$KEYS_DIR/private.pem.b64" | tr -d '\n')"
-  JWT_PUB_B64="$(cat "$KEYS_DIR/public.pem.b64" | tr -d '\n')"
-
+  # MODIFICA: Usiamo il volume (-v) invece di leggere i file in bash
   docker run -d --name "$USER_NAME" \
     --network "$NET" \
     -p ${USER_PORT}:${USER_PORT} \
     --env-file user-service/.env \
-    -e JWT_PRIVATE_PEM_B64="$JWT_PRIV_B64" \
-    -e JWT_PUBLIC_PEM_B64="$JWT_PUB_B64" \
+    -v "$KEYS_DIR:/app/config:ro" \
+    -e JWT_PUBLIC_PEM="file:/app/config/public.pem" \
+    -e JWT_PRIVATE_PEM="file:/app/config/private.pem" \
+    -e JWT_ISS="dietiestates" \
+    -e JWT_AUD="dietiestates-app" \
     "${USER_ENV[@]}" \
     "$USER_IMAGE"
 }
 
-
 run_prop() {
   ensure_network
 
-  KEYS_DIR="$(cd "$(dirname "$0")" && pwd)/config"
-  JWT_PUB_B64="$(cat "$KEYS_DIR/public.pem.b64" | tr -d '\n')"
+  KEYS_DIR="$ROOT_DIR/config"
 
   echo "♻️  Restart container $PROP_NAME"
   docker rm -f "$PROP_NAME" >/dev/null 2>&1 || true
 
+  # MODIFICA: Usiamo il volume (-v) anche qui
   docker run -d --name "$PROP_NAME" \
     --network "$NET" \
     -p ${PROP_PORT}:${PROP_PORT} \
     --env-file property-service/.env \
-    -e JWT_PUBLIC_PEM_B64="$JWT_PUB_B64" \
+    -v "$KEYS_DIR:/app/config:ro" \
+    -e JWT_PUBLIC_PEM="file:/app/config/public.pem" \
     "${PROP_ENV[@]}" \
     "$PROP_IMAGE"
 }
 
-
-
-
 # COMANDI COMPOSTI
 build_all() { build_eureka; build_user; build_prop; }
-run_all()   { run_eureka; sleep 2; run_prop; sleep 2; run_user; }
+run_all()   { run_eureka; sleep 5; run_prop; sleep 2; run_user; } # Aumentato leggermente lo sleep per Eureka
 
 redeploy_one() {
   case "$1" in

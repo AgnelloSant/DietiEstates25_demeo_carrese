@@ -31,7 +31,7 @@ public class AuthService {
 
     RefreshToken rt = new RefreshToken();
     rt.setJti(jti);
-    rt.setUserId(userId);    // 👈 adesso Long
+    rt.setUserId(userId);    // adesso Long
     rt.setExp(exp);
     rt.setCreatedAt(Instant.now());
     rt.setUaHash(uaHash);
