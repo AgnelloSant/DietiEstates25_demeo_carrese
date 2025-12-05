@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [vue()],
 server: {
   proxy: {
-    '/property-service': {
+    '/api/properties': {
       target: 'http://localhost:8082',  // property-service
       changeOrigin: true,
     },
