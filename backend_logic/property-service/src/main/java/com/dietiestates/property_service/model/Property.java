@@ -11,8 +11,6 @@ import java.time.LocalDate;              // per la data di pubblicazione
 
 
 
-
-
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 @Entity
 @Table(name = "properties") // nome tabella nel database

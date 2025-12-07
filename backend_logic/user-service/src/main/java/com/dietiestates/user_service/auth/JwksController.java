@@ -12,7 +12,7 @@ import java.math.BigInteger;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Base64;
 import java.util.Map;
-
+//rotta con il json della chiave pubblica ed evitra anche accessi malevoli di token errati
 @RestController
 public class JwksController {
   private final JwtProperties props;

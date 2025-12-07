@@ -34,8 +34,8 @@ public class JwtService {
         .issuedAt(Date.from(now))
         .expiration(Date.from(exp))
         .claims(Map.of("role", role))
-        .header().add("kid", props.getKid()).and()
-        .signWith(priv, Jwts.SIG.RS256)
+        .header().add("kid", props.getKid()).and()//questo e il valore che viene controllato per vedere la versione del token se e corrispondente per il jwks controller
+        .signWith(priv, Jwts.SIG.RS256)  //firmiamo l accesso con la chiave privata cosi da assicurarci che chiunque fa il login la tiene
         .compact();
   }
 
@@ -60,7 +60,7 @@ public class JwtService {
         .requireIssuer(props.getIss())
         .requireAudience(props.getAud())
         .clockSkewSeconds(60)
-        .verifyWith(pub)
+        .verifyWith(pub) //verifichiamo la validità della chiave privata data all accesso con la chiave pubblica 
         .build()
         .parseSignedClaims(token)
         .getPayload();
