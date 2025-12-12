@@ -1,3 +1,5 @@
-*.pem
-*.key
-.env
+# ❌ Ignora tutte le chiavi private/pubbliche
+private.pem
+private.pem.b64
+public.pem
+public.pemb64
