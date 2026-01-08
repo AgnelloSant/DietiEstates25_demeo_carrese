@@ -1,312 +1,188 @@
 package com.dietiestates.property_service.model;
 
-import org.junit.jupiter.api.*;
-import static org.junit.jupiter.api.Assertions.*;
+import com.dietiestates.property_service.controller.PropertyController;
+import com.dietiestates.property_service.dto.*;
+import com.dietiestates.property_service.service.*;
+import com.dietiestates.shared.dto.PropertySearchDTO;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.ResponseEntity;
 
-/**
- * Test per PropertyController - Verifica funzionamento metodi con parametri multipli
- * 
- * Questo file testa due metodi principali del controller:
- * 1. searchProperties - ricerca immobili con 6 filtri diversi
- * 2. searchByBounds - ricerca geografica con coordinate e raggio
- * 
- * I test verificano che i parametri vengano validati correttamente
- * e che la logica di business funzioni .
- */
+import java.util.Collections;
+import java.util.List;
+
+// Import statici per JUnit 5
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+// Import statici per Mockito
+import static org.mockito.Mockito.*;
+
+// IMPORT STATICI PER HAMCREST (La parte fondamentale)
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+
+@ExtendWith(MockitoExtension.class)
 class PropertyControllerTest {
 
-    // Variabili per simulare i parametri del metodo searchProperties
-    // Questi rappresentano i filtri che un utente potrebbe usare per cercare casa
-    private String testCity;           
-    private Double testMinArea;       
-    private Double testMaxPrice;      
-    private String testListingType;   
-    private Integer testRooms;        
-    private String testEnergyClass;   
-    
-    // Variabili per simulare i parametri del metodo searchByBounds
-    
-    private Double testLat;            
-    private Double testLon;            
-    private Double testRadiusKm;       
-    /**
-     * Questo metodo viene eseguito automaticamente prima di ogni test
-     * Serve per preparare i dati in uno stato pulito e prevedibile
-     */
-    @BeforeEach
-    void setUp() {
-        System.out.println("\n--- Preparazione test ---");
-        
-        // Impostiamo valori realistici per una ricerca immobiliare tipica
-        testCity = "Milano";
-        testMinArea = 50.0;              
-        testMaxPrice = 300000.0;         
-        testListingType = "affitto";     
-        testRooms = 2;                   
-        testEnergyClass = "B";           
-        
-        // Coordinate geografiche del centro di Roma (vicino al Colosseo)
-        testLat = 41.9028;
-        testLon = 12.4964;
-        testRadiusKm = 5.0;             
-        
-        System.out.println("Dati di test pronti");
-    }
+    // --- MOCKS DEI SERVIZI ---
+    @Mock private PropertySearchLogic propertySearchLogic;
+    @Mock private PropertyCreateLogic propertyCreateLogic;
+    @Mock private PropertyUpdateLogic propertyUpdateLogic;
+    @Mock private PropertyDeleteLogic propertyDeleteLogic;
+    @Mock private PropertyGetLogic propertyGetLogic;
+    @Mock private ReservationService reservationService;
+    @Mock private BidService bidService;
 
-    /**
-     * TEST 1: Verifica il metodo searchProperties che accetta 6 parametri
-     * 
-     * Scenario: Un utente cerca casa a Milano, minimo 50mq, massimo 300k euro,
-     * in affitto, con 2 stanze e classe energetica B.
-     * 
-     * Cosa verifichiamo:
-     * - Tutti i 6 parametri siano validi
-     * - I valori numerici siano positivi dove necessario
-     * - I valori testuali non siano vuoti
-     */
-    @Test
-    @DisplayName("Test ricerca immobili con 6 filtri")
-    void testSearchProperties_SixParameters() {
-        System.out.println("\nTEST 1: Ricerca immobili con filtri multipli");
-        System.out.println("Parametri della ricerca:");
-        System.out.println("  - Città: " + testCity);
-        System.out.println("  - Superficie minima: " + testMinArea + " mq");
-        System.out.println("  - Prezzo massimo: €" + testMaxPrice);
-        System.out.println("  - Tipo annuncio: " + testListingType);
-        System.out.println("  - Numero stanze: " + testRooms);
-        System.out.println("  - Classe energetica: " + testEnergyClass);
+    @InjectMocks
+    private PropertyController propertyController;
 
-        // Verifica parametro 1: la città deve essere specificata
-        assertNotNull(testCity, "La città non può essere vuota");
-        System.out.println("\n  OK - Città validata");
+    // ===================================================================================
+    // METODO 1: searchByBounds (Ricerca Geospaziale)
+    // Strategia: Boundary Value Analysis (Robustness) -> 19 Test Case
+    // Copertura: Limiti validi e invalidi per Latitudine, Longitudine e Raggio.
+    // ===================================================================================
 
-        // Verifica parametro 2: l'area deve essere un numero positivo
-        // Non ha senso cercare case con superficie negativa o zero!
-        assertTrue(testMinArea > 0, "La superficie deve essere maggiore di zero");
-        System.out.println("  OK - Superficie minima valida (" + testMinArea + " mq)");
+    @ParameterizedTest(name = "BVA Robustness {index}: Lat={0}, Lon={1}, Radius={2} -> Atteso: {3}")
+    @CsvSource({
+        // --- BASE CASE (Tutti Nominali) ---
+        "45.0, 10.0, 50.0, VALID",     // 1. Nominale
 
-        // Verifica parametro 3: il prezzo deve essere positivo
-        assertTrue(testMaxPrice > 0, "Il prezzo deve essere positivo");
-        System.out.println("  OK - Prezzo massimo valido (€" + testMaxPrice + ")");
+        // --- VARIABILE 1: LATITUDE (Range -90 a 90) ---
+        "-90.0, 10.0, 50.0, VALID",    // 2. Min
+        "-89.9, 10.0, 50.0, VALID",    // 3. Min+
+        "89.9,  10.0, 50.0, VALID",    // 4. Max-
+        "90.0,  10.0, 50.0, VALID",    // 5. Max
+        "-90.1, 10.0, 50.0, INVALID",  // 6. Min- (Errore)
+        "90.1,  10.0, 50.0, INVALID",  // 7. Max+ (Errore)
 
-        // Verifica parametro 4: il tipo di annuncio deve essere specificato
-        assertNotNull(testListingType, "Tipo annuncio deve essere specificato");
-        System.out.println("  OK - Tipo annuncio valido (" + testListingType + ")");
+        // --- VARIABILE 2: LONGITUDE (Range -180 a 180) ---
+        "45.0, -180.0, 50.0, VALID",   // 8. Min
+        "45.0, -179.9, 50.0, VALID",   // 9. Min+
+        "45.0, 179.9,  50.0, VALID",   // 10. Max-
+        "45.0, 180.0,  50.0, VALID",   // 11. Max
+        "45.0, -180.1, 50.0, INVALID", // 12. Min- (Errore)
+        "45.0, 180.1,  50.0, INVALID", // 13. Max+ (Errore)
 
-        // Verifica parametro 5: numero stanze deve essere almeno 1
-        assertTrue(testRooms > 0, "Il numero di stanze deve essere almeno 1");
-        System.out.println("  OK - Numero stanze valido (" + testRooms + " stanze)");
+        // --- VARIABILE 3: RADIUS (Range > 0) ---
+        "45.0, 10.0, 0.1,     VALID",   // 14. Min
+        "45.0, 10.0, 0.2,     VALID",   // 15. Min+
+        "45.0, 10.0, 19999.0, VALID",   // 16. Max-
+        "45.0, 10.0, 20000.0, VALID",   // 17. Max
+        "45.0, 10.0, -0.1,    INVALID", // 18. Min- (Negativo -> Errore)
+        "45.0, 10.0, 20001.0, INVALID"  // 19. Max+ (Troppo grande -> Errore)
+    })
 
-        // Verifica parametro 6: classe energetica deve essere specificata
-        assertNotNull(testEnergyClass, "Classe energetica deve essere specificata");
-        System.out.println("  OK - Classe energetica valida (classe " + testEnergyClass + ")");
+    void testSearchByBounds_Robustness(Double lat, Double lon, Double radius, String expectedResult) {
 
-        // Verifica finale: se tutti i parametri sono ok, la ricerca può procedere
-        boolean tuttiParametriValidi = testCity != null && 
-                                       testMinArea > 0 && 
-                                       testMaxPrice > 0 && 
-                                       testListingType != null && 
-                                       testRooms > 0 && 
-                                       testEnergyClass != null;
-        
-        assertTrue(tuttiParametriValidi, "Tutti i parametri devono essere validi insieme");
-        
-        System.out.println("\nRISULTATO: Tutti i 6 parametri sono corretti");
-        System.out.println("La ricerca può essere eseguita con successo");
-    }
+        if ("VALID".equals(expectedResult)) {
+            // SETUP MOCK
+            PropertySearchDTO mockProp = new PropertySearchDTO();
+            mockProp.setId(1L);
 
-    /**
-     * TEST 2: Verifica il metodo searchByBounds che accetta 3 parametri geografici
-     * 
-     * Scenario: Un utente cerca immobili vicino al centro di Roma,
-     * nel raggio di 5 chilometri dalle coordinate specificate.
-     * 
-     * Cosa verifichiamo:
-     * - La latitudine sia nel range valido (-90° a +90°)
-     * - La longitudine sia nel range valido (-180° a +180°)
-     * - Il raggio sia un numero positivo
-     * - L'area di ricerca calcolata sia sensata
-     */
-    @Test
-    @DisplayName("Test ricerca geografica con coordinate")
-    void testSearchByBounds_ThreeGeoParameters() {
-        System.out.println("\nTEST 2: Ricerca geografica immobili");
-        System.out.println("Parametri geografici:");
-        System.out.println("  - Latitudine: " + testLat + "° (centro Roma)");
-        System.out.println("  - Longitudine: " + testLon + "°");
-        System.out.println("  - Raggio ricerca: " + testRadiusKm + " km");
-
-        // Verifica parametro 1: latitudine deve essere tra -90 e +90 gradi
-        // -90 = Polo Sud, +90 = Polo Nord
-        assertTrue(testLat >= -90.0 && testLat <= 90.0, 
-                  "La latitudine deve essere tra -90° e +90°");
-        System.out.println("\n  OK - Latitudine valida (entro i limiti geografici mondiali)");
-
-        // Verifica parametro 2: longitudine deve essere tra -180 e +180 gradi
-        // Questi sono i limiti geografici del pianeta Terra
-        assertTrue(testLon >= -180.0 && testLon <= 180.0, 
-                  "La longitudine deve essere tra -180° e +180°");
-        System.out.println("  OK - Longitudine valida (entro i limiti geografici mondiali)");
-
-        // Verifica parametro 3: il raggio deve essere positivo
-        // Non ha senso cercare in un raggio negativo!
-        assertTrue(testRadiusKm > 0, "Il raggio deve essere positivo");
-        System.out.println("  OK - Raggio valido (" + testRadiusKm + " km)");
-
-        // Calcoliamo l'area coperta dalla ricerca usando la formula del cerchio
-        // Area = π × raggio²
-        double areaCopertura = Math.PI * testRadiusKm * testRadiusKm;
-        assertTrue(areaCopertura > 0, "L'area di copertura deve essere positiva");
-        
-        System.out.println("\n  Calcolo area di ricerca:");
-        System.out.println("  Formula: π × " + testRadiusKm + "² = " + 
-                          String.format("%.2f", areaCopertura) + " km²");
-        System.out.println("  Questa area copre circa " + 
-                          String.format("%.0f", areaCopertura) + " chilometri quadrati");
-
-        // Verifica finale: tutti i parametri geografici sono validi insieme
-        boolean parametriGeograficiOk = (testLat >= -90 && testLat <= 90) && 
-                                       (testLon >= -180 && testLon <= 180) && 
-                                       (testRadiusKm > 0);
-        
-        assertTrue(parametriGeograficiOk, "Tutti i parametri geografici devono essere validi");
-        
-        System.out.println("\nRISULTATO: Coordinate geografiche corrette");
-        System.out.println("La ricerca geografica può essere eseguita");
-    }
-
-    /**
-     * TEST 3: Verifica comportamento con valori estremi
-     * 
-     * Scenario: Testiamo il sistema con coordinate geografiche
-     * ai limiti del pianeta (poli, limiti est-ovest).
-     * 
-     * Questo è importante per verificare che il sistema
-     * non vada in errore con valori limite ma validi.
-     */
-    @Test
-    @DisplayName("Test con valori geografici estremi")
-    void testEdgeCases_BoundaryValues() {
-        System.out.println("\nTEST 3: Verifica valori limite geografici");
-        
-        // Coordinate ai limiti estremi del pianeta
-        Double[] latitudiniEstreme = {-90.0, -45.0, 0.0, 45.0, 90.0};
-        Double[] longitudiniEstreme = {-180.0, -90.0, 0.0, 90.0, 180.0};
-        
-        System.out.println("\nTest latitudini estreme:");
-        for (Double lat : latitudiniEstreme) {
-            // Ogni latitudine deve essere nel range valido
-            assertTrue(lat >= -90.0 && lat <= 90.0, 
-                      "Latitudine " + lat + "° deve essere valida");
+            when(propertySearchLogic.searchByBounds(lat, lon, radius))
+                    .thenReturn(List.of(mockProp));//creiamo liksta finta da cui il service dovrà attingere
             
-            String luogo = "";
-            if (lat == -90.0) luogo = " (Polo Sud)";
-            else if (lat == 90.0) luogo = " (Polo Nord)";
-            else if (lat == 0.0) luogo = " (Equatore)";
+            // ESECUZIONE
+            ResponseEntity<List<PropertySearchDTO>> response = 
+                    propertyController.searchByBounds(lat, lon, radius);
+
+            // ASSERZIONI CON HAMCREST
+            // Verifica Status Code
+            assertThat("Status code deve essere 200 OK", 
+                  response.getStatusCode().value(), is(200));
             
-            System.out.println("  OK - " + String.format("%6.1f", lat) + "°" + luogo);
+            // Verifica Body
+            assertThat("Il body non deve essere nullo", 
+                    response.getBody(), notNullValue());
+            assertThat("La lista deve contenere 1 elemento", 
+                    response.getBody(), hasSize(1));
+            
+        } else {
+            // CASO INVALIDO
+            when(propertySearchLogic.searchByBounds(lat, lon, radius))
+                    .thenThrow(new IllegalArgumentException("Invalid input"));
+            
+            assertThrows(IllegalArgumentException.class, () -> { //qui controlla se davvero il controll lanci l exception in  questi casi 
+                propertyController.searchByBounds(lat, lon, radius);
+            });
         }
+    }
 
-        System.out.println("\nTest longitudini estreme:");
-        for (Double lon : longitudiniEstreme) {
-            // Ogni longitudine deve essere nel range valido
-            assertTrue(lon >= -180.0 && lon <= 180.0, 
-                      "Longitudine " + lon + "° deve essere valida");
+    // ===================================================================================
+    // METODO 2: searchProperties (Ricerca Filtri)
+    // Strategia: N-WECT (ISP Signature-Based) -> Max Classi = 9 Test Case
+    // Copertura: Tutte le classi energetiche + Each Choice su tutti gli altri parametri.
+    // ===================================================================================
+
+    @ParameterizedTest(name = "N-WECT {index}: Energy={5}, Type={3} ... -> {6}")
+    @CsvSource(value = {
+        // 1. Energy A (Valid) | Type VENDITA (Valid) | Full Params
+        "Napoli, 50.0, 200000.0, vendita, 3, A, VALID",
+
+        // 2. Energy B (Valid) | Type AFFITTO (Valid) | Null Params (Opzionali)
+        "null, null, null, affitto, null, B, VALID",
+
+        // 3. Energy C (Valid) | Type Null (Valid) | Area Invalid
+        "Roma, -10.0, 150000.0, null, 2, C, INVALID", 
+
+        // 4. Energy D (Valid) | Type Invalid (Scambio)
+        "Milano, 60.0, 250000.0, scambio, 4, D, INVALID", 
+
+        // 5. Energy E (Valid) | Type VENDITA | Rooms Invalid (Negativo)
+        "Torino, 70.0, 100000.0, vendita, -1, E, INVALID",
+
+        // 6. Energy F (Valid) | Price Invalid (Negativo)
+        "Firenze, 80.0, -100.0, affitto, 5, F, INVALID",
+
+        // 7. Energy G (Valid) | All Valid
+        "Bologna, 40.0, 120000.0, vendita, 1, G, VALID",
+
+        // 8. Energy Null (Valid/Opzionale) | All Valid
+        "null, 100.0, 500000.0, affitto, 4, null, VALID",
+
+        // 9. Energy Invalid (Z)
+        "Napoli, 50.0, 200000.0, vendita, 3, Z, INVALID"
+    }, nullValues = "null")
+
+    void testSearchProperties_NWECT(        //prende i test da 1 a 9 uno alla volta e li inserisce nelle corrette variabili
+            String city, Double minArea, Double maxPrice, String type, Integer rooms, String energy, String expected) {
+
+        if ("VALID".equals(expected)) {
+            // SETUP MOCK(preparazione)
+            PropertySearchDTO resultDto = new PropertySearchDTO();
+            resultDto.setCity(city != null ? city : "AnyCity"); // Valore di default per il mock
             
-            String direzione = "";
-            if (lon < 0) direzione = " (Ovest)";
-            else if (lon > 0) direzione = " (Est)";
-            else direzione = " (Meridiano di Greenwich)";
+            when(propertySearchLogic.searchProperties(city, minArea, maxPrice, type, rooms, energy)) //quando qualcono chiamera search properties
+                    .thenReturn(List.of(resultDto));  //lista finta,non controlla nel db! ma in questa lista finta appena create grazie a csv
+
+            // ESECUZIONE
+            ResponseEntity<List<PropertySearchDTO>> response = 
+                    propertyController.searchProperties(city, minArea, maxPrice, type, rooms, energy);//avvia la search 
+
+            // ASSERZIONI CON HAMCREST
+          assertThat(response.getStatusCode().value(), is(200));//controlliao se è invalid
             
-            System.out.println("  OK - " + String.format("%6.1f", lon) + "°" + direzione);
+            List<PropertySearchDTO> body = response.getBody();//estraiamo il corpo della risposta
+
+            assertThat(body, is(notNullValue()));
+            assertThat(body, is(not(empty()))); // Verifica che la lista non sia vuota
+            assertThat(body, hasSize(1));
+            
+            // Verifica profonda sul contenuto del DTO restituito
+            assertThat(body.get(0).getCity(), equalTo(resultDto.getCity()));  //l elemento è proprio quello che mi aspettavo?
+
+        } else {
+            // CASO INVALIDO
+            when(propertySearchLogic.searchProperties(city, minArea, maxPrice, type, rooms, energy))
+                    .thenThrow(new IllegalArgumentException("Invalid param"));
+
+            assertThrows(IllegalArgumentException.class, () -> 
+                propertyController.searchProperties(city, minArea, maxPrice, type, rooms, energy));
         }
-        
-        System.out.println("\nRISULTATO: Tutti i valori limite gestiti correttamente");
-        System.out.println("Il sistema funziona anche con coordinate estreme");
-    }
-
-    /**
-     * TEST 4: Verifica performance del sistema
-     * 
-     * Scenario: Simuliamo 1000 ricerche consecutive per verificare
-     * che la validazione dei parametri sia veloce ed efficiente.
-     * 
-     * Questo è importante in un sistema reale dove potrebbero
-     * arrivare molte richieste contemporaneamente.
-     */
-    @Test
-    @DisplayName("Test prestazioni validazione")
-    void testPerformance_MultipleValidations() {
-        System.out.println("\nTEST 4: Test prestazioni del sistema");
-        
-        int numeroRicerche = 1000;
-        System.out.println("Simulazione di " + numeroRicerche + " ricerche consecutive...");
-
-        long tempoInizio = System.currentTimeMillis();
-        
-        // Simuliamo tante ricerche consecutive
-        for (int i = 0; i < numeroRicerche; i++) {
-            // Validazione parametri ricerca standard (6 parametri)
-            boolean ricercaValida = testCity != null && 
-                                   testMinArea > 0 && 
-                                   testMaxPrice > 0 && 
-                                   testListingType != null && 
-                                   testRooms > 0 && 
-                                   testEnergyClass != null;
-            
-            // Validazione parametri geografici (3 parametri)
-            boolean geografiaValida = testLat >= -90 && testLat <= 90 && 
-                                     testLon >= -180 && testLon <= 180 && 
-                                     testRadiusKm > 0;
-            
-            // Ogni ricerca deve passare la validazione
-            assertTrue(ricercaValida && geografiaValida, 
-                      "La validazione deve funzionare sempre");
-            
-            // Mostriamo progresso ogni 200 ricerche
-            if (i > 0 && i % 200 == 0) {
-                System.out.println("  Completate " + i + "/" + numeroRicerche + " ricerche...");
-            }
-        }
-        
-        long tempoFine = System.currentTimeMillis();
-        long durata = tempoFine - tempoInizio;
-        
-        System.out.println("\nRisultati performance:");
-        System.out.println("  - Ricerche totali: " + numeroRicerche);
-        System.out.println("  - Tempo totale: " + durata + " millisecondi");
-        System.out.println("  - Tempo medio per ricerca: " + 
-                          String.format("%.3f", (durata / (double)numeroRicerche)) + " ms");
-        System.out.println("  - Ricerche al secondo: " + 
-                          (numeroRicerche * 1000 / Math.max(durata, 1)));
-        
-        // Il sistema dovrebbe essere veloce (meno di 5 secondi per 1000 ricerche)
-        assertTrue(durata < 5000, 
-                  "Il sistema dovrebbe essere veloce (< 5 secondi per 1000 ricerche)");
-        
-        System.out.println("\nRISULTATO: Prestazioni ottime");
-        System.out.println("Il sistema è abbastanza veloce per uso reale");
-    }
-
-    /**
-     * Questo metodo viene eseguito dopo ogni test per pulizia
-     */
-    @AfterEach
-    void tearDown() {
-        System.out.println("--- Test completato ---\n");
-    }
-
-    /**
-     * Messaggio finale quando tutti i test sono finiti
-     */
-    @AfterAll
-    static void tearDownAll() {
-        System.out.println("========================================");
-        System.out.println("TUTTI I TEST COMPLETATI CON SUCCESSO");
-        System.out.println("========================================");
-        System.out.println("Metodi testati:");
-        System.out.println("  1. searchProperties (6 parametri)");
-        System.out.println("  2. searchByBounds (3 parametri)");
-        System.out.println("========================================\n");
     }
 }

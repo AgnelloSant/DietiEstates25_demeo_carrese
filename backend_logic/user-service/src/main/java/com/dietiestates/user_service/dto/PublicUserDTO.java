@@ -4,4 +4,6 @@ public record PublicUserDTO(
     Long id,
     String email,
     String role
-) {}
+) {
+    
+}

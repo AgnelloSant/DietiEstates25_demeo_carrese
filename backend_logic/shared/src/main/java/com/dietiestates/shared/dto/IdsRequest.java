@@ -13,4 +13,3 @@ public class IdsRequest {
 }
 
 
-///Users/utentenumero2/Desktop/DietiEstates25_demeo_carrese-main/backend_logic/shared/src/main/java/com/dietiestates/shared/dto/IdsRequest.java

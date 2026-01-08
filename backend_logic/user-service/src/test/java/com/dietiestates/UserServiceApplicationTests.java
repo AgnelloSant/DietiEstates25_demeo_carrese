@@ -1,4 +1,4 @@
-package com.dietiestates.user_service;
+package com.dietiestates;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
