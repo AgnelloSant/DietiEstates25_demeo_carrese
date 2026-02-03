@@ -1,0 +1,5 @@
+/Users/pierluigidemeo/Desktop/Dieti2.0/backend/api-gateway/src/main/java/com/backend/Main.java
+/Users/pierluigidemeo/Desktop/Dieti2.0/backend/api-gateway/src/main/java/com/backend/filter/RouteValidator.java
+/Users/pierluigidemeo/Desktop/Dieti2.0/backend/api-gateway/src/main/java/com/backend/util/JwtUtil.java
+/Users/pierluigidemeo/Desktop/Dieti2.0/backend/api-gateway/src/main/java/com/backend/filter/AuthenticationFilter.java
+/Users/pierluigidemeo/Desktop/Dieti2.0/backend/api-gateway/src/main/java/com/backend/config/GatewayConfig.java

@@ -1,0 +1,51 @@
+package com.dietiestates.user_service.controller;
+
+import com.dietiestates.user_service.dto.PswChangeRequest;
+import com.dietiestates.user_service.dto.PublicUserDTO;
+import com.dietiestates.user_service.dto.UpdateProfileRequest;
+import com.dietiestates.user_service.service.UserService;
+import com.dietiestates.user_service.dto.UserProfileDTO;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("")
+public class UserController {
+
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PublicUserDTO> getProfile(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.getPublicProfile(id));
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserProfileDTO> getProfile(@RequestHeader("X-User-Email") String email) {
+        System.out.println("Request arrived at the controller: " + email);
+        return ResponseEntity.ok(userService.getProfile(email));
+    }
+
+    // @GetMapping("/me")
+    // public ResponseEntity<PublicUserDTO> getMyProfile(java.security.Principal
+    // principal) {
+    // // The principal name is the email set by HeaderAuthenticationFilter
+    // return ResponseEntity.ok(userService.getProfileByEmail(principal.getName()));
+    // }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> updateProfile(@PathVariable Long id, @RequestBody UpdateProfileRequest request) {
+        userService.updateProfile(id, request);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/password")
+    public ResponseEntity<Void> changePassword(@RequestBody PswChangeRequest request) {
+        userService.changePassword(request);
+        return ResponseEntity.ok().build();
+    }
+}
