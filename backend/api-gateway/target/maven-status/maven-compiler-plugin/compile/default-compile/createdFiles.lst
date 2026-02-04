@@ -1,6 +1,0 @@
-com/backend/Main.class
-com/backend/util/JwtUtil.class
-com/backend/config/GatewayConfig.class
-com/backend/filter/RouteValidator.class
-com/backend/filter/AuthenticationFilter.class
-com/backend/filter/AuthenticationFilter$Config.class

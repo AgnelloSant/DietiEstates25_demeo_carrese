@@ -13,25 +13,25 @@ import java.util.Arrays;
 @Configuration
 public class GatewayConfig {
 
-        @Bean
-        public RouteLocator customRouteLocator(RouteLocatorBuilder builder,
-                        com.backend.filter.AuthenticationFilter authFilter) {
-                return builder.routes()
-                                .route("user-service", r -> r.path("/user/**")
-                                                .filters(f -> f.filter(authFilter.apply(
-                                                                new com.backend.filter.AuthenticationFilter.Config())))
-                                                .uri("http://user-service:8080"))
-                                .route("auth-service", r -> r.path("/auth/**")
-                                                .filters(f -> f.prefixPath("/user"))
-                                                .uri("http://user-service:8080")) // /auth endpoints are public, so
-                                                                                  // usually no auth filter needed, or
-                                                                                  // RouteValidator handles skipping it
-                                .route("property-service", r -> r.path("/properties/**")
-                                                .filters(f -> f.filter(authFilter.apply(
-                                                                new com.backend.filter.AuthenticationFilter.Config())))
-                                                .uri("http://property-service:8081"))
-                                .build();
-        }
+@Bean
+public RouteLocator customRouteLocator(RouteLocatorBuilder builder,
+                com.backend.filter.AuthenticationFilter authFilter) {
+        return builder.routes()
+                // Rotta per le API utente normali (protette)
+                .route("user-service", r -> r.path("/user/**")
+                        .filters(f -> f.filter(authFilter.apply(new com.backend.filter.AuthenticationFilter.Config())))
+                        .uri("http://user-service:8080"))
+
+                // Rotta per Auth e LOGIN SOCIALE (pubbliche)
+                .route("auth-social-route", r -> r.path("/auth/**", "/oauth2/**", "/login/**")
+                        .filters(f -> f.prefixPath("/user")) // Se lo user-service ha context-path /user
+                        .uri("http://user-service:8080"))
+
+                .route("property-service", r -> r.path("/properties/**")
+                        .filters(f -> f.filter(authFilter.apply(new com.backend.filter.AuthenticationFilter.Config())))
+                        .uri("http://property-service:8081"))
+                .build();
+}
 
         @Bean
         public CorsWebFilter corsWebFilter() {

@@ -33,3 +33,11 @@ coverage
 src/**/*.vue.js
 src/**/*.js.map
 *.tsbuildinfo
+
+
+# Maven/Spring Boot target
+**/target/
+target/
+*.jar
+*.war
+*.ear

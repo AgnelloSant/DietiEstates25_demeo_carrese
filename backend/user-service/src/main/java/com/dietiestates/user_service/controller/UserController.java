@@ -30,12 +30,6 @@ public class UserController {
         return ResponseEntity.ok(userService.getProfile(email));
     }
 
-    // @GetMapping("/me")
-    // public ResponseEntity<PublicUserDTO> getMyProfile(java.security.Principal
-    // principal) {
-    // // The principal name is the email set by HeaderAuthenticationFilter
-    // return ResponseEntity.ok(userService.getProfileByEmail(principal.getName()));
-    // }
 
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateProfile(@PathVariable Long id, @RequestBody UpdateProfileRequest request) {

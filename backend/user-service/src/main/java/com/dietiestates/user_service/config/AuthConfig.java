@@ -1,6 +1,7 @@
 package com.dietiestates.user_service.config;
 
 import com.dietiestates.user_service.repository.UserRepository;
+import com.dietiestates.user_service.service.CustomOAuth2SuccessHandler;
 import com.dietiestates.user_service.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -38,15 +40,27 @@ public class AuthConfig {
         return config.getAuthenticationManager();
     }
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http,
-            HeaderAuthenticationFilter headerAuthenticationFilter) throws Exception {
-        return http.csrf(csrf -> csrf.disable())
-                .addFilterBefore(headerAuthenticationFilter,
-                        org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()
-                        .anyRequest().authenticated())
-                .build();
-    }
+ @Bean
+public SecurityFilterChain securityFilterChain(HttpSecurity http,
+        HeaderAuthenticationFilter headerAuthenticationFilter,
+        CustomOAuth2SuccessHandler successHandler) throws Exception {
+
+    return http
+        .csrf(csrf -> csrf.disable())
+
+        .authorizeHttpRequests(auth -> auth
+            .requestMatchers("/auth/**", "/oauth2/**", "/login/**").permitAll()
+            .anyRequest().authenticated()
+        )
+
+        .oauth2Login(oauth -> oauth
+            .successHandler(successHandler)
+        )
+
+        .addFilterBefore(headerAuthenticationFilter,
+            UsernamePasswordAuthenticationFilter.class)
+
+        .build();
+}
+
 }
