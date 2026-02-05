@@ -61,4 +61,18 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(request.getNewPsw()));
         userRepository.save(user);
     }
+
+    public void createAdmin(User credentials) {
+        credentials.setRole("ADMIN");
+        credentials.setPassword(passwordEncoder.encode(credentials.getPassword()));
+        userRepository.save(credentials);
+
+    }
+
+    public void createAgent(User credentials) {
+        credentials.setRole("AGENT");
+        credentials.setPassword(passwordEncoder.encode(credentials.getPassword()));
+        userRepository.save(credentials);
+    }
+
 }

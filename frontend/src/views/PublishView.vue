@@ -15,7 +15,7 @@
     </div>
 
 
-    <!-- Step 1: Info base -->
+    <!-- Step 1 -->
     <div v-if="step === 1" class="step">
       <h2 class="page-subtitle">📌 Informazioni di base</h2>
       <input v-model="form.title" placeholder="🏠 Titolo annuncio" required />

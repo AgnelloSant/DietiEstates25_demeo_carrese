@@ -8,6 +8,7 @@ import com.dietiestates.user_service.dto.UserProfileDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.dietiestates.user_service.model.User;
 
 @RestController
 @RequestMapping("")
@@ -46,6 +47,18 @@ public class UserController {
     @PostMapping("/password")
     public ResponseEntity<Void> changePassword(@RequestBody PswChangeRequest request) {
         userService.changePassword(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/create/admin")
+    public ResponseEntity<Void> createAdmin(@RequestBody User user) {
+        userService.createAdmin(user);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/create/agent")
+    public ResponseEntity<Void> createAgent(@RequestBody User user) {
+        userService.createAgent(user);
         return ResponseEntity.ok().build();
     }
 }

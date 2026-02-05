@@ -1,25 +1,21 @@
 <template>
   <div class="property-card" :class="{ compact }">
-    <!-- Badge tipo annuncio -->
     <div v-if="property.listingType" class="listing-type" :class="property.listingType.toLowerCase()">
       {{ property.listingType.toUpperCase() }}
     </div>
 
-    <!-- Immagine -->
-    <img :src="property.imageUrl || '/placeholder-house.jpg'" alt="Foto immobile" class="property-img"/>
+    <img :src="property.imageUrl ? getContentUrl(property.imageUrl) : '/placeholder-house.jpg'" alt="Foto immobile" class="property-img"/>
 
     <div class="property-info">
       <h3>{{ property.title }}</h3>
       <p>{{ property.city }} • {{ property.area }} m² • {{ property.address }}</p>
       <p class="price">€ {{ property.price.toLocaleString() }}</p>
 
-      <!-- Extra info -->
       <p v-if="property.rooms || property.energyClass" class="extras">
         <span v-if="property.rooms">🛏️ {{ property.rooms }} stanze</span>
         <span v-if="property.energyClass"> • 🔋 Classe {{ property.energyClass }}</span>
       </p>
 
-      <!-- 🆕 Badge vantaggi -->
       <div class="badges">
         <span v-if="property.nearSchool" class="badge">🏫 Scuole</span>
         <span v-if="property.nearPark" class="badge">🌳 Parchi</span>
@@ -29,7 +25,7 @@
       <!-- Azioni -->
       <div class="card-actions">
         <RouterLink :to="`/properties/${property.id}`" class="details-btn">Dettagli</RouterLink>
-        <!-- ❤️ toggle preferiti -->
+        
         <button
           class="fav-btn"
           :class="{ active: isFavourite }"
@@ -49,6 +45,11 @@ defineProps<{ property: PropertySearchDTO; compact?: boolean; isFavourite?: bool
 defineEmits<{
   (e: "toggle-fav", id: number): void
 }>()
+
+function getContentUrl(path: string) {
+    const baseUrl = import.meta.env.VITE_API_PROPERTY_URL || 'http://localhost:8082'
+    return `${baseUrl}/uploads/${path}`
+}
 </script>
 
 <style scoped>

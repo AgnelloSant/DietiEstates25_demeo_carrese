@@ -11,24 +11,20 @@ import { useAuthStore } from "@/stores/authenticate"
 import { usePropertyStore } from "@/stores/properties"
 
 /**
- * 🔑 LOGIN
- * POST → /user/auth/login
+ * LOGIN
  */
 export const login = (payload: LoginRequest) => {
   // Backend AuthController is mapped to /auth
   return httpUS.post<LoginResponse>("/auth/login", payload)
 }
 
-/**
- * 📝 REGISTRAZIONE
- * POST → /user/auth/register
- */
+
 export const register = (payload: RegisterRequest) => {
   return httpUS.post("/auth/register", payload)
 }
 
 /**
- * 🔒 CAMBIO PASSWORD
+ * CAMBIO PASSWORD
  * POST → /user/password
  */
 export const changePassword = (payload: PswChangeRequest) => {
@@ -36,8 +32,8 @@ export const changePassword = (payload: PswChangeRequest) => {
 }
 
 /**
- * 🚪 LOGOUT
- * POST → /user/logout (Note: Backend may not handle this, kept for client consistency)
+ *  LOGOUT
+ * POST → /user/logout 
  */
 export const logout = async () => {
   const store = useAuthStore()
@@ -61,17 +57,24 @@ export const logout = async () => {
 }
 
 /**
- * 👤 OTTIENI PROFILO COMPLETO
- * GET → /user/me
+ * OTTIENI PROFILO COMPLETO
  */
 export const getProfile = () => {
   return httpUS.get("/me")
 }
 
 /**
- * ✏️ AGGIORNA PROFILO (nome e telefono)
- * PUT → /user/{id}
+ * AGGIORNA PROFILO (nome e telefono)
  */
-export const updateProfile = (id: number, data: UpdateProfileRequest) => {
-  return httpUS.put(`/${id}`, data)
+export const updateProfile = (data: UpdateProfileRequest) => {
+  const store = useAuthStore()
+  return httpUS.put(`/${store.user?.id}`, data)
+}
+
+export const createAdmin = (payload: RegisterRequest) => {
+  return httpUS.post("/create/admin", payload)
+}
+
+export const createAgent = (payload: RegisterRequest) => {
+  return httpUS.post("/create/agent", payload)
 }

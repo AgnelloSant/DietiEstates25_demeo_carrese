@@ -23,10 +23,13 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/search", "/search/**", "/getall", "/get/**", "/uploads/**").permitAll()
-                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/{id:[0-9]+}").permitAll() // Allow
-                                                                                                              // GET
-                                                                                                              // /123
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/{id:[0-9]+}").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/{id:[0-9]+}/images").permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/{id:[0-9]+}/images").permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.POST, "/create")
+                        .hasAnyRole("AGENT", "ADMIN")
+                        .requestMatchers(org.springframework.http.HttpMethod.POST, "/{id:[0-9]+}/upload")
+                        .hasAnyRole("AGENT", "ADMIN")
                         .anyRequest().authenticated())
                 .addFilterBefore(headerAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

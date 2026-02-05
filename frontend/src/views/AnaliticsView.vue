@@ -47,22 +47,16 @@
     <div class="modal modal--medium">
         <h3>Dettagli offerte</h3>
 
-        <div class="bid-header">
-            <strong class="text-info">Importo</strong>
-            <strong class="text-info">Data</strong>
-            <strong class="text-info">Azioni</strong>
-        </div>
-
         <div v-if="selectedBids && selectedBids.length > 0" class="bid-list">
             <div v-for="b in selectedBids" :key="b.id" class="bid-row">
+              <div class="bid-row-content">
+                <strong class="text-info">Importo</strong>
                 <div class="white-text">€ {{ b.amount.toFixed(2) }}</div> 
-                
+
+                <strong class="text-info">Data</strong>
                 <div class="white-text">{{ formatPublishedAt(b.publishedAt) }}</div>
-                
-                <div class="bid-actions">
-                    <button @click="acceptBid(b.id)" class="btn-accept">Accetta</button>
-                    <button @click="rejectBid(b.id)" class="btn-bulk-delete"> Rifiuta </button>
-                </div>
+        
+              </div>
             </div>
         </div>
         <div v-else class="empty-state">
