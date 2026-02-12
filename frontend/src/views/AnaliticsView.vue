@@ -7,7 +7,7 @@
     </div>
 
     <!-- EXCEL DOWNLOAD BUTTONS -->
-    <div style="margin-bottom: 20px; text-align: right; display: flex; gap: 10px; justify-content: flex-end;">
+    <div style="margin-bottom: 20px; text-align: center; display: flex; gap: 10px; justify-content: center;">
         <button style="padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;" @click="downloadExcel">Scarica Excel Prenotazioni</button>
         <button style="padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;" @click="downloadBidsExcelFile">Scarica Excel Offerte</button>
     </div>

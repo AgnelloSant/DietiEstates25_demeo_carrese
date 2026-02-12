@@ -5,7 +5,6 @@
       <div class="header-glow"></div>
       <div class="container header-inner">
         <RouterLink to="/" class="logo-modern">
-          <span class="logo-icon">🏠</span>
           <span class="logo-text">
             <span class="logo-primary">Dieti</span>
             <span class="logo-secondary">Estates</span>
@@ -245,14 +244,6 @@ const handlePublishClick = () => {
 </script>
 
 <style scoped>
-/*  Menu si impila su mobile
-
-Footer diventa single column
-
- Modal si adatta allo schermo */
-/* ============================================
-   🎨 HEADER MODERNO
-   ============================================ */
 
 .header-modern {
   position: relative;
