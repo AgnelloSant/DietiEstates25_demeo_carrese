@@ -1,10 +1,10 @@
 # build stage
-FROM node:22-alpine as build-stage
+FROM node:22-alpine AS build-stage
 WORKDIR /app
 COPY package*.json ./
-RUN npm install && npx vite build
+RUN npm install 
 COPY . .
-RUN npm run build-only
+RUN npx vite build
 
 # development stage
 FROM node:22-alpine as dev-stage
@@ -16,7 +16,7 @@ EXPOSE 5173
 CMD ["npm", "run", "dev", "--", "--host"]
 
 # production stage
-FROM nginx:stable-alpine as production-stage
+FROM nginx:stable-alpine AS production-stage
 COPY --from=build-stage /app/dist /usr/share/nginx/html
 # Copy the config as a template for env substitution
 COPY nginx.conf /etc/nginx/templates/default.conf.template
