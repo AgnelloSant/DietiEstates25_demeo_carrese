@@ -41,3 +41,6 @@ jobs:
           # Property Service
           docker build -t $ECR_REGISTRY/dieti-property-service:latest -f ./backend/property-service/Dockerfile ./backend/property-service
           docker push $ECR_REGISTRY/dieti-property-service:latest
+      - name: Force ECS Update
+        run: |
+          aws ecs update-service --cluster dietiestates-cluster --service frontend --force-new-deployment
