@@ -2,6 +2,7 @@ package com.dietiestates.user_service.controller;
 
 import com.dietiestates.user_service.dto.LoginRequest;
 import com.dietiestates.user_service.dto.LoginResponse;
+import com.dietiestates.user_service.dto.PswChangeRequest;
 import com.dietiestates.user_service.dto.PublicUserDTO;
 import com.dietiestates.user_service.model.User;
 import com.dietiestates.user_service.service.AuthService;
@@ -41,6 +42,12 @@ public class AuthController {
         } else {
             throw new RuntimeException("invalid access");
         }
+    }
+
+    @PostMapping("/password")
+    public ResponseEntity<Void> changePassword(@RequestBody PswChangeRequest request) {
+        service.changePassword(request);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/login")

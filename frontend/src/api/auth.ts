@@ -28,7 +28,7 @@ export const register = (payload: RegisterRequest) => {
  * POST → /user/password
  */
 export const changePassword = (payload: PswChangeRequest) => {
-  return httpUS.post("/password", payload)
+  return httpUS.post("/auth/password", payload)
 }
 
 /**
