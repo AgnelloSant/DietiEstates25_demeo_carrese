@@ -107,7 +107,7 @@ import { useToast } from "vue-toastification"
 // 🗺️ Leaflet
 import L from "leaflet"
 import "leaflet/dist/leaflet.css"
-import { text } from "stream/consumers"
+//import { text } from "stream/consumers"
 
 delete (L.Icon.Default.prototype as any)._getIconUrl
 L.Icon.Default.mergeOptions({

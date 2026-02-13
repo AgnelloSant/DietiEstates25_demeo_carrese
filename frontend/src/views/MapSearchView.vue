@@ -66,7 +66,7 @@ onMounted(() => {
   const drawnItems = new L.FeatureGroup()
   map.addLayer(drawnItems)
 
-  const drawControl = new L.Control.Draw({
+  const drawControl = new (L as any).Control.Draw({
     draw: {
       polygon: false,
       rectangle: false,
@@ -80,7 +80,7 @@ onMounted(() => {
   map.addControl(drawControl)
 
   // Evento: cerchio disegnato
-  map.on(L.Draw.Event.CREATED, async (e: any) => {
+  map.on((L as any).Draw.Event.CREATED, async (e: any) => {
     if (e.layerType === "circle") {
       if (activeCircle) map?.removeLayer(activeCircle)
       activeCircle = e.layer as Circle

@@ -9,8 +9,7 @@ import {
 } from "@/api/properties"
 import { getFavourites, addFavourite } from "@/api/users"
 import type { PropertySearchDTO, PropertyCreateDTO, PropertyUpdateDTO, CreateReservationDTO, CreateBidDTO } from "@/types/Properties"
-import { create } from "domain"
-// 👇 importa anche il dettaglio
+//import { create } from "domain"
 import type { PropertyDetailDTO } from "@/types/Properties"
 import { httpProperty } from "@/api/http"   // <-- se non c'è, importa il tuo client axios
 
