@@ -23,9 +23,7 @@ public class GatewayConfig {
                                                 .uri("http://user-service:8080"))
                                 .route("auth-service", r -> r.path("/auth/**")
                                                 .filters(f -> f.prefixPath("/user"))
-                                                .uri("http://user-service:8080")) // /auth endpoints are public, so
-                                                                                  // usually no auth filter needed, or
-                                                                                  // RouteValidator handles skipping it
+                                                .uri("http://user-service:8080"))
                                 .route("property-service", r -> r.path("/properties/**")
                                                 .filters(f -> f.filter(authFilter.apply(
                                                                 new com.backend.filter.AuthenticationFilter.Config())))
@@ -36,7 +34,7 @@ public class GatewayConfig {
         @Bean
         public CorsWebFilter corsWebFilter() {
                 CorsConfiguration corsConfig = new CorsConfiguration();
-                corsConfig.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://localhost:3000"));
+                corsConfig.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://localhost:3000", "*"));
                 corsConfig.setMaxAge(3600L);
                 corsConfig.addAllowedMethod("*");
                 corsConfig.addAllowedHeader("*");
