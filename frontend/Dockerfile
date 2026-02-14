@@ -1,29 +1,30 @@
-# Stage 1: Build
+# --- Stage 1: Build ---
 FROM node:22-alpine AS build-stage
 WORKDIR /app
-
-# Saltiamo cypress per velocità
-ENV CYPRESS_INSTALL_BINARY=0 
-
+ENV CYPRESS_INSTALL_BINARY=0
 COPY package*.json ./
-# Installazione pulita
-RUN npm ci 
-
-# Copiamo i file
+RUN npm install
 COPY . .
+RUN npx vite build
 
-# --- IL TRUCCO ---
-# Forziamo Vite a generare nomi diversi e pulire la cartella
-RUN npx vite build --emptyOutDir
+# COMANDO DIAGNOSTICO: Vedremo questo log nelle GitHub Actions!
+RUN echo "CONTENUTO DELLA CARTELLA DIST:" && ls -R /app/dist
 
-# Stage 2: Production
+# --- Stage 2: Production ---
 FROM nginx:stable-alpine
-# Pulizia maniacale
-RUN rm -rf /usr/share/nginx/html/*
 
-# Copia i file dalla build appena fatta
+# Rimuoviamo la configurazione di default per evitare conflitti
+RUN rm /etc/nginx/conf.d/default.conf
+
+# Copiamo la tua configurazione in una posizione che Nginx DEVE leggere
+COPY nginx.conf /etc/nginx/conf.d/frontend.conf
+
+# Puliamo e copiamo i file
+RUN rm -rf /usr/share/nginx/html/*
 COPY --from=build-stage /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Permessi: Assicuriamoci che Nginx possa leggere i file
+RUN chmod -R 755 /usr/share/nginx/html
 
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
