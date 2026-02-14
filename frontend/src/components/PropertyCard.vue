@@ -9,7 +9,7 @@
     <div class="property-info">
       <h3>{{ property.title }}</h3>
       <p>{{ property.city }} • {{ property.area }} m² • {{ property.address }}</p>
-      <p class="price">€ {{ property.price.toLocaleString() }}</p>
+      <p class="price">€ {{ property.price ? property.price.toLocaleString() : 'N/A' }}</p>
 
       <p v-if="property.rooms || property.energyClass" class="extras">
         <span v-if="property.rooms">🛏️ {{ property.rooms }} stanze</span>

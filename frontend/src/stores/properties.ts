@@ -73,16 +73,15 @@ export const usePropertyStore = defineStore("properties", {
       } catch (err) {
         console.error("Errore nel caricamento proprietà", err)
         this.error = "Errore nel caricamento delle proprietà"
-        this.list = []          // 🔴 se fallisce → svuoto la lista
+        this.list = []
       } finally {
-        this.loading = false    // 🔵 disattivo stato di caricamento
+        this.loading = false
       }
 
     },
 
 
 
-    // 🔹 Fetch dettaglio proprietà
     async fetchDetail(id: number): Promise<PropertyDetailDTO> {
       return await getPropertyDetail(id)
     },
@@ -245,7 +244,6 @@ export const usePropertyStore = defineStore("properties", {
       }
     },
 
-    // ✍️ CRUD PROPERTY
     async addProperty(payload: PropertyCreateDTO) {
       try {
         const res = await createProperty(payload)
@@ -266,7 +264,6 @@ export const usePropertyStore = defineStore("properties", {
       await this.fetchList()
     },
 
-    // 📸 IMAGES
     async uploadImage(id: number, file: File) {
       await uploadPropertyImage(id, file)
     },
