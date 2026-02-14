@@ -47,7 +47,8 @@ defineEmits<{
 }>()
 
 function getContentUrl(path: string) {
-    const baseUrl = import.meta.env.VITE_API_PROPERTY_URL || 'http://localhost:8082'
+function getContentUrl(path: string) {
+    const baseUrl = import.meta.env.VITE_API_PROPERTY_URL || ''
     return `${baseUrl}/uploads/${path}`
 }
 </script>

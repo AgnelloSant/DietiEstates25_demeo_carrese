@@ -8,8 +8,8 @@ COPY . .
 # --- FORCE RELATIVE PATHS ---
 # Sovrascriviamo le variabili per essere sicuri che la build usi paths relativi
 # e ignori qualsiasi .env.production che potrebbe esserci
-ENV VITE_API_PROPERTY_URL=""
-ENV VITE_API_USER_URL=""
+ENV VITE_API_PROPERTY_URL="/property"
+ENV VITE_API_USER_URL="/user"
 
 RUN npx vite build
 

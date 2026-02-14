@@ -3,7 +3,7 @@ import axios from 'axios'
 
 // property-service (Gateway)
 export const httpProperty = axios.create({
-  baseURL: import.meta.env.VITE_API_PROPERTY_URL || 'http://localhost:8082',
+  baseURL: import.meta.env.VITE_API_PROPERTY_URL || '/property',
   headers: {
     'Content-Type': 'application/json'
   }
@@ -11,7 +11,7 @@ export const httpProperty = axios.create({
 
 // user-service (Gateway)
 export const httpUS = axios.create({
-  baseURL: import.meta.env.VITE_API_USER_URL || 'http://localhost:8082/user',
+  baseURL: import.meta.env.VITE_API_USER_URL || '/user',
   headers: {
     'Content-Type': 'application/json'
   }
