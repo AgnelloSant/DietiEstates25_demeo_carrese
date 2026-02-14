@@ -110,7 +110,7 @@
 
     <!-- Step 4: Foto -->
     <div v-if="step === 4" class="step">
-      <h2 class="page-subtitle">📸 Foto principale</h2>
+      <h2 class="page-subtitle">📸 Foto immobile</h2>
       <input type="file" accept="image/jpeg" @change="handleFileSelect" />
       <p class="hint">Carica una foto in formato .jpg</p>
       
