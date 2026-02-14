@@ -69,6 +69,7 @@ export const usePropertyStore = defineStore("properties", {
         const res = await searchProperties(params)
 
         //  salvo i risultati nella lista del Pinia store
+        console.log("Search results received:", res.data)
         this.list = res.data
       } catch (err) {
         console.error("Errore nel caricamento proprietà", err)

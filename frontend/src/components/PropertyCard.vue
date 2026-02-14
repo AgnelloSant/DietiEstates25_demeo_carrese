@@ -41,7 +41,7 @@
 <script setup lang="ts">
 import type { PropertySearchDTO } from "@/types/Properties"
 
-defineProps<{ property: PropertySearchDTO; compact?: boolean; isFavourite?: boolean }>()
+const props = defineProps<{ property: PropertySearchDTO; compact?: boolean; isFavourite?: boolean }>()
 defineEmits<{
   (e: "toggle-fav", id: number): void
 }>()
@@ -51,6 +51,12 @@ function getContentUrl(path: string) {
     const baseUrl = import.meta.env.VITE_API_PROPERTY_URL || ''
     return `${baseUrl}/uploads/${path}`
 }
+
+import { onMounted } from 'vue';
+onMounted(() => {
+  console.log('PropertyCard mounted with property:', props.property);
+});
+
 </script>
 
 <style scoped>
