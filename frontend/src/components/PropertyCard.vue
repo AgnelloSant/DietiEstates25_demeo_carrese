@@ -46,7 +46,7 @@ defineEmits<{
   (e: "toggle-fav", id: number): void
 }>()
 
-function getContentUrl(path: string) {
+
 function getContentUrl(path: string) {
     const baseUrl = import.meta.env.VITE_API_PROPERTY_URL || ''
     return `${baseUrl}/uploads/${path}`
