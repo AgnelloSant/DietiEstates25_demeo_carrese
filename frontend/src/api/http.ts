@@ -3,7 +3,7 @@ import axios from 'axios'
 
 // property-service (Gateway)
 export const httpProperty = axios.create({
-  baseURL: import.meta.env.VITE_API_PROPERTY_URL || '/property',
+  baseURL: import.meta.env.VITE_API_PROPERTY_URL || '/properties',
   headers: {
     'Content-Type': 'application/json'
   }
