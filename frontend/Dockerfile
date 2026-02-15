@@ -16,6 +16,15 @@ RUN npx vite build
 # COMANDO DIAGNOSTICO: Vedremo questo log nelle GitHub Actions!
 RUN echo "CONTENUTO DELLA CARTELLA DIST:" && ls -R /app/dist
 
+# --- Stage 1.5: Dev ---
+FROM node:22-alpine AS dev-stage
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+EXPOSE 5173
+CMD ["npm", "run", "dev", "--", "--host"]
+
 # --- Stage 2: Production ---
 FROM nginx:stable-alpine
 
