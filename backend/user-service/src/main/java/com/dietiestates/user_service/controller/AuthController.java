@@ -4,6 +4,7 @@ import com.dietiestates.user_service.dto.LoginRequest;
 import com.dietiestates.user_service.dto.LoginResponse;
 import com.dietiestates.user_service.dto.PswChangeRequest;
 import com.dietiestates.user_service.dto.PublicUserDTO;
+import com.dietiestates.user_service.dto.RegisterRequest;
 import com.dietiestates.user_service.model.User;
 import com.dietiestates.user_service.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,7 +30,14 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
 
     @PostMapping("/register")
-    public String addNewUser(@RequestBody User user) {
+    public String addNewUser(
+            @RequestBody @jakarta.validation.Valid RegisterRequest request) {
+        User user = new User();
+        user.setName(request.getName());
+        user.setEmail(request.getEmail());
+        user.setPassword(request.getPassword());
+        user.setPhone(request.getPhone());
+        user.setRole(request.getRole());
         return service.saveUser(user);
     }
 

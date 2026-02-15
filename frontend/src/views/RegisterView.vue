@@ -112,6 +112,22 @@ const handleRegister = async () => {
   error.value = ''
   registering.value = true
 
+  // Email Validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(form.email)) {
+    error.value = 'Please enter a valid email address.';
+    registering.value = false;
+    return;
+  }
+
+  // Password Validation
+  const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+  if (!passwordRegex.test(form.password)) {
+    error.value = 'Password must be at least 8 characters long, contain at least one number and one uppercase letter.';
+    registering.value = false;
+    return;
+  }
+
   try {
     const success = await auth.registerUser(form)
     if (success) {

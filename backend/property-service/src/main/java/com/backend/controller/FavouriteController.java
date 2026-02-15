@@ -21,16 +21,11 @@ public class FavouriteController {
 
     @GetMapping("/get")
     public ResponseEntity<List<PropertyDetailDTO>> getFavourites(@RequestHeader("X-User-Id") Long userId) {
-        System.out.println("DEBUG PropertyService: getFavourites called. Principal: " + userId);
 
         if (userId == null) {
-            System.out.println("DEBUG PropertyService: Unauthorized (anonymous or null)");
             return ResponseEntity.status(401).build();
         }
-
         try {
-            // Long userId = Long.valueOf(principal.toString());
-            System.out.println("DEBUG PropertyService: Fetching favorites for userId: " + userId);
             return ResponseEntity.ok(favouriteService.getFavouriteProperties(userId));
         } catch (NumberFormatException e) {
             System.err.println("ERROR PropertyService: Invalid user ID format: " + userId);

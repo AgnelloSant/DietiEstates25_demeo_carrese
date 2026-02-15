@@ -1,8 +1,19 @@
 package com.dietiestates.user_service.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+
 public class PswChangeRequest {
     private String oldPsw;
+
+    @NotBlank(message = "New password is required")
+    @Size(min = 8, message = "Password must be at least 8 characters long")
+    @Pattern(regexp = ".*\\d.*", message = "Password must contain at least one number")
+    @Pattern(regexp = ".*[A-Z].*", message = "Password must contain at least one uppercase letter")
     private String newPsw;
+
+    @NotBlank(message = "Email is required")
     private String email;
 
     public PswChangeRequest() {
