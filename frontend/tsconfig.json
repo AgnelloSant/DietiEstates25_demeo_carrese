@@ -1,19 +1,32 @@
 {
   "compilerOptions": {
     "target": "ESNext",
+    "types": [
+      "vite/client"
+    ],
     "module": "ESNext",
     "moduleResolution": "node",
     "strict": true,
     "jsx": "preserve",
     "esModuleInterop": true,
     "skipLibCheck": true,
-        "noEmit": true,  //  Non genera file .js nel build
+    "noEmit": true, //  Non genera file .js nel build
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": [
+        "src/*"
+      ]
     },
-    "lib": ["ESNext", "DOM"]
+    "lib": [
+      "ESNext",
+      "DOM"
+    ]
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue"
+  ]
 }

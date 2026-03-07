@@ -15,18 +15,18 @@
     </div>
 
 
-    <!-- Step 1: Info base -->
+    <!-- Step 1 -->
     <div v-if="step === 1" class="step">
-      <h2 class="page-subtitle">📌 Informazioni di base</h2>
-      <input v-model="form.title" placeholder="🏠 Titolo annuncio" required />
+      <h2 class="page-subtitle">Informazioni di base</h2>
+      <input v-model="form.title" placeholder="Titolo annuncio" required />
       <textarea
         v-model="form.description"
-        placeholder="📝 Descrizione immobile"
+        placeholder="Descrizione immobile"
         rows="4"
         class="description-input"
         required
       ></textarea>
-      <input v-model="form.city" placeholder="📍 Città (Es. Napoli)" required />
+      <input v-model="form.city" placeholder="Città (Es. Napoli)" required />
 
       <div class="nav-buttons">
         <button
@@ -41,13 +41,13 @@
 
     <!-- Step 2: Indirizzo -->
     <div v-if="step === 2" class="step">
-      <h2 class="page-subtitle">📍 Indirizzo</h2>
+      <h2 class="page-subtitle">Indirizzo</h2>
       <input v-model="addressInput" placeholder="Via Roma 10, Napoli" required />
       <button class="third-btn" @click="resolveAddress">Trova sulla mappa</button>
 
       <div v-if="coords" id="map" class="map-preview"></div>
       <p v-if="coords" class="success">
-        ✅ Coordinate trovate: {{ coords.lat }}, {{ coords.lng }}
+        Coordinate trovate: {{ coords.lat }}, {{ coords.lng }}
       </p>
 
       <div class="nav-buttons">
@@ -60,7 +60,7 @@
 
     <!-- Step 3: Dettagli tecnici -->
     <div v-if="step === 3" class="step">
-      <h2 class="page-subtitle">📏 Dettagli immobile</h2>
+      <h2 class="page-subtitle">Dettagli immobile</h2>
       <input
         v-model.number="form.area"
         type="number"
@@ -78,15 +78,15 @@
 
       <select v-model="form.listingType" required>
         <option disabled value="">-- Tipo annuncio --</option>
-        <option value="vendita">🏷️ Vendita</option>
-        <option value="affitto">📄 Affitto</option>
+        <option value="vendita">Vendita</option>
+        <option value="affitto">Affitto</option>
       </select>
 
       <input
         v-model.number="form.rooms"
         type="number"
         min="1"
-        placeholder="🛏️ Numero stanze"
+        placeholder="Numero stanze"
         required
       />
 
@@ -97,20 +97,20 @@
       </select>
 
       <div class="nav-buttons">
-        <button class="btn-primary" @click="prevStep">⬅️ Indietro</button>
+        <button class="btn-primary" @click="prevStep">Indietro</button>
         <button
           class="btn-primary"
           :disabled="!form.area || !form.price || !form.rooms || !form.energyClass"
           @click="nextStep"
         >
-          Avanti ➡️
+          Avanti
         </button>
       </div>
     </div>
 
     <!-- Step 4: Foto -->
     <div v-if="step === 4" class="step">
-      <h2 class="page-subtitle">📸 Foto principale</h2>
+      <h2 class="page-subtitle">Foto immobile</h2>
       <input type="file" accept="image/jpeg" @change="handleFileSelect" />
       <p class="hint">Carica una foto in formato .jpg</p>
       
@@ -119,17 +119,16 @@
       </div>
 
        <div class="nav-buttons">
-        <button class="btn-primary" @click="prevStep">⬅️ Indietro</button>
-        <button class="btn-primary" @click="nextStep">Avanti ➡️</button>
+        <button class="btn-primary" @click="prevStep">Indietro</button>
+        <button class="btn-primary" @click="nextStep">Avanti</button>
       </div>
     </div>
 
     <!-- Step 5: Riepilogo -->
     <div v-if="step === 5" class="step">
-      <h2>✅ Riepilogo finale</h2>
+      <h2>Riepilogo finale</h2>
 
       <div class="container">
-        <!-- 📋 Dati -->
         <ul class="summary">
           <li><b>Titolo:</b> {{ form.title }}</li>
           <li><b>Descrizione:</b> {{ form.description }}</li>
@@ -142,13 +141,12 @@
           <li><b>Classe energetica:</b> {{ form.energyClass }}</li>
         </ul>
 
-        <!-- Mini mappa -->
         <div v-if="coords" id="map-summary" class="map-summary"></div>
       </div>
 
       <div class="nav-buttons">
-        <button class="btn-primary" @click="prevStep">⬅️ Indietro</button>
-        <button class="btn-publish" @click="publish">🚀 Pubblica</button>
+        <button class="btn-primary" @click="prevStep">Indietro</button>
+        <button class="btn-publish" @click="publish">Pubblica</button>
       </div>
     </div>
 

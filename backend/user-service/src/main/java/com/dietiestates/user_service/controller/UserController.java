@@ -8,6 +8,7 @@ import com.dietiestates.user_service.dto.UserProfileDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.dietiestates.user_service.model.User;
 
 @RestController
 @RequestMapping("")
@@ -30,22 +31,21 @@ public class UserController {
         return ResponseEntity.ok(userService.getProfile(email));
     }
 
-    // @GetMapping("/me")
-    // public ResponseEntity<PublicUserDTO> getMyProfile(java.security.Principal
-    // principal) {
-    // // The principal name is the email set by HeaderAuthenticationFilter
-    // return ResponseEntity.ok(userService.getProfileByEmail(principal.getName()));
-    // }
-
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateProfile(@PathVariable Long id, @RequestBody UpdateProfileRequest request) {
         userService.updateProfile(id, request);
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/password")
-    public ResponseEntity<Void> changePassword(@RequestBody PswChangeRequest request) {
-        userService.changePassword(request);
+    @PostMapping("/create/admin")
+    public ResponseEntity<Void> createAdmin(@RequestBody User user) {
+        userService.createAdmin(user);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/create/agent")
+    public ResponseEntity<Void> createAgent(@RequestBody User user) {
+        userService.createAgent(user);
         return ResponseEntity.ok().build();
     }
 }

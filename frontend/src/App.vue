@@ -5,7 +5,6 @@
       <div class="header-glow"></div>
       <div class="container header-inner">
         <RouterLink to="/" class="logo-modern">
-          <span class="logo-icon">🏠</span>
           <span class="logo-text">
             <span class="logo-primary">Dieti</span>
             <span class="logo-secondary">Estates</span>
@@ -33,6 +32,20 @@
             Admin
           </RouterLink>
 
+          <!-- Insights (Agenti e Admin) -->
+          <RouterLink
+            v-if="auth.user && (auth.user.role?.toUpperCase().includes('AGENT') || auth.user.role?.toUpperCase().includes('ADMIN'))"
+            to="/analitics"
+            class="nav-link"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="20" x2="18" y2="10"></line>
+              <line x1="12" y1="20" x2="12" y2="4"></line>
+              <line x1="6" y1="20" x2="6" y2="14"></line>
+            </svg>
+            Insights
+          </RouterLink>
+
           <!--  Bottone Pubblica Annuncio -->
           <button class="btn-publish-modern" @click="handlePublishClick">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -42,7 +55,9 @@
             Pubblica
           </button>
 
-          <!-- Profilo, analytics e logout (solo utenti loggati)-->
+          
+
+          <!-- Profiloe logout (solo utenti loggati)-->
           <template v-if="auth.user">
             <RouterLink to="/profile" class="nav-link">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -52,14 +67,6 @@
               Profilo
             </RouterLink>
             
-            <RouterLink to="/analitics" class="nav-link">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="18" y1="20" x2="18" y2="10"></line>
-                <line x1="12" y1="20" x2="12" y2="4"></line>
-                <line x1="6" y1="20" x2="6" y2="14"></line>
-              </svg>
-              Insights
-            </RouterLink>
             
             <a href="#" @click.prevent="showLogoutConfirm = true" class="nav-link nav-link-logout">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -70,6 +77,8 @@
               Logout
             </a>
           </template>
+
+
 
           <!-- Link per guest -->
           <template v-else>
@@ -158,7 +167,7 @@
           <h3 class="modal-title">Non sei autorizzato</h3>
           <p class="modal-message">Per pubblicare un annuncio devi lavorare presso un agenzia immobiliare.</p>
           
-          <div class="modal-actions-modern">
+          <div v-if="!auth.user" class="modal-actions-modern">
             <RouterLink to="/login" class="btn-modal btn-modal-primary" @click="showPublishPrompt = false">
               Accedi
             </RouterLink>
@@ -235,14 +244,6 @@ const handlePublishClick = () => {
 </script>
 
 <style scoped>
-/*  Menu si impila su mobile
-
-Footer diventa single column
-
- Modal si adatta allo schermo */
-/* ============================================
-   🎨 HEADER MODERNO
-   ============================================ */
 
 .header-modern {
   position: relative;

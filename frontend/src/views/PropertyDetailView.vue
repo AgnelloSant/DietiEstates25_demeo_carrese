@@ -20,7 +20,7 @@
       </div>
       <p class="detail-city"><i class="fa-solid fa-location-dot"></i> {{ property.city }}</p>
       <p class="bold-text"><strong>{{ property.area }} m²</strong></p>
-      <p class="green-text">€ {{ property.price.toLocaleString() }}</p>
+      <p class="green-text">€ {{ property.price.String() }}</p>
       <p class="detail-extra"><b>Tipo:</b> {{ property.listingType }}</p>
       <p class="detail-extra"><b>Stanze:</b> {{ property.rooms }}</p>
       <p class="detail-extra"><b>Classe energetica:</b> {{ property.energyClass }}</p>
@@ -107,7 +107,7 @@ import { useToast } from "vue-toastification"
 // 🗺️ Leaflet
 import L from "leaflet"
 import "leaflet/dist/leaflet.css"
-import { text } from "stream/consumers"
+//import { text } from "stream/consumers"
 
 delete (L.Icon.Default.prototype as any)._getIconUrl
 L.Icon.Default.mergeOptions({

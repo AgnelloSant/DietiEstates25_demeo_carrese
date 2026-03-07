@@ -16,10 +16,6 @@
           <span class="stat-number">{{ affittiCount }}</span>
           <span class="stat-label">In Affitto</span>
         </div>
-        <div class="stat-bubble">
-          <span class="stat-number">€{{ averagePrice.toLocaleString('it-IT') }}</span>
-          <span class="stat-label">Prezzo Medio</span>
-        </div>
       </div>
     </div>
 

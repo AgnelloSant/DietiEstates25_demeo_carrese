@@ -47,18 +47,6 @@
               </div>
             </div>
             
-            <div class="feature-item">
-              <div class="feature-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                  <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-                </svg>
-              </div>
-              <div class="feature-text">
-                <div class="feature-title">Notifiche Real-Time</div>
-                <div class="feature-desc">Sempre aggiornato</div>
-              </div>
-            </div>
           </div>
           
           <!-- CTA -->
@@ -314,10 +302,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* ============================================
-   🌟 HERO PROFESSIONALE CENTRATO
-   ============================================ */
-
 .hero-professional {
   position: relative;
   min-height: 100vh;

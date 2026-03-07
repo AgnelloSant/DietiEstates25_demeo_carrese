@@ -20,23 +20,21 @@ public class GatewayConfig {
                                 .route("user-service", r -> r.path("/user/**")
                                                 .filters(f -> f.filter(authFilter.apply(
                                                                 new com.backend.filter.AuthenticationFilter.Config())))
-                                                .uri("http://user-service:8080"))
+                                                .uri("http://user-service.dietiestates.local:8080"))
                                 .route("auth-service", r -> r.path("/auth/**")
                                                 .filters(f -> f.prefixPath("/user"))
-                                                .uri("http://user-service:8080")) // /auth endpoints are public, so
-                                                                                  // usually no auth filter needed, or
-                                                                                  // RouteValidator handles skipping it
+                                                .uri("http://user-service.dietiestates.local:8080"))
                                 .route("property-service", r -> r.path("/properties/**")
                                                 .filters(f -> f.filter(authFilter.apply(
                                                                 new com.backend.filter.AuthenticationFilter.Config())))
-                                                .uri("http://property-service:8081"))
+                                                .uri("http://property-service.dietiestates.local:8081"))
                                 .build();
         }
 
         @Bean
         public CorsWebFilter corsWebFilter() {
                 CorsConfiguration corsConfig = new CorsConfiguration();
-                corsConfig.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://localhost:3000"));
+                corsConfig.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://localhost:3000", "*"));
                 corsConfig.setMaxAge(3600L);
                 corsConfig.addAllowedMethod("*");
                 corsConfig.addAllowedHeader("*");

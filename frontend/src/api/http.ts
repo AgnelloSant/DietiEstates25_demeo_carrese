@@ -3,7 +3,7 @@ import axios from 'axios'
 
 // property-service (Gateway)
 export const httpProperty = axios.create({
-  baseURL: import.meta.env.VITE_API_PROPERTY_URL || 'http://localhost:8082',
+  baseURL: import.meta.env.VITE_API_PROPERTY_URL || '/properties',
   headers: {
     'Content-Type': 'application/json'
   }
@@ -11,7 +11,7 @@ export const httpProperty = axios.create({
 
 // user-service (Gateway)
 export const httpUS = axios.create({
-  baseURL: import.meta.env.VITE_API_USER_URL || 'http://localhost:8082/user',
+  baseURL: import.meta.env.VITE_API_USER_URL || '/user',
   headers: {
     'Content-Type': 'application/json'
   }
@@ -25,7 +25,7 @@ const addAuthHeader = (config: any) => {
   const token = localStorage.getItem("token")
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
-    console.log('🔑 JWT aggiunto alla richiesta:', config.url)
+    console.log('JWT aggiunto alla richiesta:', config.url)
   }
   return config
 }
@@ -56,14 +56,14 @@ httpUS.interceptors.response.use(
 
       originalRequest._retry = true  // Flag per evitare loop infinito
 
-      console.warn('⚠️ Token scaduto (401), provo refresh...')
+      console.warn('Token scaduto (401), provo refresh...')
 
       try {
         // Chiama endpoint refresh (manda refresh token via cookie HttpOnly)
         const refreshResponse = await httpUS.post('/refresh')
         const newToken = refreshResponse.data.accessToken
 
-        console.log('✅ Token refreshato con successo')
+        console.log('Token refreshato con successo')
 
         // Salva nuovo token
         localStorage.setItem('token', newToken)
@@ -76,7 +76,7 @@ httpUS.interceptors.response.use(
 
       } catch (refreshError) {
         // Refresh fallito → Token refresh scaduto o revocato
-        console.error('❌ Refresh fallito, logout forzato')
+        console.error('Refresh fallito, logout forzato')
 
         // Pulisci tutto
         localStorage.clear()

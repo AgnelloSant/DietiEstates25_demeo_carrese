@@ -31,7 +31,9 @@ const options: PluginOptions = {
 app.use(createPinia())
 app.use(router)
 
-// 👉 castiamo Toast a `any` per bypassare il problema di overload TS
 app.use(Toast as any, options)
 
 app.mount("#app")
+
+
+//Commento stupido per vedere se funziona il commit

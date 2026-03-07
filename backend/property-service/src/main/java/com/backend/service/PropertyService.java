@@ -63,6 +63,7 @@ public class PropertyService {
         }
 
         propertyRepository.save(property);
+        createDTO.setId(property.getId());
         createDTO.setNearSchool(property.isNearSchool());
         createDTO.setNearPark(property.isNearPark());
         createDTO.setNearTransport(property.isNearTransport());
