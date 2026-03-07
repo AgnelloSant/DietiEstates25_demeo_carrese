@@ -1,5 +1,6 @@
 package com.backend.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
@@ -9,9 +10,20 @@ import org.springframework.web.cors.reactive.CorsWebFilter;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Configuration
 public class GatewayConfig {
+
+        @Value("${USER_SERVICE_URL:http://user-service:8080}")
+        private String userServiceUrl;
+
+        @Value("${PROPERTY_SERVICE_URL:http://property-service:8081}")
+        private String propertyServiceUrl;
+
+        @Value("${ALLOWED_ORIGINS:http://localhost:5173,http://localhost:3000}")
+        private String allowedOrigins;
 
         @Bean
         public RouteLocator customRouteLocator(RouteLocatorBuilder builder,
@@ -20,21 +32,27 @@ public class GatewayConfig {
                                 .route("user-service", r -> r.path("/user/**")
                                                 .filters(f -> f.filter(authFilter.apply(
                                                                 new com.backend.filter.AuthenticationFilter.Config())))
-                                                .uri("http://user-service.dietiestates.local:8080"))
+                                                .uri(userServiceUrl))
                                 .route("auth-service", r -> r.path("/auth/**")
                                                 .filters(f -> f.prefixPath("/user"))
-                                                .uri("http://user-service.dietiestates.local:8080"))
+                                                .uri(userServiceUrl))
                                 .route("property-service", r -> r.path("/properties/**")
                                                 .filters(f -> f.filter(authFilter.apply(
                                                                 new com.backend.filter.AuthenticationFilter.Config())))
-                                                .uri("http://property-service.dietiestates.local:8081"))
+                                                .uri(propertyServiceUrl))
                                 .build();
         }
 
         @Bean
         public CorsWebFilter corsWebFilter() {
                 CorsConfiguration corsConfig = new CorsConfiguration();
-                corsConfig.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://localhost:3000", "*"));
+
+                List<String> origins = Arrays.stream(allowedOrigins.split(","))
+                                .map(String::trim)
+                                .collect(Collectors.toList());
+
+                corsConfig.setAllowedOrigins(origins);
+                System.out.println("DEBUG Gateway: Allowed Origins: " + origins);
                 corsConfig.setMaxAge(3600L);
                 corsConfig.addAllowedMethod("*");
                 corsConfig.addAllowedHeader("*");

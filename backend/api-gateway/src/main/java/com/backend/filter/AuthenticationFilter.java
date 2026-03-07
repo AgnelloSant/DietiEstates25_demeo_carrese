@@ -31,7 +31,8 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
             if (isSecured) {
                 if (!exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
                     System.out.println("DEBUG Gateway: Missing auth header for secured path: " + path);
-                    throw new RuntimeException("missing authorization header");
+                    exchange.getResponse().setStatusCode(org.springframework.http.HttpStatus.UNAUTHORIZED);
+                    return exchange.getResponse().setComplete();
                 }
 
                 String authHeader = exchange.getRequest().getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
@@ -66,7 +67,8 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
                 } catch (Exception e) {
                     System.out.println("DEBUG Gateway: Token verification failed: " + e.getMessage());
                     e.printStackTrace();
-                    throw new RuntimeException("unauthorized access to application");
+                    exchange.getResponse().setStatusCode(org.springframework.http.HttpStatus.UNAUTHORIZED);
+                    return exchange.getResponse().setComplete();
                 }
             }
             return chain.filter(exchange);
