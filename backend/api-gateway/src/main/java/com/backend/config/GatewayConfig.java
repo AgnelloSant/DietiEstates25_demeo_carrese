@@ -51,8 +51,8 @@ public class GatewayConfig {
                                 .map(String::trim)
                                 .collect(Collectors.toList());
 
-                corsConfig.setAllowedOrigins(origins);
-                System.out.println("DEBUG Gateway: Allowed Origins: " + origins);
+                corsConfig.setAllowedOriginPatterns(origins);
+                System.out.println("DEBUG Gateway: Allowed Origin Patterns: " + origins);
                 corsConfig.setMaxAge(3600L);
                 corsConfig.addAllowedMethod("*");
                 corsConfig.addAllowedHeader("*");
