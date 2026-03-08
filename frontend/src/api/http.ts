@@ -1,9 +1,11 @@
 import { useAuthStore } from '@/stores/authenticate'
 import axios from 'axios'
 
+const ensureTrailingSlash = (url: string) => url.endsWith('/') ? url : url + '/';
+
 // property-service (Gateway)
 export const httpProperty = axios.create({
-  baseURL: import.meta.env.VITE_API_PROPERTY_URL || '/properties',
+  baseURL: ensureTrailingSlash(import.meta.env.VITE_API_PROPERTY_URL || '/properties'),
   headers: {
     'Content-Type': 'application/json'
   }
@@ -11,7 +13,7 @@ export const httpProperty = axios.create({
 
 // user-service (Gateway)
 export const httpUS = axios.create({
-  baseURL: import.meta.env.VITE_API_USER_URL || '/user',
+  baseURL: ensureTrailingSlash(import.meta.env.VITE_API_USER_URL || '/user'),
   headers: {
     'Content-Type': 'application/json'
   }
