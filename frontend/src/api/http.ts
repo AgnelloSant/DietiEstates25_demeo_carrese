@@ -60,7 +60,7 @@ httpUS.interceptors.response.use(
 
       try {
         // Chiama endpoint refresh (manda refresh token via cookie HttpOnly)
-        const refreshResponse = await httpUS.post('/refresh')
+        const refreshResponse = await httpUS.post('refresh')
         const newToken = refreshResponse.data.accessToken
 
         console.log('Token refreshato con successo')

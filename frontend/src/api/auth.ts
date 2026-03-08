@@ -15,12 +15,12 @@ import { usePropertyStore } from "@/stores/properties"
  */
 export const login = (payload: LoginRequest) => {
   // Backend AuthController is mapped to /auth
-  return httpUS.post<LoginResponse>("/auth/login", payload)
+  return httpUS.post<LoginResponse>("auth/login", payload)
 }
 
 
 export const register = (payload: RegisterRequest) => {
-  return httpUS.post("/auth/register", payload)
+  return httpUS.post("auth/register", payload)
 }
 
 /**
@@ -28,7 +28,7 @@ export const register = (payload: RegisterRequest) => {
  * POST → /user/password
  */
 export const changePassword = (payload: PswChangeRequest) => {
-  return httpUS.post("/auth/password", payload)
+  return httpUS.post("auth/password", payload)
 }
 
 /**
@@ -41,7 +41,7 @@ export const logout = async () => {
 
   try {
     // Backend revoca refresh token
-    await httpUS.post("/logout")
+    await httpUS.post("logout")
   } catch (err) {
     console.warn('Logout backend fallito (token già scaduto?)')
   }
@@ -60,7 +60,7 @@ export const logout = async () => {
  * OTTIENI PROFILO COMPLETO
  */
 export const getProfile = () => {
-  return httpUS.get("/me")
+  return httpUS.get("me")
 }
 
 /**
@@ -68,13 +68,13 @@ export const getProfile = () => {
  */
 export const updateProfile = (data: UpdateProfileRequest) => {
   const store = useAuthStore()
-  return httpUS.put(`/${store.user?.id}`, data)
+  return httpUS.put(`${store.user?.id}`, data)
 }
 
 export const createAdmin = (payload: RegisterRequest) => {
-  return httpUS.post("/create/admin", payload)
+  return httpUS.post("create/admin", payload)
 }
 
 export const createAgent = (payload: RegisterRequest) => {
-  return httpUS.post("/create/agent", payload)
+  return httpUS.post("create/agent", payload)
 }

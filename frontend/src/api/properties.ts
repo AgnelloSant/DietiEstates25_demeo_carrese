@@ -16,7 +16,7 @@ export const searchProperties = (params?: {
   rooms?: number
   energyClass?: string
 }): Promise<AxiosResponse<PropertySearchDTO[]>> => {
-  return httpProperty.get<PropertySearchDTO[]>("/search", { params })
+  return httpProperty.get<PropertySearchDTO[]>("search", { params })
 }
 
 export const searchByBounds = (params: {
@@ -24,11 +24,11 @@ export const searchByBounds = (params: {
   lon: number
   radiusKm: number
 }): Promise<AxiosResponse<PropertySearchDTO[]>> => {
-  return httpProperty.get<PropertySearchDTO[]>("/search/bybounds", { params })
+  return httpProperty.get<PropertySearchDTO[]>("search/bybounds", { params })
 }
 
 export async function getPropertyDetail(id: number) {
-  const { data } = await httpProperty.get<PropertyDetailDTO>(`/${id}`)
+  const { data } = await httpProperty.get<PropertyDetailDTO>(`${id}`)
   return data
 }
 
@@ -36,7 +36,7 @@ export async function getPropertyDetail(id: number) {
 export async function uploadPropertyImage(id: number, file: File) {
   const formData = new FormData()
   formData.append("file", file)
-  await httpProperty.post(`/${id}/upload`, formData, {
+  await httpProperty.post(`${id}/upload`, formData, {
     headers: {
       "Content-Type": "multipart/form-data"
     }
@@ -44,14 +44,14 @@ export async function uploadPropertyImage(id: number, file: File) {
 }
 
 export async function getPropertyImages(id: number): Promise<string[]> {
-  const { data } = await httpProperty.get<string[]>(`/${id}/images`)
+  const { data } = await httpProperty.get<string[]>(`${id}/images`)
   return data
 }
 
 // Creazione proprietà
 export async function createProperty(payload: PropertyCreateDTO) {
   // POST /create
-  const { data } = await httpProperty.post<PropertyCreateDTO>('/create', payload)
+  const { data } = await httpProperty.post<PropertyCreateDTO>('create', payload)
   return data
 }
 
@@ -59,7 +59,7 @@ export async function createProperty(payload: PropertyCreateDTO) {
 // Update
 export async function updateProperty(id: number, payload: PropertyUpdateDTO) {
   const { data } = await httpProperty.put(
-    `/update/${id}`,
+    `update/${id}`,
     payload,
     { headers: { "Content-Type": "application/json" } }
   )
@@ -67,7 +67,7 @@ export async function updateProperty(id: number, payload: PropertyUpdateDTO) {
 }
 
 export async function deleteProperty(id: number) {
-  await httpProperty.delete(`/delete/${id}`)
+  await httpProperty.delete(`delete/${id}`)
 }
 
 
@@ -76,13 +76,13 @@ export async function deleteProperty(id: number) {
   * GET → /reservations/getbyproperty/{id}
   */
 export async function getReservationsByProperty(id: number) {
-  const { data } = await httpProperty.get(`/reservations/getbyproperty/${id}`);
+  const { data } = await httpProperty.get(`reservations/getbyproperty/${id}`);
   return data;
 }
 
 export async function getReservationsByUser() {
   const token = localStorage.getItem("token");
-  const { data } = await httpProperty.get(`/reservations/getbyuser`, {
+  const { data } = await httpProperty.get(`reservations/getbyuser`, {
     headers: { Authorization: `Bearer ${token}` }
   });
   return data;
@@ -93,12 +93,12 @@ export async function getReservationsByUser() {
 * POST → /reservations/new
 */
 export async function createReservation(payload: CreateReservationDTO) {
-  const { data } = await httpProperty.post<CreateReservationDTO>(`/reservations/new`, payload);
+  const { data } = await httpProperty.post<CreateReservationDTO>(`reservations/new`, payload);
   return data;
 }
 
 export async function getStats(idProp: number) {
-  var propertyBookings = await httpProperty.get(`/reservations/countbyproperty/${idProp}`);
+  var propertyBookings = await httpProperty.get(`reservations/countbyproperty/${idProp}`);
   // var propertyBids = await httpProperty.get(`/bids/countByProperty/${id}`);
   const data = {
     bookings: propertyBookings.data,
@@ -114,13 +114,13 @@ export async function getStats(idProp: number) {
   * GET → /bids/getbyuser/{id}
   */
 export async function getBidsByProperty(idProp: number) {
-  const { data } = await httpProperty.get(`/bids/getbyproperty/${idProp}`);
+  const { data } = await httpProperty.get(`bids/getbyproperty/${idProp}`);
   return data;
 }
 
 export async function getBidsByUser() {
   const token = localStorage.getItem("token");
-  const { data } = await httpProperty.get(`/bids/getbyuser`, {
+  const { data } = await httpProperty.get(`bids/getbyuser`, {
     headers: { Authorization: `Bearer ${token}` }
   });
   return data;
@@ -128,7 +128,7 @@ export async function getBidsByUser() {
 
 export async function getBidsSummaryByUserOwned() {
   const token = localStorage.getItem("token");
-  const { data } = await httpProperty.get(`/bids/getsummary`, {
+  const { data } = await httpProperty.get(`bids/getsummary`, {
     headers: { Authorization: `Bearer ${token}` }
   });
   return data;
@@ -136,7 +136,7 @@ export async function getBidsSummaryByUserOwned() {
 
 export async function getMonthlyTrend() {
   const token = localStorage.getItem("token");
-  const { data } = await httpProperty.get(`/bids/getmonthlytrend`, {
+  const { data } = await httpProperty.get(`bids/getmonthlytrend`, {
     headers: { Authorization: `Bearer ${token}` }
   });
   return data;
@@ -146,7 +146,7 @@ export async function createBid(payload: CreateBidDTO) {
   const token = localStorage.getItem("token");
 
   const { data } = await httpProperty.post<boolean>(
-    `/bids/new`,
+    `bids/new`,
     payload,
     {
       headers: {
@@ -158,20 +158,20 @@ export async function createBid(payload: CreateBidDTO) {
 }
 
 export const getFavourites = () => {
-  return httpProperty.get('/favourites/get')
+  return httpProperty.get('favourites/get')
 }
 
 export const addFavourite = (propertyId: number) => {
-  return httpProperty.post('/favourites/add', { idProp: propertyId })
+  return httpProperty.post('favourites/add', { idProp: propertyId })
 }
 
 export const removeFavourite = (propertyId: number) => {
-  return httpProperty.delete(`/favourites/remove/${propertyId}`)
+  return httpProperty.delete(`favourites/remove/${propertyId}`)
 }
 
 export async function downloadReservationsExcel() {
   const token = localStorage.getItem("token");
-  const response = await httpProperty.get('/reservations/getexcel', {
+  const response = await httpProperty.get('reservations/getexcel', {
     headers: { Authorization: `Bearer ${token}` },
     responseType: 'blob', // Important for binary data
   });
@@ -180,7 +180,7 @@ export async function downloadReservationsExcel() {
 
 export async function downloadBidsExcel() {
   const token = localStorage.getItem("token");
-  const response = await httpProperty.get('/bids/getreceived', {
+  const response = await httpProperty.get('bids/getreceived', {
     headers: { Authorization: `Bearer ${token}` },
     responseType: 'blob',
   });
