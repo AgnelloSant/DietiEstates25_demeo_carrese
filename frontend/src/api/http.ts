@@ -1,11 +1,32 @@
 import { useAuthStore } from '@/stores/authenticate'
 import axios from 'axios'
 
-const ensureTrailingSlash = (url: string) => url.endsWith('/') ? url : url + '/';
+/**
+ * Builds a robust baseURL for a service.
+ * 1. Takes the URL from env or uses the local fallback.
+ * 2. If it's a full URL (contains ://), it ensures it ends with the service path (suffix).
+ * 3. Ensures it ends with a trailing slash for proper axios path joining.
+ */
+const buildBaseURL = (envUrl: string | undefined, fallback: string) => {
+  let url = envUrl || fallback;
+  const suffix = fallback.startsWith('/') ? fallback : '/' + fallback; // e.g., /properties
+
+  // If it's a production URL (e.g. https://...onrender.com)
+  if (url.includes('://')) {
+    // Remove trailing slash for easier check
+    let normalized = url.endsWith('/') ? url.slice(0, -1) : url;
+    if (!normalized.endsWith(suffix)) {
+      normalized += suffix;
+    }
+    url = normalized;
+  }
+
+  return url.endsWith('/') ? url : url + '/';
+};
 
 // property-service (Gateway)
 export const httpProperty = axios.create({
-  baseURL: ensureTrailingSlash(import.meta.env.VITE_API_PROPERTY_URL || '/properties'),
+  baseURL: buildBaseURL(import.meta.env.VITE_API_PROPERTY_URL, '/properties'),
   headers: {
     'Content-Type': 'application/json'
   }
@@ -13,7 +34,7 @@ export const httpProperty = axios.create({
 
 // user-service (Gateway)
 export const httpUS = axios.create({
-  baseURL: ensureTrailingSlash(import.meta.env.VITE_API_USER_URL || '/user'),
+  baseURL: buildBaseURL(import.meta.env.VITE_API_USER_URL, '/user'),
   headers: {
     'Content-Type': 'application/json'
   }
