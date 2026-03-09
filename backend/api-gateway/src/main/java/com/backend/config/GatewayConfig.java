@@ -16,10 +16,10 @@ import java.util.stream.Collectors;
 @Configuration
 public class GatewayConfig {
 
-        @Value("${USER_SERVICE_URL} || http://user-service:8080")
+        @Value("${USER_SERVICE_URL:http://user-service:8080}")
         private String userServiceUrl;
 
-        @Value("${PROPERTY_SERVICE_URL} || http://property-service:8081")
+        @Value("${PROPERTY_SERVICE_URL:http://property-service:8081}")
         private String propertyServiceUrl;
 
         @Value("${ALLOWED_ORIGINS:http://localhost:5173,http://localhost:3000,https://dieti-estates25-demeo-carrese.vercel.app}")
