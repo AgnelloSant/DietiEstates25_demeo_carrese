@@ -2,6 +2,7 @@ package com.dietiestates.user_service.service;
 
 import com.dietiestates.user_service.dto.AuthResult;
 import com.dietiestates.user_service.dto.LoginRequest;
+import com.dietiestates.user_service.dto.PswChangeRequest;
 import com.dietiestates.user_service.dto.TokenPair;
 import com.dietiestates.user_service.model.User;
 import com.dietiestates.user_service.repository.UserRepository;
@@ -59,5 +60,17 @@ public class AuthService {
 
     public void validateToken(String token) {
         jwtService.validateToken(token);
+    }
+
+    public void changePassword(PswChangeRequest request) {
+        User user = repository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!passwordEncoder.matches(request.getOldPsw(), user.getPassword())) {
+            throw new RuntimeException("Invalid old password");
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getNewPsw()));
+        repository.save(user);
     }
 }

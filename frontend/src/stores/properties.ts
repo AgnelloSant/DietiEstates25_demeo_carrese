@@ -9,8 +9,7 @@ import {
 } from "@/api/properties"
 import { getFavourites, addFavourite,removeFavourite } from "@/api/users"
 import type { PropertySearchDTO, PropertyCreateDTO, PropertyUpdateDTO, CreateReservationDTO, CreateBidDTO } from "@/types/Properties"
-import { create } from "domain"
-// 👇 importa anche il dettaglio
+//import { create } from "domain"
 import type { PropertyDetailDTO } from "@/types/Properties"
 import { httpProperty } from "@/api/http"   // <-- se non c'è, importa il tuo client axios
 
@@ -70,20 +69,20 @@ export const usePropertyStore = defineStore("properties", {
         const res = await searchProperties(params)
 
         //  salvo i risultati nella lista del Pinia store
+        console.log("Search results received:", res.data)
         this.list = res.data
       } catch (err) {
         console.error("Errore nel caricamento proprietà", err)
         this.error = "Errore nel caricamento delle proprietà"
-        this.list = []          // 🔴 se fallisce → svuoto la lista
+        this.list = []
       } finally {
-        this.loading = false    // 🔵 disattivo stato di caricamento
+        this.loading = false
       }
 
     },
 
 
 
-    // 🔹 Fetch dettaglio proprietà
     async fetchDetail(id: number): Promise<PropertyDetailDTO> {
       return await getPropertyDetail(id)
     },
@@ -278,7 +277,6 @@ async toggleFavourite(idProp: number) {
       }
     },
 
-    // ✍️ CRUD PROPERTY
     async addProperty(payload: PropertyCreateDTO) {
       try {
         const res = await createProperty(payload)
@@ -299,7 +297,6 @@ async toggleFavourite(idProp: number) {
       await this.fetchList()
     },
 
-    // 📸 IMAGES
     async uploadImage(id: number, file: File) {
       await uploadPropertyImage(id, file)
     },

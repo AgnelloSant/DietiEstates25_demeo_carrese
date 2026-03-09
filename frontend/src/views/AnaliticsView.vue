@@ -7,7 +7,7 @@
     </div>
 
     <!-- EXCEL DOWNLOAD BUTTONS -->
-    <div style="margin-bottom: 20px; text-align: right; display: flex; gap: 10px; justify-content: flex-end;">
+    <div style="margin-bottom: 20px; text-align: center; display: flex; gap: 10px; justify-content: center;">
         <button style="padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;" @click="downloadExcel">Scarica Excel Prenotazioni</button>
         <button style="padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;" @click="downloadBidsExcelFile">Scarica Excel Offerte</button>
     </div>
@@ -47,22 +47,16 @@
     <div class="modal modal--medium">
         <h3>Dettagli offerte</h3>
 
-        <div class="bid-header">
-            <strong class="text-info">Importo</strong>
-            <strong class="text-info">Data</strong>
-            <strong class="text-info">Azioni</strong>
-        </div>
-
         <div v-if="selectedBids && selectedBids.length > 0" class="bid-list">
             <div v-for="b in selectedBids" :key="b.id" class="bid-row">
+              <div class="bid-row-content">
+                <strong class="text-info">Importo</strong>
                 <div class="white-text">€ {{ b.amount.toFixed(2) }}</div> 
-                
+
+                <strong class="text-info">Data</strong>
                 <div class="white-text">{{ formatPublishedAt(b.publishedAt) }}</div>
-                
-                <div class="bid-actions">
-                    <button @click="acceptBid(b.id)" class="btn-accept">Accetta</button>
-                    <button @click="rejectBid(b.id)" class="btn-bulk-delete"> Rifiuta </button>
-                </div>
+        
+              </div>
             </div>
         </div>
         <div v-else class="empty-state">

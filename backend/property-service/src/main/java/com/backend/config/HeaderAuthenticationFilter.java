@@ -26,13 +26,12 @@ public class HeaderAuthenticationFilter extends OncePerRequestFilter {
         String userRole = request.getHeader("X-User-Role");
 
         if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            // Since property-service might not have a full User table or
-            // UserDetailsService,
-            // we create a simple authenticated principal based on the header.
             UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                    userId, // Principal is now the ID
+                    userId,
                     null,
-                    Collections.singletonList(new SimpleGrantedAuthority(userRole != null ? userRole : "ROLE_USER")));
+                    Collections.singletonList(new SimpleGrantedAuthority(
+                            (userRole != null && !userRole.startsWith("ROLE_")) ? "ROLE_" + userRole
+                                    : (userRole != null ? userRole : "ROLE_USER"))));
             authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authToken);
         }

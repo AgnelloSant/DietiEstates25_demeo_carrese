@@ -22,17 +22,10 @@ import com.backend.dto.BidTrendDTO;
 import java.io.ByteArrayInputStream;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import java.sql.Date;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.web.bind.annotation.*;
-//import org.springframework.security.core.annotation.AuthenticationPrincipal;
+
 import java.time.LocalDateTime;
-//import java.time.format.DateTimeFormatter;
-//import java.util.List;
 
 @RestController
 @RequestMapping("")

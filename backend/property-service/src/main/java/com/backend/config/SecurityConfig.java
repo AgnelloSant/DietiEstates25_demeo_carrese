@@ -16,19 +16,23 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final HeaderAuthenticationFilter headerAuthenticationFilter;
-// SecurityConfig.java
-@Bean
-public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    http
-        .csrf(AbstractHttpConfigurer::disable)
-        
-        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) 
-        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-        .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/search/**", "/getall", "/get/**", "/uploads/**", "/favourites/**").permitAll()
-            .anyRequest().authenticated()
-        )
-        .addFilterBefore(headerAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/search", "/search/**", "/getall", "/get/**", "/uploads/**", "/favourites/**").permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/{id:[0-9]+}").permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/{id:[0-9]+}/images").permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/{id:[0-9]+}/images").permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.POST, "/create")
+                        .hasAnyRole("AGENT", "ADMIN")
+                        .requestMatchers(org.springframework.http.HttpMethod.POST, "/{id:[0-9]+}/upload")
+                        .hasAnyRole("AGENT", "ADMIN")
+                        .anyRequest().authenticated())
+                .addFilterBefore(headerAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
     return http.build();
 }

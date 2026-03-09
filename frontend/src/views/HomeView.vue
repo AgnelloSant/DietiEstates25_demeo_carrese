@@ -316,10 +316,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* ============================================
-   🌟 HERO PROFESSIONALE CENTRATO
-   ============================================ */
-
 .hero-professional {
   position: relative;
   min-height: 100vh;

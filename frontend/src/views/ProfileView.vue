@@ -21,20 +21,19 @@
       <!-- Card Info Utente -->
       <div class="basic-card">
         <div class="card-header">
-          <h2>📋 Informazioni Personali</h2>
+          <h2>Informazioni Personali</h2>
           <button 
             v-if="!editMode" 
             @click="enableEdit" 
             class="btn-secondary"
           >
-            ✏️ Modifica
+             Modifica
           </button>
         </div>
 
         <div class="card-content">
-          <!-- Nome -->
           <div class="card-item">
-            <label>👤 Nome</label>
+            <label> Nome</label>
             <input 
               v-if="editMode" 
               v-model="editForm.name" 
@@ -45,16 +44,14 @@
             <p v-else class="card-item">{{ profile.name || 'Non specificato' }}</p>
           </div>
 
-          <!-- Email (non editabile) -->
           <div class="card-item">
-            <label>📧 Email</label>
+            <label> Email</label>
             <p class="card-item">{{ profile.email }}</p>
             <span class="badge" :class="providerClass">{{ providerLabel }}</span>
           </div>
 
-          <!-- Telefono -->
           <div class="card-item">
-            <label>📞 Telefono</label>
+            <label> Telefono</label>
             <input 
               v-if="editMode" 
               v-model="editForm.phone" 
@@ -65,9 +62,8 @@
             <p v-else class="card-item">{{ profile.phone || 'Non specificato' }}</p>
           </div>
 
-          <!-- Ruolo (non editabile) -->
           <div class="card-item">
-            <label>🔑 Ruolo</label>
+            <label> Ruolo</label>
             <p class="card-item">
               <span class="role-badge">{{ profile.role }}</span>
             </p>
@@ -84,7 +80,7 @@
         </div>
       </div>
 
-      <!-- Card Cambio Password (solo per utenti local) -->
+      <!-- Cambio Password  solo se loggati con email e password-->
       <div v-if="profile.provider === 'local'" class="basic-card">
         <div class="card-header">
           <h2>Sicurezza</h2>
@@ -118,31 +114,82 @@
         </form>
       </div>
 
-      <!-- Messaggio per utenti OAuth -->
       <div v-else class="oauth-notice">
         <p> Accedi tramite <strong>{{ providerLabel }}</strong></p>
         <p class="notice-text">La tua password è gestita da {{ providerLabel }}. Non puoi cambiarla qui.</p>
       </div>
 
-      <!-- Messaggi feedback -->
       <div v-if="successMessage" class="success">
-        ✅ {{ successMessage }}
+         {{ successMessage }}
       </div>
       <div v-if="errorMessage" class="error-message">
-        ⚠️ {{ errorMessage }}
+        {{ errorMessage }}
       </div>
 
     </div>
+  </div>
+  <!--  Creazione Utente admin o agente -->
+  
+  <div v-if="['ADMIN', 'AGENT', 'ROLE_ADMIN', 'ROLE_AGENT'].includes(profile.role?.toUpperCase())" class="basic-card">
+    <div class="card-header">
+      <h2> Crea Utente</h2>
+    </div>
+
+    <form @submit.prevent="createNewUser" class="password-form">
+      <div class="form-group">
+        <label>Nome</label>
+        <input v-model="newUser.name" type="text" placeholder="Nome completo" required />
+      </div>
+
+      <div class="form-group">
+        <label>Email</label>
+        <input v-model="newUser.email" type="email" placeholder="email@example.com" required />
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+        <input v-model="newUser.password" type="password" placeholder="Password sicura" required />
+      </div>
+
+       <div class="form-group">
+        <label>Telefono</label>
+        <input v-model="newUser.phone" type="tel" placeholder="+39 ..." required />
+      </div>
+
+      <div class="form-group" v-if="isAdmin">
+        <label>Ruolo</label>
+        <select v-model="newUser.role" class="role-select">
+          <option value="AGENT">Agente</option>
+          <option value="ADMIN">Admin</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn-primary" :disabled="creatingUser">
+        <span v-if="!creatingUser">✨ Crea {{ isAdmin ? newUser.role : 'Agente' }}</span>
+        <span v-else>⏳ Creazione...</span>
+      </button>
+    </form>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/authenticate'
-import { getProfile, updateProfile } from '@/api/auth'
-import type { UserProfile, UpdateProfileRequest, PswChangeRequest } from '@/types/user'
+import { getProfile, updateProfile, createAdmin, createAgent } from '@/api/auth'
+import type { UserProfile, UpdateProfileRequest, PswChangeRequest, RegisterRequest } from '@/types/user'
+import { useToast } from "vue-toastification"
 
+const toast = useToast()
 const auth = useAuthStore()
+
+const creatingUser = ref(false)
+const newUser = reactive({
+  name: '',
+  email: '',
+  password: '',
+  phone: '',
+  role: 'AGENT'
+})
 
 // State
 const profile = ref<UserProfile>({
@@ -193,7 +240,44 @@ const providerClass = computed(() => {
   return `badge-${profile.value.provider}`
 })
 
-// Methods
+const isAdmin = computed(() => {
+  return profile.value.role?.toUpperCase().includes('ADMIN') || auth.user?.role?.toUpperCase().includes('ADMIN')
+})
+
+const createNewUser = async () => {
+    creatingUser.value = true;
+    try{
+        const payload: RegisterRequest = {
+            name: newUser.name,
+            email: newUser.email,
+            password: newUser.password,
+            phone: newUser.phone,
+            role: newUser.role
+        }
+
+        if(isAdmin.value && newUser.role === 'ADMIN'){
+             await createAdmin(payload)
+             toast.success("Nuovo Admin creato con successo!")
+        } else {
+             await createAgent(payload)
+             toast.success("Nuovo Agente creato con successo!")
+        }
+
+        // Reset form
+        newUser.name = ''
+        newUser.email = ''
+        newUser.password = ''
+        newUser.phone = ''
+        newUser.role = 'AGENT'
+
+    }catch(e){
+        console.error(e)
+        toast.error("Errore nella creazione dell'utente")
+    }finally{
+        creatingUser.value = false
+    }
+}
+
 const loadProfile = async () => {
   loading.value = true
   try {
@@ -405,5 +489,12 @@ onMounted(() => {
   .edit-actions {
     flex-direction: column;
   }
+}
+
+.password-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 1rem;
 }
 </style>
