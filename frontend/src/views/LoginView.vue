@@ -117,6 +117,7 @@
 import { ref } from "vue"
 import { useRouter } from "vue-router"
 import { useAuthStore } from "@/stores/authenticate"
+import { httpUS } from "@/api/http"
 
 const router = useRouter()
 const auth = useAuthStore()
