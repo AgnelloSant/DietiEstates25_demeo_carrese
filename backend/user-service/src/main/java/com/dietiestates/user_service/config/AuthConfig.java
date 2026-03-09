@@ -2,6 +2,8 @@ package com.dietiestates.user_service.config;
 
 import com.dietiestates.user_service.repository.UserRepository;
 import com.dietiestates.user_service.service.CustomUserDetailsService;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
