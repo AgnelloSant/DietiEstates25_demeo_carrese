@@ -22,7 +22,7 @@ public class GatewayConfig {
         @Value("${PROPERTY_SERVICE_URL:http://property-service:8081}")
         private String propertyServiceUrl;
 
-        @Value("${ALLOWED_ORIGINS:http://localhost:5173,http://localhost:3000,https://dieti-estates25-demeo-carrese.vercel.app}")
+        @Value("${ALLOWED_ORIGINS:http://localhost:5173,http://localhost:3000,https://dieti-estates25-demeo-carrese.vercel.app,https://dieti-estates25-demeo-carrese*.vercel.app}")
         private String allowedOrigins;
 
         @Bean
