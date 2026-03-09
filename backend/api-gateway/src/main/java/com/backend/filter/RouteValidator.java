@@ -9,6 +9,7 @@ import java.util.function.Predicate;
 @Component
 public class RouteValidator {
 
+        //lista di rotte che non hanno bisogno di JWT
         public static final List<String> openApiEndpoints = List.of(
                         "/auth/.*", // Matches /auth/register, /auth/login, etc.
                         "/user/auth/.*",

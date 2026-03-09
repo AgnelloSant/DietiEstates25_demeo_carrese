@@ -55,7 +55,6 @@
                 </svg>
               </div>
               <div class="feature-text">
-                <div class="feature-title">Notifiche Real-Time</div>
                 <div class="feature-desc">Sempre aggiornato</div>
               </div>
             </div>
@@ -115,18 +114,20 @@
             <p>{{ store.favError }}</p>
           </div>
 
-          <div v-else-if="store.favList.length" class="fav-carousel">
-            <PropertyCard
-              v-for="p in store.favList"
-              :key="`fav-${p.id}`"
-              :property="p"
-              :compact="true"
-              class="fav-item"
-            />
-          </div>
+       <div v-else-if="store.favList.length" class="fav-carousel">
+  <PropertyCard
+    v-for="p in store.favList"
+    :key="`fav-${p.id}`"
+    :property="p"
+    :compact="true"
+    :is-favourite="true" 
+    @toggle-fav="store.toggleFavourite"
+    class="fav-item"
+  />
+</div>
 
           <div v-else class="empty-state">
-            <div class="empty-icon">💙</div>
+            <div class="empty-icon"></div>
             <p>Nessun preferito salvato</p>
             <small>Clicca sul cuore degli annunci per salvarli qui</small>
           </div>
@@ -167,15 +168,16 @@
           </div>
 
           <!-- Properties grid -->
-          <div v-else-if="pagedList.length" class="properties-grid">
-            <PropertyCard
-              v-for="p in pagedList"
-              :key="p.id"
-              :property="p"
-              @add-fav="store.addToFavourites"
-              class="property-item"
-            />
-          </div>
+        <div v-else-if="pagedList.length" class="properties-grid">
+  <PropertyCard
+    v-for="p in pagedList"
+    :key="p.id"
+    :property="p"
+    :is-favourite="store.favList.some(fav => fav.id === p.id)"
+    @toggle-fav="store.toggleFavourite"
+    class="property-item"
+  />
+</div>
 
           <!-- Empty state -->
           <div v-else class="empty-state">

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import java.util.List;
-
+import java.util.Map;
 @RestController
 @RequestMapping("/favourites")
 public class FavouriteController {
@@ -19,56 +19,60 @@ public class FavouriteController {
         this.favouriteService = favouriteService;
     }
 
+    // 1. Ottieni la lista dei preferiti
     @GetMapping("/get")
-    public ResponseEntity<List<PropertyDetailDTO>> getFavourites(@RequestHeader("X-User-Id") Long userId) {
-        System.out.println("DEBUG PropertyService: getFavourites called. Principal: " + userId);
-
+    public ResponseEntity<List<PropertyDetailDTO>> getFavourites(
+            @RequestHeader(value = "X-User-Id", required = false) Long userId) {
+        
         if (userId == null) {
-            System.out.println("DEBUG PropertyService: Unauthorized (anonymous or null)");
             return ResponseEntity.status(401).build();
         }
-
-        try {
-            // Long userId = Long.valueOf(principal.toString());
-            System.out.println("DEBUG PropertyService: Fetching favorites for userId: " + userId);
-            return ResponseEntity.ok(favouriteService.getFavouriteProperties(userId));
-        } catch (NumberFormatException e) {
-            System.err.println("ERROR PropertyService: Invalid user ID format: " + userId);
-            return ResponseEntity.badRequest().build();
-        }
+        
+        return ResponseEntity.ok(favouriteService.getFavouriteProperties(userId));
     }
 
+    // 2. Aggiungi un preferito
     @PostMapping("/add")
-    public ResponseEntity<Void> addFavourite(@AuthenticationPrincipal Object principal,
-            @RequestBody java.util.Map<String, Long> payload) {
-        if (principal == null || "anonymousUser".equals(principal)) {
+    public ResponseEntity<Void> addFavourite(
+            @RequestHeader(value = "X-User-Id", required = false) Long userId, 
+            @RequestBody Map<String, Long> payload) {
+        
+        if (userId == null) {
             return ResponseEntity.status(401).build();
         }
-        Long userId = Long.valueOf(principal.toString());
+        
         Long propId = payload.get("idProp");
         if (propId == null) {
             return ResponseEntity.badRequest().build();
         }
+        
         favouriteService.addFavouriteProperty(userId, propId);
         return ResponseEntity.ok().build();
     }
 
+    // 3. Rimuovi un preferito
     @DeleteMapping("/remove/{propId}")
-    public ResponseEntity<Void> removeFavourite(@AuthenticationPrincipal Object principal, @PathVariable Long propId) {
-        if (principal == null || "anonymousUser".equals(principal)) {
+    public ResponseEntity<Void> removeFavourite(
+            @RequestHeader(value = "X-User-Id", required = false) Long userId, 
+            @PathVariable Long propId) {
+        
+        if (userId == null) {
             return ResponseEntity.status(401).build();
         }
-        Long userId = Long.valueOf(principal.toString());
+        
         favouriteService.removeFavourite(userId, propId);
         return ResponseEntity.ok().build();
     }
 
+    // 4. Conteggio preferiti
     @GetMapping("/count")
-    public ResponseEntity<Long> countFavourites(@AuthenticationPrincipal Object principal) {
-        if (principal == null || "anonymousUser".equals(principal)) {
+    public ResponseEntity<Long> countFavourites(
+            @RequestHeader(value = "X-User-Id", required = false) Long userId) {
+        
+        if (userId == null) {
             return ResponseEntity.status(401).build();
         }
-        Long userId = Long.valueOf(principal.toString());
+        
         return ResponseEntity.ok(favouriteService.countFavourites(userId));
     }
 }

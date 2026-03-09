@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/auth")
@@ -44,7 +45,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest req, HttpServletRequest httpReq) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest req, HttpServletRequest httpReq) {
         try {
             String uaHash = sha256(httpReq.getHeader("User-Agent"));
             String ipHash = sha256(httpReq.getRemoteAddr());

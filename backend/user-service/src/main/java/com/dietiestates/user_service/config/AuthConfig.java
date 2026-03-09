@@ -47,20 +47,19 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http,
 
     return http
         .csrf(csrf -> csrf.disable())
-
         .authorizeHttpRequests(auth -> auth
+            
             .requestMatchers("/auth/**", "/oauth2/**", "/login/**").permitAll()
             .anyRequest().authenticated()
         )
-
         .oauth2Login(oauth -> oauth
             .successHandler(successHandler)
+            
+            .authorizationEndpoint(auth -> auth.baseUri("/oauth2/authorization"))
+            .redirectionEndpoint(red -> red.baseUri("/login/oauth2/code/*"))
         )
-
         .addFilterBefore(headerAuthenticationFilter,
             UsernamePasswordAuthenticationFilter.class)
-
         .build();
 }
-
 }

@@ -129,7 +129,7 @@ const handleRegister = async () => {
 
 // OAuth2 Login (registrazione automatica)
 const loginWithGoogle = () => {
-  window.location.href = 'http://localhost:8081/oauth2/authorization/google'
+  window.location.href = 'http://localhost:8082/user/oauth2/authorization/google'
 }
 
 const loginWithFacebook = () => {
@@ -137,7 +137,7 @@ const loginWithFacebook = () => {
 }
 
 const loginWithGitHub = () => {
-  window.location.href = 'http://localhost:8081/oauth2/authorization/github'
+  window.location.href = 'http://localhost:8082/user/oauth2/authorization/github'
 }
 </script>
 

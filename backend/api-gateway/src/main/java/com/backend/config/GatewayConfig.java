@@ -16,21 +16,21 @@ public class GatewayConfig {
 @Bean
 public RouteLocator customRouteLocator(RouteLocatorBuilder builder,
                 com.backend.filter.AuthenticationFilter authFilter) {
-        return builder.routes()
-                // Rotta per le API utente normali (protette)
-                .route("user-service", r -> r.path("/user/**")
-                        .filters(f -> f.filter(authFilter.apply(new com.backend.filter.AuthenticationFilter.Config())))
-                        .uri("http://user-service:8080"))
+    return builder.routes()
+            // 1. ROTTE PUBBLICHE (Auth, OAuth2, Login)
+            .route("auth-social-route", r -> r.path("/user/oauth2/**", "/user/login/**", "/user/auth/**")
+                    .uri("http://user-service:8080"))
 
-                // Rotta per Auth e LOGIN SOCIALE (pubbliche)
-                .route("auth-social-route", r -> r.path("/auth/**", "/oauth2/**", "/login/**")
-                        .filters(f -> f.prefixPath("/user")) // Se lo user-service ha context-path /user
-                        .uri("http://user-service:8080"))
+            // 2. API UTENTE PROTETTE (Richiedono Token)
+            .route("user-service", r -> r.path("/user/**")
+                    .filters(f -> f.filter(authFilter.apply(new com.backend.filter.AuthenticationFilter.Config())))
+                    .uri("http://user-service:8080"))
 
-                .route("property-service", r -> r.path("/properties/**")
-                        .filters(f -> f.filter(authFilter.apply(new com.backend.filter.AuthenticationFilter.Config())))
-                        .uri("http://property-service:8081"))
-                .build();
+            // 3. PROPERTY SERVICE
+            .route("property-service", r -> r.path("/properties/**")
+                    .filters(f -> f.filter(authFilter.apply(new com.backend.filter.AuthenticationFilter.Config())))
+                    .uri("http://property-service:8081"))
+            .build();
 }
 
         @Bean

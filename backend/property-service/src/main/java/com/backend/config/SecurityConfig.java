@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -15,23 +16,22 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final HeaderAuthenticationFilter headerAuthenticationFilter;
+// SecurityConfig.java
+@Bean
+public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    http
+        .csrf(AbstractHttpConfigurer::disable)
+        
+        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) 
+        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+        .authorizeHttpRequests(auth -> auth
+            .requestMatchers("/search/**", "/getall", "/get/**", "/uploads/**", "/favourites/**").permitAll()
+            .anyRequest().authenticated()
+        )
+        .addFilterBefore(headerAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(AbstractHttpConfigurer::disable)
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/search", "/search/**", "/getall", "/get/**", "/uploads/**").permitAll()
-                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/{id:[0-9]+}").permitAll() // Allow
-                                                                                                              // GET
-                                                                                                              // /123
-                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/{id:[0-9]+}/images").permitAll()
-                        .anyRequest().authenticated())
-                .addFilterBefore(headerAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
-        return http.build();
-    }
+    return http.build();
+}
 
     @Bean
     public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
