@@ -7,13 +7,13 @@ import axios from 'axios'
  * 2. If it's a full URL (contains ://), it ensures it ends with the service path (suffix).
  * 3. Ensures it ends with a trailing slash for proper axios path joining.
  */
-const buildBaseURL = (envUrl: string | undefined, fallback: string) => {
-  let url = envUrl || fallback;
-  const suffix = fallback.startsWith('/') ? fallback : '/' + fallback; // e.g., /properties
+const buildBaseURL = (envUrl: string | undefined, serviceSuffix: string) => {
+  let url = envUrl || serviceSuffix;
+  const suffix = serviceSuffix.startsWith('/') ? serviceSuffix : '/' + serviceSuffix;
 
-  // If it's a production URL (e.g. https://...onrender.com)
   if (url.includes('://')) {
-    // Remove trailing slash for easier check
+    // Ensure the URL ends with the service namespacing (e.g., /user or /properties)
+    // because that's how the Gateway routes requests.
     let normalized = url.endsWith('/') ? url.slice(0, -1) : url;
     if (!normalized.endsWith(suffix)) {
       normalized += suffix;
@@ -21,7 +21,9 @@ const buildBaseURL = (envUrl: string | undefined, fallback: string) => {
     url = normalized;
   }
 
-  return url.endsWith('/') ? url : url + '/';
+  const finalUrl = url.endsWith('/') ? url : url + '/';
+  console.log(`[API] Base URL configured for ${serviceSuffix}:`, finalUrl);
+  return finalUrl;
 };
 
 // property-service (Gateway)
