@@ -19,6 +19,14 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class AuthConfig {
 
+    @Autowired
+    private UserDetailsService userDetailsService;
+
+    @Bean
+    public HeaderAuthenticationFilter headerAuthenticationFilter() {
+        return new HeaderAuthenticationFilter(userDetailsService);
+    }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

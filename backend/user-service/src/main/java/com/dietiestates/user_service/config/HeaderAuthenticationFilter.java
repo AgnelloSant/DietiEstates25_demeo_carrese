@@ -14,7 +14,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-@Component
 public class HeaderAuthenticationFilter extends OncePerRequestFilter {
 
     private final UserDetailsService userDetailsService;
@@ -46,8 +45,11 @@ public class HeaderAuthenticationFilter extends OncePerRequestFilter {
             } else {
                 System.out.println("DEBUG: UserDetails is null for " + userEmail);
             }
+        } else if (userEmail == null) {
+            // This is expected for public endpoints like /auth/login
+            System.out.println("DEBUG: No X-User-Email header found for " + request.getRequestURI());
         } else {
-            System.out.println("DEBUG: userEmail is null or already authenticated (Context: "
+            System.out.println("DEBUG: userEmail (" + userEmail + ") already authenticated (Context: "
                     + SecurityContextHolder.getContext().getAuthentication() + ")");
         }
         filterChain.doFilter(request, response);

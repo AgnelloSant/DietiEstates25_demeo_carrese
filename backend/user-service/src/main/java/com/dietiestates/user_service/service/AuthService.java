@@ -40,9 +40,13 @@ public class AuthService {
                 String refreshToken = jwtService.generateRefreshToken(req.getEmail());
                 var cookie = jwtService.createRefreshCookie(refreshToken);
 
+                System.out.println("DEBUG: Login successful for user: " + req.getEmail());
                 return Optional.of(new AuthResult(user, new TokenPair(accessToken, cookie)));
             }
+        } catch (org.springframework.security.core.AuthenticationException e) {
+            System.out.println("DEBUG: Authentication failed for user " + req.getEmail() + ": " + e.getMessage());
         } catch (Exception e) {
+            System.out.println("DEBUG: Unexpected error during login for " + req.getEmail());
             e.printStackTrace();
         }
         return Optional.empty();

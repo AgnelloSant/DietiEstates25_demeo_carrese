@@ -154,10 +154,10 @@ const handleLogin = async () => {
 //  GOOGLE - Con prompt nell'URL
 const loginWithGoogle = () => {
   console.log('🔵 Redirecting to Google OAuth2...')
-  // Costruisci URL con parametri custom
-  const baseUrl = 'http://localhost:8081/oauth2/authorization/google'
+  // Utilizziamo l'URL di base dall'env (Gateway o User Service)
+  const baseUrl = httpUS.defaults.baseURL + "oauth2/authorization/google"
   const params = new URLSearchParams({
-    prompt: 'select_account'  // ← Forzza scelta account
+    prompt: 'select_account'  // ← Forza scelta account
   })
   window.location.href = `${baseUrl}?${params.toString()}`
 }
@@ -165,7 +165,7 @@ const loginWithGoogle = () => {
 //  FACEBOOK - Con auth_type nell'URL
 const loginWithFacebook = () => {
   console.log('🔵 Redirecting to Facebook OAuth2...')
-  const baseUrl = 'https://unknowledgeable-undisconnectedly-marcela.ngrok-free.dev/oauth2/authorization/facebook'
+  const baseUrl = httpUS.defaults.baseURL + "oauth2/authorization/facebook"
   const params = new URLSearchParams({
     auth_type: 'reauthenticate'  // ← Forza re-login
   })
@@ -174,7 +174,7 @@ const loginWithFacebook = () => {
 //login con github utilizzando l authorization callback url 
 const loginWithGitHub = () => {
   console.log('🔵 Redirecting to GitHub OAuth2...')
-  window.location.href = 'http://localhost:8081/oauth2/authorization/github'
+  window.location.href = httpUS.defaults.baseURL + "oauth2/authorization/github"
 }
 </script>
 <style scoped>
