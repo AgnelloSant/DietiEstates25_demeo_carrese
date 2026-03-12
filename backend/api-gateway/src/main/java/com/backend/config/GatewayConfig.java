@@ -25,23 +25,33 @@ public class GatewayConfig {
         @Value("${ALLOWED_ORIGINS:http://localhost:5173,http://localhost:3000,https://dieti-estates25-demeo-carrese.vercel.app,https://dieti-estates25-demeo-carrese*.vercel.app}")
         private String allowedOrigins;
 
-        @Bean
-        public RouteLocator customRouteLocator(RouteLocatorBuilder builder,
-                        com.backend.filter.AuthenticationFilter authFilter) {
-                return builder.routes()
-                                .route("user-service", r -> r.path("/user/**")
-                                                .filters(f -> f.filter(authFilter.apply(
-                                                                new com.backend.filter.AuthenticationFilter.Config())))
-                                                .uri(userServiceUrl))
-                                .route("auth-service", r -> r.path("/auth/**")
-                                                .filters(f -> f.prefixPath("/user"))
-                                                .uri(userServiceUrl))
-                                .route("property-service", r -> r.path("/properties/**")
-                                                .filters(f -> f.filter(authFilter.apply(
-                                                                new com.backend.filter.AuthenticationFilter.Config())))
-                                                .uri(propertyServiceUrl))
-                                .build();
-        }
+    @Bean
+    public RouteLocator customRouteLocator(
+            RouteLocatorBuilder builder,
+            com.backend.filter.AuthenticationFilter authFilter) {
+
+        return builder.routes()
+                // 1. ROTTE PUBBLICHE
+                .route("auth-social-route", r -> r
+                        .path("/user/oauth2/**", "/user/login/**", "/user/auth/**")
+                        .uri(userServiceUrl))
+
+                // 2. API UTENTE PROTETTE
+                .route("user-service", r -> r
+                        .path("/user/**")
+                        .filters(f -> f.filter(authFilter.apply(
+                                new com.backend.filter.AuthenticationFilter.Config())))
+                        .uri(userServiceUrl))
+
+                // 3. PROPERTY SERVICE
+                .route("property-service", r -> r
+                        .path("/properties/**")
+                        .filters(f -> f.filter(authFilter.apply(
+                                new com.backend.filter.AuthenticationFilter.Config())))
+                        .uri(propertyServiceUrl))
+
+                .build();
+    }
 
         @Bean
         public CorsWebFilter corsWebFilter() {

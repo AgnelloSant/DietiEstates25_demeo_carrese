@@ -40,23 +40,22 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
                     authHeader = authHeader.substring(7);
                 }
                 try {
-                    // Normalize token (remove Bearer if double wrapped or handle clean token)
-                    // The authHeader is already substring(7) so it is clean token.
+                
                     System.out.println("DEBUG Gateway: Token received: " + authHeader);
-                    Claims claims = jwtUtil.validateToken(authHeader);
+                    Claims claims = jwtUtil.validateToken(authHeader); //qui validiamo il token grazie alla function in jwt util
 
                     String email = claims.getSubject();
                     Object idObj = claims.get("id");
                     Object roleObj = claims.get("role");
 
                     String id = idObj != null ? String.valueOf(idObj) : "";
-                    String role = roleObj != null ? String.valueOf(roleObj) : "USER"; // Default to USER if missing
+                    String role = roleObj != null ? String.valueOf(roleObj) : "USER"; 
 
                     System.out.println(
                             "DEBUG Gateway: Token validated. Email: " + email + ", ID: " + id + ", Role: " + role);
 
                     // Add header to request
-                    exchange = exchange.mutate()
+                    exchange = exchange.mutate()  //creiamo una nuova versione del token aggiungendogli l header e continuaimo quest ad ogni chiamata
                             .request(exchange.getRequest().mutate()
                                     .header("X-User-Email", email)
                                     .header("X-User-Id", id)

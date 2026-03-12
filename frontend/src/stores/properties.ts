@@ -7,7 +7,7 @@ import {
   getBidsByUser, getBidsSummaryByUserOwned, getMonthlyTrend,
   getPropertyDetail, searchByBounds, uploadPropertyImage, getPropertyImages
 } from "@/api/properties"
-import { getFavourites, addFavourite } from "@/api/users"
+import { getFavourites, addFavourite,removeFavourite } from "@/api/users"
 import type { PropertySearchDTO, PropertyCreateDTO, PropertyUpdateDTO, CreateReservationDTO, CreateBidDTO } from "@/types/Properties"
 //import { create } from "domain"
 import type { PropertyDetailDTO } from "@/types/Properties"
@@ -147,6 +147,38 @@ export const usePropertyStore = defineStore("properties", {
       }
     },
 
+async removeFromFavourites(idProp: number) {
+  try {
+   
+    await removeFavourite(idProp) 
+    
+    // Aggiornamento locale dello stato
+    this.favList = this.favList.filter((p) => p.id !== idProp)
+  } catch (e) {
+    console.error("Errore rimozione preferito", e)
+  }
+},
+
+async toggleFavourite(idProp: number) {
+  const isFav = this.favList.some(p => p.id === idProp)
+
+  if (isFav) {
+    // Chiama il metodo di rimozione
+    await this.removeFromFavourites(idProp)
+  } else {
+    try {
+     
+      await addFavourite({ idProp }) 
+      
+      const item = this.list.find(p => p.id === idProp)
+      if (item && !this.favList.some(p => p.id === idProp)) {
+        this.favList = [item, ...this.favList]
+      }
+    } catch (e) {
+      console.error("Errore durante l'aggiunta", e)
+    }
+  }
+},
 
     // -------------------------------------------------
     // OPERAZIONI SU RESERVATIONS

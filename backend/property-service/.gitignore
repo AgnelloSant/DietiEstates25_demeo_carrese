@@ -1,1 +1,7 @@
 .env
+# Maven/Spring Boot target
+**/target/
+target/
+*.jar
+*.war
+*.ear

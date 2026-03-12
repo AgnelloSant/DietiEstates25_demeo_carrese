@@ -63,3 +63,7 @@ Thumbs.db
 
 # Environment
 .env
+
+.DS_Store
+
+backend/user-service/.env

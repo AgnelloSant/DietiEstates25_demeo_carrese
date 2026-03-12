@@ -8,6 +8,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -25,24 +26,37 @@ public class HeaderAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
+        // 1. OTTIENI IL PATH DELLA RICHIESTA
+        String path = request.getServletPath();
+        
+        // 2. LOG DI DEBUG PER IL PATH
+        System.out.println("DEBUG: HeaderAuthenticationFilter checking path: " + path);
+
+        if (path.contains("/oauth2") || path.contains("/login/oauth2")) {
+            System.out.println("DEBUG: Skipping HeaderAuthenticationFilter for OAuth2 path");
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String userEmail = request.getHeader("X-User-Email");
-        System.out.println("DEBUG: HeaderAuthenticationFilter processing request to " + request.getRequestURI());
         System.out.println("DEBUG: Found X-User-Email: " + userEmail);
 
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
-            System.out.println("DEBUG: UserDetails loaded for " + userEmail + ": " + (userDetails != null));
-
-            if (userDetails != null) {
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        null,
-                        userDetails.getAuthorities());
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
-                System.out.println("DEBUG: Authentication set in SecurityContext for " + userEmail);
-            } else {
-                System.out.println("DEBUG: UserDetails is null for " + userEmail);
+            try {
+                UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
+                
+                if (userDetails != null) {
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities());
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                    System.out.println("DEBUG: Authentication set in SecurityContext for " + userEmail);
+                }
+            } catch (UsernameNotFoundException e) {
+                // Gestisce il caso in cui l'utente nell'header non esiste nel DB
+                System.out.println("DEBUG: User not found in DB for email: " + userEmail);
             }
         } else if (userEmail == null) {
             // This is expected for public endpoints like /auth/login
@@ -51,6 +65,7 @@ public class HeaderAuthenticationFilter extends OncePerRequestFilter {
             System.out.println("DEBUG: userEmail (" + userEmail + ") already authenticated (Context: "
                     + SecurityContextHolder.getContext().getAuthentication() + ")");
         }
+
         filterChain.doFilter(request, response);
     }
 }

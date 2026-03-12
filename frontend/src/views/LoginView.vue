@@ -155,8 +155,8 @@ const handleLogin = async () => {
 //  GOOGLE - Con prompt nell'URL
 const loginWithGoogle = () => {
   console.log('🔵 Redirecting to Google OAuth2...')
-  // Utilizziamo l'URL di base dall'env (Gateway o User Service)
-  const baseUrl = httpUS.defaults.baseURL + "oauth2/authorization/google"
+  // Costruisci URL con parametri custom
+  const baseUrl = 'http://localhost:8082/user/oauth2/authorization/google'
   const params = new URLSearchParams({
     prompt: 'select_account'  // ← Forza scelta account
   })
@@ -175,7 +175,7 @@ const loginWithFacebook = () => {
 //login con github utilizzando l authorization callback url 
 const loginWithGitHub = () => {
   console.log('🔵 Redirecting to GitHub OAuth2...')
-  window.location.href = httpUS.defaults.baseURL + "oauth2/authorization/github"
+  window.location.href = 'http://localhost:8082/user/oauth2/authorization/github'
 }
 </script>
 <style scoped>

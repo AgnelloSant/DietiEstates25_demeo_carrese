@@ -1,3 +1,5 @@
+
+
 services:
   user-service:
     build: ./backend/user-service
@@ -8,6 +10,7 @@ services:
       - ./backend/user-service/.env
     networks:
       - dieti-network
+
 
   property-service:
     build: ./backend/property-service
