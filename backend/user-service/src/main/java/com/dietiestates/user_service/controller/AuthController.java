@@ -7,6 +7,8 @@ import com.dietiestates.user_service.dto.PublicUserDTO;
 import com.dietiestates.user_service.dto.RegisterRequest;
 import com.dietiestates.user_service.model.User;
 import com.dietiestates.user_service.service.AuthService;
+
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -20,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Value;
 
 @RestController
 @RequestMapping("/auth")
@@ -118,4 +121,61 @@ public class AuthController {
         }
         return hexString.toString();
     }
+
+@PostMapping("/refresh")
+public ResponseEntity<?> refresh(HttpServletRequest request) {
+    try {
+        String refreshToken = extractCookie(request, refreshCookieName);
+
+        var resultOpt = service.refreshSession(refreshToken);
+
+        if (resultOpt.isEmpty()) {
+            return ResponseEntity.status(401).build();
+        }
+
+        var result = resultOpt.get();
+
+        PublicUserDTO publicUser = new PublicUserDTO(
+                result.user().getId(),
+                result.user().getEmail(),
+                result.user().getRole());
+
+        LoginResponse response = new LoginResponse(
+                result.tokens().access(),
+                publicUser);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, result.tokens().refreshCookie().toString())
+                .body(response);
+
+    } catch (Throwable e) {
+        e.printStackTrace();
+        return ResponseEntity.status(500)
+                .body("DEBUG: " + e.getClass().getName() + " message: " + e.getMessage());
+    }
 }
+
+@Value("${jwt.cookie.name:refreshToken}")
+private String refreshCookieName;
+
+private String extractCookie(HttpServletRequest request, String cookieName) {
+    if (request.getCookies() == null) {
+        return null;
+    }
+
+    for (Cookie cookie : request.getCookies()) {
+        if (cookieName.equals(cookie.getName())) {
+            return cookie.getValue();
+        }
+    }
+
+    return null;
+}
+
+}
+
+
+
+
+    
+

@@ -41,7 +41,7 @@ export const logout = async () => {
 
   try {
     // Backend revoca refresh token
-    await httpUS.post("logout")
+    await httpUS.post("auth/logout")
   } catch (err) {
     console.warn('Logout backend fallito (token già scaduto?)')
   }

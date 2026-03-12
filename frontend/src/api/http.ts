@@ -29,6 +29,7 @@ const buildBaseURL = (envUrl: string | undefined, serviceSuffix: string) => {
 // property-service (Gateway)
 export const httpProperty = axios.create({
   baseURL: buildBaseURL(import.meta.env.VITE_API_PROPERTY_URL, '/properties'),
+    withCredentials: true,
   headers: {
     'Content-Type': 'application/json'
   }
@@ -37,6 +38,7 @@ export const httpProperty = axios.create({
 // user-service (Gateway)
 export const httpUS = axios.create({
   baseURL: buildBaseURL(import.meta.env.VITE_API_USER_URL, '/user'),
+    withCredentials: true,
   headers: {
     'Content-Type': 'application/json'
   }
@@ -67,56 +69,45 @@ httpUS.interceptors.request.use(addAuthHeader)
  * 3. Se refresh FAIL → Logout e redirect a /login
  */
 httpUS.interceptors.response.use(
-  (response) => response,  // Se tutto OK, passa la risposta
-
+  (response) => response,
   async (error) => {
     const originalRequest = error.config
 
-    // Se errore è 401 e non abbiamo già provato a refreshare
+    if (!originalRequest) {
+      return Promise.reject(error)
+    }
+
+    // Non ritentare su login o refresh
+    if (
+      originalRequest.url?.includes('/auth/login') ||
+      originalRequest.url?.includes('/auth/refresh')
+    ) {
+      return Promise.reject(error)
+    }
+
     if (error.response?.status === 401 && !originalRequest._retry) {
-      // Evita loop se la richiesta fallita è proprio il login
-      if (originalRequest.url?.includes('/auth/login')) {
-        return Promise.reject(error);
-      }
-
-      originalRequest._retry = true  // Flag per evitare loop infinito
-
-      console.warn('Token scaduto (401), provo refresh...')
+      originalRequest._retry = true
 
       try {
-        // Chiama endpoint refresh (manda refresh token via cookie HttpOnly)
-        const refreshResponse = await httpUS.post('refresh')
+        const refreshResponse = await httpUS.post('auth/refresh')
         const newToken = refreshResponse.data.accessToken
 
-        console.log('Token refreshato con successo')
-
-        // Salva nuovo token
         localStorage.setItem('token', newToken)
-
-        // Aggiorna header della richiesta originale
         originalRequest.headers.Authorization = `Bearer ${newToken}`
 
-        // Riprova la richiesta originale con nuovo token
         return httpUS(originalRequest)
-
       } catch (refreshError) {
-        // Refresh fallito → Token refresh scaduto o revocato
-        console.error('Refresh fallito, logout forzato')
-
-        // Pulisci tutto
         localStorage.clear()
-
-        // Redirect a login
         window.location.href = '/login?session_expired=true'
-
         return Promise.reject(refreshError)
       }
     }
 
-    // Se non è 401 o refresh già fallito, propaga errore
     return Promise.reject(error)
   }
 )
+
+
 
 // Property service: stesso handler 401
 httpProperty.interceptors.response.use(

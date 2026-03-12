@@ -16,14 +16,14 @@ import java.util.stream.Collectors;
 @Configuration
 public class GatewayConfig {
 
-        @Value("${USER_SERVICE_URL:http://user-service:8080}")
-        private String userServiceUrl;
+    @Value("${USER_SERVICE_URL:http://user-service:8080}")
+    private String userServiceUrl;
 
-        @Value("${PROPERTY_SERVICE_URL:http://property-service:8081}")
-        private String propertyServiceUrl;
+    @Value("${PROPERTY_SERVICE_URL:http://property-service:8081}")
+    private String propertyServiceUrl;
 
-        @Value("${ALLOWED_ORIGINS:http://localhost:5173,http://localhost:3000,https://dieti-estates25-demeo-carrese.vercel.app,https://dieti-estates25-demeo-carrese*.vercel.app}")
-        private String allowedOrigins;
+    @Value("${ALLOWED_ORIGINS:http://localhost:5173,http://localhost:3000}")
+    private String allowedOrigins;
 
     @Bean
     public RouteLocator customRouteLocator(
@@ -31,19 +31,16 @@ public class GatewayConfig {
             com.backend.filter.AuthenticationFilter authFilter) {
 
         return builder.routes()
-                // 1. ROTTE PUBBLICHE
-                .route("auth-social-route", r -> r
-                        .path("/user/oauth2/**", "/user/login/**", "/user/auth/**")
+                .route("user-public-route", r -> r
+                        .path("/user/auth/**", "/user/oauth2/**")
                         .uri(userServiceUrl))
 
-                // 2. API UTENTE PROTETTE
                 .route("user-service", r -> r
                         .path("/user/**")
                         .filters(f -> f.filter(authFilter.apply(
                                 new com.backend.filter.AuthenticationFilter.Config())))
                         .uri(userServiceUrl))
 
-                // 3. PROPERTY SERVICE
                 .route("property-service", r -> r
                         .path("/properties/**")
                         .filters(f -> f.filter(authFilter.apply(
@@ -53,24 +50,23 @@ public class GatewayConfig {
                 .build();
     }
 
-        @Bean
-        public CorsWebFilter corsWebFilter() {
-                CorsConfiguration corsConfig = new CorsConfiguration();
+    @Bean
+    public CorsWebFilter corsWebFilter() {
+        CorsConfiguration corsConfig = new CorsConfiguration();
 
-                List<String> origins = Arrays.stream(allowedOrigins.split(","))
-                                .map(String::trim)
-                                .collect(Collectors.toList());
+        List<String> origins = Arrays.stream(allowedOrigins.split(","))
+                .map(String::trim)
+                .collect(Collectors.toList());
 
-                corsConfig.setAllowedOriginPatterns(origins);
-                System.out.println("DEBUG Gateway: Allowed Origin Patterns: " + origins);
-                corsConfig.setMaxAge(3600L);
-                corsConfig.addAllowedMethod("*");
-                corsConfig.addAllowedHeader("*");
-                corsConfig.setAllowCredentials(true);
+        corsConfig.setAllowedOriginPatterns(origins);
+        corsConfig.setMaxAge(3600L);
+        corsConfig.addAllowedMethod("*");
+        corsConfig.addAllowedHeader("*");
+        corsConfig.setAllowCredentials(true);
 
-                UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-                source.registerCorsConfiguration("/**", corsConfig);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", corsConfig);
 
-                return new CorsWebFilter(source);
-        }
+        return new CorsWebFilter(source);
+    }
 }

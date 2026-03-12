@@ -77,4 +77,30 @@ public class AuthService {
         user.setPassword(passwordEncoder.encode(request.getNewPsw()));
         repository.save(user);
     }
+public Optional<AuthResult> refreshSession(String refreshToken) {
+    try {
+        if (refreshToken == null || refreshToken.isBlank()) {
+            return Optional.empty();
+        }
+
+        jwtService.validateRefreshToken(refreshToken);
+
+        String email = jwtService.extractUsername(refreshToken);
+
+        User user = repository.findByEmail(email).orElseThrow();
+
+        String newAccessToken = jwtService.generateToken(email);
+        String newRefreshToken = jwtService.generateRefreshToken(email);
+        var newCookie = jwtService.createRefreshCookie(newRefreshToken);
+
+        return Optional.of(new AuthResult(user, new TokenPair(newAccessToken, newCookie)));
+    } catch (Exception e) {
+        System.out.println("DEBUG: Refresh failed");
+        e.printStackTrace();
+        return Optional.empty();
+    }
+}
+
+
+
 }
