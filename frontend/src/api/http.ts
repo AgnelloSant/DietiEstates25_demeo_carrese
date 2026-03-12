@@ -50,13 +50,19 @@ export const httpUS = axios.create({
  */
 const addAuthHeader = (config: any) => {
   const token = localStorage.getItem("token")
-  if (token) {
+  const requestUrl = config.url || ""
+
+  if (
+    token &&
+    !requestUrl.includes('auth/login') &&
+    !requestUrl.includes('auth/refresh')
+  ) {
+    config.headers = config.headers || {}
     config.headers.Authorization = `Bearer ${token}`
-    console.log('JWT aggiunto alla richiesta:', config.url)
   }
+
   return config
 }
-
 httpProperty.interceptors.request.use(addAuthHeader)
 httpUS.interceptors.request.use(addAuthHeader)
 
@@ -79,8 +85,8 @@ httpUS.interceptors.response.use(
 
     // Non ritentare su login o refresh
     if (
-      originalRequest.url?.includes('/auth/login') ||
-      originalRequest.url?.includes('/auth/refresh')
+      originalRequest.url?.includes('auth/login') ||
+      originalRequest.url?.includes('auth/refresh')
     ) {
       return Promise.reject(error)
     }
