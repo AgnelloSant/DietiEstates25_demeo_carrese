@@ -12,7 +12,13 @@ public class RouteValidator {
     public static final List<String> openApiEndpoints = List.of(
             "/auth/.*",
             "/user/auth/.*",
+
+            // OAuth2 start + callback
+            "/user/oauth2/.*",
+            "/user/login/oauth2/.*",
+
             "/eureka.*",
+
             "/properties/search.*",
             "/properties/getall",
             "/properties/\\d+",

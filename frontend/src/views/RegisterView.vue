@@ -48,7 +48,7 @@
       <form @submit.prevent="handleRegister" class="register-form">
         <div class="form-group">
           <label>Nome completo</label>
-          <input class="full-line-input" form.name type="text" placeholder="Mario Rossi" required />
+          <input class="full-line-input" v-model="form.name" type="text" placeholder="Mario Rossi" required />
         </div>
 
         <div class="form-group">

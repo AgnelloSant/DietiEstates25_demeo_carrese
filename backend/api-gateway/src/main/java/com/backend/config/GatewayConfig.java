@@ -31,15 +31,19 @@ public class GatewayConfig {
             com.backend.filter.AuthenticationFilter authFilter) {
 
         return builder.routes()
-                .route("user-public-route", r -> r
-                        .path("/user/auth/**", "/user/oauth2/**")
-                        .uri(userServiceUrl))
+         .route("user-public-route", r -> r
+        .path(
+            "/user/auth/**",
+            "/user/oauth2/**",
+            "/user/login/oauth2/**"
+        )
+        .uri(userServiceUrl))
 
                 .route("user-service", r -> r
-                        .path("/user/**")
-                        .filters(f -> f.filter(authFilter.apply(
-                                new com.backend.filter.AuthenticationFilter.Config())))
-                        .uri(userServiceUrl))
+        .path("/user/**")
+        .filters(f -> f.filter(authFilter.apply(
+                new com.backend.filter.AuthenticationFilter.Config())))
+        .uri(userServiceUrl))
 
                 .route("property-service", r -> r
                         .path("/properties/**")

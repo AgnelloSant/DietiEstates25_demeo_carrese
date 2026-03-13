@@ -64,6 +64,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest req, HttpServletRequest httpReq) {
+        System.out.println("DEBUG LOGIN HIT -> email: " + req.getEmail());//da cancellare
         try {
             String uaHash = sha256(httpReq.getHeader("User-Agent"));
             String ipHash = sha256(httpReq.getRemoteAddr());
