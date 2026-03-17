@@ -77,6 +77,9 @@ public class AuthService {
         user.setPassword(passwordEncoder.encode(request.getNewPsw()));
         repository.save(user);
     }
+
+
+    
 public Optional<AuthResult> refreshSession(String refreshToken) {
     try {
         if (refreshToken == null || refreshToken.isBlank()) {

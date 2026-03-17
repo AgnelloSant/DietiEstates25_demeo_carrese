@@ -1,12 +1,12 @@
 {
-    "rewrites": [
-        {
-            "source": "/user/:path*",
-            "destination": "https://dietiestates25-demeo-carrese.onrender.com/user/:path*"
-        },
-        {
-            "source": "/properties/:path*",
-            "destination": "https://dietiestates25-demeo-carrese.onrender.com/properties/:path*"
-        }
-    ]
+  "rewrites": [
+    {
+      "source": "/user/:path*",
+      "destination": "https://api-gateway-production-2a77.up.railway.app/user/:path*"
+    },
+    {
+      "source": "/properties/:path*",
+      "destination": "https://api-gateway-production-2a77.up.railway.app/properties/:path*"
+    }
+  ]
 }
