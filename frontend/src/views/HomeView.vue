@@ -54,9 +54,6 @@
                   <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
                 </svg>
               </div>
-              <div class="feature-text">
-                <div class="feature-desc">Sempre aggiornato</div>
-              </div>
             </div>
           </div>
           

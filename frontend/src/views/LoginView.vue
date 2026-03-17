@@ -76,7 +76,7 @@
               class="toggle-password" 
               @click="showPassword = !showPassword"
             >
-              {{ showPassword ? '-' : '+' }}
+              {{ showPassword ? 'nascondi' : 'mostra' }}
             </button>
           </div>
         </div>
