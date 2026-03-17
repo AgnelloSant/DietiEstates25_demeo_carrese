@@ -20,7 +20,7 @@
       </div>
       <p class="detail-city"><i class="fa-solid fa-location-dot"></i> {{ property.city }}</p>
       <p class="bold-text"><strong>{{ property.area }} m²</strong></p>
-      <p class="green-text">€ {{ property.price.String() }}</p>
+      <p class="green-text">€ {{ property.price.toString() }}</p>
       <p class="detail-extra"><b>Tipo:</b> {{ property.listingType }}</p>
       <p class="detail-extra"><b>Stanze:</b> {{ property.rooms }}</p>
       <p class="detail-extra"><b>Classe energetica:</b> {{ property.energyClass }}</p>
