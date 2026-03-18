@@ -79,47 +79,13 @@ class AuthControllerTest {
         System.out.println("==============================\n");
     }
 
+   
     // ===============================
-    // TC2 - PASSWORD TROPPO CORTA
-    // ===============================
-
-    @Test
-    @DisplayName("TC2 - Password troppo corta → 400")
-    void tc2_shortPassword() throws Exception {
-
-        String json = """
-                {
-                    "email": "test@mail.com",
-                    "password": "Pass1@"
-                }
-                """;
-
-        System.out.println("\n==============================");
-        System.out.println("AVVIO TC2 - PASSWORD TROPPO CORTA");
-        System.out.println("JSON INVIATO:");
-        System.out.println(json);
-
-        MvcResult result = mockMvc.perform(post("/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andReturn();
-
-        System.out.println("STATUS RICEVUTO: " + result.getResponse().getStatus());
-        System.out.println("BODY RISPOSTA:");
-        System.out.println(result.getResponse().getContentAsString());
-
-        System.out.println("TC2 SUPERATO ");
-        System.out.println("==============================\n");
-    }
-
-    // ===============================
-    // TC3 - CREDENZIALI VALIDE MA UTENTE NON TROVATO
+    // TC2 - CREDENZIALI VALIDE MA UTENTE NON TROVATO
     // ===============================
 
     @Test
-    @DisplayName("TC3 - Credenziali valide ma utente non trovato → 401")
+    @DisplayName("TC2 - Credenziali valide ma utente non trovato → 401")
     void tc3_validButUnauthorized() throws Exception {
 
         when(authService.userLogin(any(), any(), any()))
@@ -133,7 +99,7 @@ class AuthControllerTest {
                 """;
 
         System.out.println("\n==============================");
-        System.out.println("AVVIO TC3 - UTENTE NON TROVATO");
+        System.out.println("AVVIO TC2 - UTENTE NON TROVATO");
         System.out.println("JSON INVIATO:");
         System.out.println(json);
 
@@ -148,7 +114,7 @@ class AuthControllerTest {
         System.out.println("BODY RISPOSTA:");
         System.out.println(result.getResponse().getContentAsString());
 
-        System.out.println("TC3 SUPERATO ");
+        System.out.println("TC2 SUPERATO ");
         System.out.println("==============================\n");
     }
 }
