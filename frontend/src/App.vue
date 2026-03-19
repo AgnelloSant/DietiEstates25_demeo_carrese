@@ -11,7 +11,6 @@
           </span>
         </RouterLink>
 
-        <!-- NAVBAR DINAMICA -->
         <nav class="nav-modern">
           <RouterLink to="/" class="nav-link">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -20,7 +19,6 @@
             </svg>
             Annunci
           </RouterLink>
-<!-- Pagina modifica annunci (solo amministratori)-->
           <RouterLink
             v-if="auth.user && auth.user.role?.toUpperCase() === 'ADMIN'"
             to="/admin"
@@ -32,7 +30,6 @@
             Admin
           </RouterLink>
 
-          <!-- Insights (Agenti e Admin) -->
           <RouterLink
             v-if="auth.user && (auth.user.role?.toUpperCase().includes('AGENT') || auth.user.role?.toUpperCase().includes('ADMIN'))"
             to="/analitics"
@@ -46,7 +43,6 @@
             Insights
           </RouterLink>
 
-          <!--  Bottone Pubblica Annuncio -->
           <button class="btn-publish-modern" @click="handlePublishClick">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -57,7 +53,6 @@
 
           
 
-          <!-- Profiloe logout (solo utenti loggati)-->
           <template v-if="auth.user">
             <RouterLink to="/profile" class="nav-link">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -80,7 +75,6 @@
 
 
 
-          <!-- Link per guest -->
           <template v-else>
             <RouterLink to="/login" class="nav-link nav-link-login">
               Login
@@ -93,7 +87,6 @@
       </div>
     </header>
 
-    <!-- Contenuto della pagina corrente -->
     <main class="page-container">
       <RouterView />
     </main>
@@ -102,7 +95,6 @@
       <div class="footer-content">
         <div class="footer-brand">
           <div class="footer-logo">
-            <span class="logo-icon">🏠</span>
             <span class="footer-brand-text">Dieti Estates</span>
           </div>
           <p class="footer-tagline">La tua casa dei sogni ti aspetta</p>
@@ -126,7 +118,6 @@
       </div>
     </footer>
 
-    <!--  Popup Logout -->
     <Transition name="modal-fade">
       <div v-if="showLogoutConfirm" class="modal-overlay-modern" @click="showLogoutConfirm = false">
         <div class="modal-modern modal-modern--small" @click.stop>

@@ -167,7 +167,6 @@
 
     <!-- Empty state -->
     <div v-else class="empty-state">
-      <div class="empty-icon">🏠</div>
       <h3>Nessuna proprietà trovata</h3>
       <p>{{ searchQuery ? 'Prova a cambiare i filtri di ricerca' : 'Non ci sono proprietà da gestire al momento' }}</p>
       <button @click="clearAllFilters" class="btn-clear-filters" v-if="hasActiveFilters">
