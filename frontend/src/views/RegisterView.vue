@@ -5,9 +5,6 @@
       
       <!-- Header -->
       <div class="register-header">
-        <div class="logo-circle">
-          <span class="logo-icon">🏠</span>
-        </div>
         <h1 class="page-title">Crea Account</h1>
         <p class="page-subtitle">Unisciti a Dieti Estates</p>
       </div>

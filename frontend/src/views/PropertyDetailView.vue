@@ -1,6 +1,5 @@
 <template>
   <div v-if="property" class="def-container">
-    <!-- 🏠 Immagine -->
     <div class="detail-image">
       <img :src="activeImage ? getContentUrl(activeImage) : (property.imageUrl || '/placeholder-house.jpg')" alt="Foto immobile" />
       
@@ -10,7 +9,6 @@
       </div>
     </div>
 
-    <!-- 📋 Info principali -->
     <div class="info-container">
       <div class="detail-header">
         <h1 class="title">{{ property.title }}</h1>

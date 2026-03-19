@@ -42,30 +42,11 @@
         </tr>
       </tbody>
     </table>
-
-  <div v-if="isDialogVisible" class="modal-overlay" @click.self="closeDetails">
-    <div class="modal modal--medium">
-        <h3>Dettagli offerte</h3>
-
-        <div v-if="selectedBids && selectedBids.length > 0" class="bid-list">
-            <div v-for="b in selectedBids" :key="b.id" class="bid-row">
-              <div class="bid-row-content">
-                <strong class="text-info">Importo</strong>
-                <div class="white-text">€ {{ b.amount.toFixed(2) }}</div> 
-
-                <strong class="text-info">Data</strong>
-                <div class="white-text">{{ formatPublishedAt(b.publishedAt) }}</div>
-        
-              </div>
-            </div>
-        </div>
-        <div v-else class="empty-state">
-            Nessuna offerta trovata per questa proprietà.
-        </div>
-
-        <button @click="closeDetails" class="btn btn-close">Chiudi</button>
-    </div>
-</div>
+    <ModalOfferte
+      :is-visible="isDialogVisible"
+      :bids="selectedBids"
+      @close="closeDetails"
+    />
 </div>
 
 
@@ -78,6 +59,7 @@ import { usePropertyStore } from "@/stores/properties"
 import BidChart from "@/components/BidChart.vue"
 import { BidDailyCount } from "@/types/Properties"
 import { downloadReservationsExcel, downloadBidsExcel } from "@/api/properties"
+import ModalOfferte from "@/components/ModalOfferte.vue"
 
 const propertyStore = usePropertyStore()
 
