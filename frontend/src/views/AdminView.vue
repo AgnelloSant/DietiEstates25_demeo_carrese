@@ -289,11 +289,12 @@ const showDeleteDialog = ref(false)
 const showBulkDeleteDialog = ref(false)
 const propertyToDelete = ref<PropertySearchDTO | null>(null)
 const selectionMode = ref(false)
+const deleteLoading = ref(false)
 
-// ✅ Stati per la modifica (con tutti i campi richiesti)
+//  Stati per la modifica (con tutti i campi richiesti)
 const showEditModal = ref(false)
 const editLoading = ref(false)
-const editingPropertyId = ref<number | null>(null) // ✅ Teniamo traccia dell'ID
+const editingPropertyId = ref<number | null>(null) //  Teniamo traccia dell'ID
 const editForm = ref<PropertyUpdateDTO>({
   title: "",
   city: "", 
@@ -308,8 +309,8 @@ const editForm = ref<PropertyUpdateDTO>({
   listingType: "vendita" as "vendita" | "affitto", // ✅ Tipizzazione corretta
   rooms: 1,
   energyClass: "A",
-  idUser: 1, // ✅ Campo obbligatorio aggiunto
-  views: 0   // ✅ Campo opzionale aggiunto
+  idUser: 1, 
+  views: 0   
 })
 
 // Computed (stesso codice)
@@ -488,8 +489,9 @@ const confirmDelete = (property: PropertySearchDTO) => {
 }
 
 const handleDeleteConfirm = async () => {
-  if (!propertyToDelete.value) return
+  if (!propertyToDelete.value || deleteLoading.value) return
 
+  deleteLoading.value = true
   try {
     await store.removeProperty(propertyToDelete.value.id)
     showDeleteDialog.value = false
@@ -500,6 +502,8 @@ const handleDeleteConfirm = async () => {
   } catch (err) {
     error.value = "Errore durante l'eliminazione della proprietà"
     console.error(err)
+  } finally {
+    deleteLoading.value = false
   }
 }
 
@@ -511,8 +515,11 @@ const bulkDelete = () => {
 const handleBulkDeleteConfirm = async () => {
   try {
     for (const id of selectedProperties.value) {
-      await store.removeProperty(id)
+      await store.removePropertyOnly(id)
     }
+
+    await store.fetchList()
+
     const deletedCount = selectedProperties.value.length
     selectedProperties.value = []
     showBulkDeleteDialog.value = false
@@ -553,7 +560,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* Tutti gli stili esistenti rimangono identici, aggiungo solo quelli per la modale */
+
 
 .stats-bar {
   display: flex;
@@ -593,7 +600,7 @@ onMounted(() => {
   margin-top: 0.5rem;
 }
 
-/* ✅ STILI MODALE DI MODIFICA */
+/*  STILI MODALE DI MODIFICA */
 .edit-modal {
   background: white;
   border-radius: 16px;

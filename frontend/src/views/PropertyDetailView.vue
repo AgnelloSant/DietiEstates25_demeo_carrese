@@ -1,46 +1,91 @@
 <template>
   <div v-if="property" class="def-container">
     <div class="detail-image">
-      <img :src="activeImage ? getContentUrl(activeImage) : (property.imageUrl || '/placeholder-house.jpg')" alt="Foto immobile" />
-      
-      <!-- Se ci sono più immagini, mostra galleria -->
+      <div class="main-image-wrapper">
+        <button
+          v-if="images.length > 1"
+          class="nav nav-left"
+          @click="prevImage"
+        >
+          ‹
+        </button>
+
+        <img
+          :src="mainImageSrc"
+          alt="Foto immobile"
+          class="main-image"
+        />
+
+        <button
+          v-if="images.length > 1"
+          class="nav nav-right"
+          @click="nextImage"
+        >
+          ›
+        </button>
+      </div>
+
       <div v-if="images.length > 1" class="gallery">
-        <img v-for="img in images" :key="img" :src="getContentUrl(img)" class="gallery-thumb" @click="activeImage = img" />
+        <img
+          v-for="(img, index) in images"
+          :key="img"
+          :src="getContentUrl(img)"
+          class="gallery-thumb"
+          :class="{ active: index === activeIndex }"
+          @click="selectImage(index)"
+        />
       </div>
     </div>
 
     <div class="info-container">
       <div class="detail-header">
         <h1 class="title">{{ property.title }}</h1>
-        <button class="favorite-btn" @click="toggleFavorite(property.id)">
+        <button
+          class="favorite-btn"
+          :class="{ active: isFavourite }"
+          @click="toggleFavorite(property.id)"
+        >
           <i class="fa-solid fa-heart"></i>
         </button>
       </div>
-      <p class="detail-city"><i class="fa-solid fa-location-dot"></i> {{ property.city }}</p>
+
+      <p class="detail-city">
+        <i class="fa-solid fa-location-dot"></i> {{ property.city }}
+      </p>
+
       <p class="bold-text"><strong>{{ property.area }} m²</strong></p>
-   <p class="green-text">€ {{ property && property.price != null ? Number(property.price).toLocaleString('it-IT') : 'N/D' }}</p>
+
+      <p class="green-text">
+        € {{ property.price != null ? Number(property.price).toLocaleString("it-IT") : "N/D" }}
+      </p>
+
       <p class="detail-extra"><b>Tipo:</b> {{ property.listingType }}</p>
       <p class="detail-extra"><b>Stanze:</b> {{ property.rooms }}</p>
       <p class="detail-extra"><b>Classe energetica:</b> {{ property.energyClass }}</p>
       <p class="detail-extra"><b>Indirizzo:</b> {{ property.address }}</p>
-      <p v-if="property.description" class="italic-text">{{ property.description }}</p>
+
+      <p v-if="property.description" class="italic-text">
+        {{ property.description }}
+      </p>
+
       <p v-if="property.publishedAt" class="text-info">
         Pubblicato il {{ new Date(property.publishedAt).toLocaleDateString() }}
       </p>
     </div>
 
-    <!-- 🔘 Bottoni azione -->
     <div class="row-container">
-      <button @click="showReservationForm = true" class="btn">Effettua una prenotazione</button>
-      <button @click="showBidForm = true" class="btn">Piazza un'offerta</button>
+      <button @click="showReservationForm = true" class="btn">
+        Effettua una prenotazione
+      </button>
+      <button @click="showBidForm = true" class="btn">
+        Piazza un'offerta
+      </button>
     </div>
 
-
-    <!-- POPUP PRENOTAZIONE -->
     <div v-if="showReservationForm" class="modal-overlay">
       <div class="modal modal--medium">
         <h2 class="title">Scegli giorno e ora</h2>
-        <div  class="input-row">
+        <div class="input-row">
           <input type="date" v-model="selectedDate" />
           <input type="time" v-model="selectedTime" />
         </div>
@@ -55,13 +100,14 @@
       </div>
     </div>
 
-    <!--POPUP OFFERTA-->
     <div v-if="showBidForm" class="modal-overlay">
       <div class="modal modal--small" style="max-width: 400px;">
         <h2 class="title">Quanto vuoi offrire?</h2>
         <div class="input-row">
-          <input  type="number" v-model.number="offerAmount" min="1"></input>
-          <span class="hint">Consigliato: {{ ((property.price*95)/100).toLocaleString() }}</span>
+          <input type="number" v-model.number="offerAmount" min="1" />
+          <span class="hint">
+            Consigliato: {{ ((property.price * 95) / 100).toLocaleString() }}
+          </span>
         </div>
         <div class="row-container">
           <button @click="showBidForm = false" class="btn">Annulla</button>
@@ -70,8 +116,10 @@
       </div>
     </div>
 
-    <!-- ✅ Vantaggi zona -->
-    <div v-if="property.nearSchool || property.nearPark || property.nearTransport" class="advantages">
+    <div
+      v-if="property.nearSchool || property.nearPark || property.nearTransport"
+      class="advantages"
+    >
       <h3>Vantaggi della zona</h3>
       <ul>
         <li v-if="property.nearSchool">🏫 Vicino a scuole</li>
@@ -80,32 +128,24 @@
       </ul>
     </div>
 
-    <!-- 🌍 Mappa -->
     <div
       v-if="property.latitude && property.longitude"
       id="map"
-      style="height: 400px; border-radius: 12px; margin-top: 1.5rem"
+      class="detail-map"
     ></div>
     <p v-else class="detail-coords">📍 Coordinate non disponibili</p>
   </div>
 
-  <!-- stato caricamento -->
   <div v-else class="loading">Caricamento...</div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, nextTick, watch} from "vue"
-import { httpProperty } from "@/api/http"
+import { onMounted, ref, nextTick, watch, computed } from "vue"
 import type { PropertyDetailDTO } from "@/types/Properties"
 import { usePropertyStore } from "@/stores/properties"
 import { useToast } from "vue-toastification"
-
-
-
-// 🗺️ Leaflet
 import L from "leaflet"
 import "leaflet/dist/leaflet.css"
-//import { text } from "stream/consumers"
 
 delete (L.Icon.Default.prototype as any)._getIconUrl
 L.Icon.Default.mergeOptions({
@@ -114,11 +154,9 @@ L.Icon.Default.mergeOptions({
   shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png"
 })
 
-// Props route
 const props = defineProps<{ id: string }>()
 const property = ref<PropertyDetailDTO | null>(null)
 
-// State
 const showReservationForm = ref(false)
 const showBidForm = ref(false)
 const selectedDate = ref("")
@@ -128,63 +166,71 @@ const offerAmount = ref<number | null>(null)
 const propertyStore = usePropertyStore()
 const toast = useToast()
 
-// State
 const images = ref<string[]>([])
-const activeImage = ref<string | null>(null)
+const activeIndex = ref(0)
 
-// Caricamento property
-onMounted(async () => {
-  // const { data } = await httpProperty.get<PropertyDetailDTO>(`/properties/${props.id}`)
-  property.value = await propertyStore.fetchDetail(Number(props.id))
-  
-  // Fetch images
-  images.value = await propertyStore.fetchImages(Number(props.id))
+const isFavourite = computed(() => {
+  if (!property.value) return false
+  return propertyStore.favList.some((p) => p.id === property.value!.id)
+})
+
+const mainImageSrc = computed(() => {
   if (images.value.length > 0) {
-      activeImage.value = images.value[0]
+    return getContentUrl(images.value[activeIndex.value])
   }
+
+  if (property.value?.imageUrl) {
+    return getContentUrl(property.value.imageUrl)
+  }
+
+  return "/placeholder-house.jpg"
+})
+
+onMounted(async () => {
+  property.value = await propertyStore.fetchDetail(Number(props.id))
+  await propertyStore.fetchFavList()
+
+  images.value = await propertyStore.fetchImages(Number(props.id))
+  activeIndex.value = 0
 
   if (property.value?.latitude && property.value?.longitude) {
     await nextTick()
-    const map = L.map("map").setView([property.value.latitude, property.value.longitude], 14)
+    const map = L.map("map").setView(
+      [property.value.latitude, property.value.longitude],
+      14
+    )
+
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map)
     L.marker([property.value.latitude, property.value.longitude]).addTo(map)
   }
 })
 
 function getContentUrl(path: string) {
-    const baseUrl = import.meta.env.VITE_API_PROPERTY_URL || 'http://localhost:8082'
-    return `${baseUrl}/uploads/${path}`
+  const baseUrl = import.meta.env.VITE_API_PROPERTY_URL || "http://localhost:8082"
+  return `${baseUrl}/uploads/${path}`
 }
 
 watch(showReservationForm, (isOpen) => {
-  if (isOpen) {
-    document.body.style.overflow = "hidden"
-  } else {
-    document.body.style.overflow = ""
-  }
+  document.body.style.overflow = isOpen ? "hidden" : ""
 })
 
-watch(showBidForm, (isOpen) => { 
-  if(isOpen) { 
-    document.body.style.overflow = "hidden"
-  }else{ 
-    document.body.style.overflow = ""
-  }
+watch(showBidForm, (isOpen) => {
+  document.body.style.overflow = isOpen ? "hidden" : ""
 })
 
-// Conferma prenotazione
 async function confirmReservation() {
   if (!selectedDate.value || !selectedTime.value) {
     toast.warning("⚠️ Seleziona data e ora")
     return
   }
+
   try {
     const res = await propertyStore.createAReservation({
       id_prop: Number(props.id),
       date: selectedDate.value,
       time: selectedTime.value
     })
-    
+
     if (res) {
       showReservationForm.value = false
       toast.success("✅ Prenotazione registrata con successo!")
@@ -197,12 +243,13 @@ async function confirmReservation() {
   }
 }
 
-async function confirmBid(){ 
-  if(!offerAmount.value){ 
+async function confirmBid() {
+  if (!offerAmount.value) {
     toast.warning("Inserire un importo prima di procedere!")
     return
   }
-  try{
+
+  try {
     const res = await propertyStore.createABid({
       id_prop: Number(props.id),
       amount: offerAmount.value
@@ -214,34 +261,31 @@ async function confirmBid(){
     } else {
       toast.error("Errore nell'inserimento dell'offerta")
     }
-  }catch(err){ 
+  } catch {
     toast.error("Errore nell'inserimento dell'offerta")
   }
 }
 
-function vendorProfile() {
-  // TODO: Apri profilo venditore
+async function toggleFavorite(idprop: number) {
+  await propertyStore.toggleFavourite(idprop)
 }
 
-function toggleFavorite(idprop: number) {
-  propertyStore.addToFavourites(idprop)
+function selectImage(index: number) {
+  activeIndex.value = index
+}
+
+function nextImage() {
+  if (!images.value.length) return
+  activeIndex.value = (activeIndex.value + 1) % images.value.length
+}
+
+function prevImage() {
+  if (!images.value.length) return
+  activeIndex.value = (activeIndex.value - 1 + images.value.length) % images.value.length
 }
 </script>
 
 <style scoped>
-
-.detail-container {
-  max-width: 1000px;
-  margin: 2rem auto;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  background: #fff;
-  padding: 2rem;
-  border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-}
-
 .detail-header {
   display: flex;
   justify-content: space-between;
@@ -254,19 +298,68 @@ function toggleFavorite(idprop: number) {
   cursor: pointer;
   font-size: 1.5rem;
   color: #ccc;
+  border-radius: 10px;
+  padding: 6px 10px;
+  transition: color 0.2s ease, transform 0.2s ease;
 }
+
 .favorite-btn:hover {
   color: #e63946;
 }
 
-.detail-image img {
+.favorite-btn.active {
+  color: #e63946;
+}
+
+.detail-image {
+  margin-bottom: 1.5rem;
+}
+
+.main-image-wrapper {
+  position: relative;
+}
+
+.main-image {
   width: 100%;
   height: 420px;
   object-fit: cover;
   border-radius: 12px;
+  display: block;
 }
 
- .detail-city {
+.nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: rgba(12, 93, 177, 0.92);
+  color: white;
+  font-size: 1.6rem;
+  border: none;
+  cursor: pointer;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  padding: 0;
+}
+
+.nav-left {
+  left: 12px;
+}
+
+.nav-right {
+  right: 12px;
+}
+
+.nav:hover {
+  background: #094a88;
+}
+
+.detail-city {
   font-size: 1.1rem;
   color: #555;
 }
@@ -275,13 +368,14 @@ function toggleFavorite(idprop: number) {
   margin-top: 20px;
   padding: 16px;
   border: 1px solid #ddd;
-  border-radius: 8px;
+  border-radius: 10px;
   background: #f9f9f9;
 }
+
 .advantages h3 {
   margin-bottom: 10px;
   color: #0c5db1;
-} 
+}
 
 .loading {
   text-align: center;
@@ -291,40 +385,70 @@ function toggleFavorite(idprop: number) {
 
 .input-row {
   display: flex;
-  justify-content: space-between; 
-  gap: 1rem;  
-  margin-bottom: 15px;                   
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 15px;
 }
 
 .input-row input {
-  flex: 1;           
-  min-width: 0;       
+  flex: 1;
+  min-width: 0;
 }
 
-.hint{ 
+.hint {
   color: #6b7280;
   opacity: 0.7;
   font-style: italic;
-
 }
 
 .gallery {
   display: flex;
   gap: 10px;
-  margin-top: 10px;
+  margin-top: 12px;
   overflow-x: auto;
+  padding-bottom: 4px;
 }
 
 .gallery-thumb {
-  width: 80px;
-  height: 60px;
+  width: 90px;
+  height: 65px;
   object-fit: cover;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   border: 2px solid transparent;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
 }
 
 .gallery-thumb:hover {
   border-color: #0c5db1;
+  transform: scale(1.05);
+}
+
+.gallery-thumb.active {
+  border-color: #0c5db1;
+}
+
+.detail-map {
+  height: 400px;
+  border-radius: 12px;
+  margin-top: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .main-image {
+    height: 280px;
+  }
+
+  .nav {
+    width: 38px;
+    height: 38px;
+    font-size: 1.2rem;
+  }
+
+  .gallery-thumb {
+    width: 70px;
+    height: 55px;
+  }
 }
 </style>

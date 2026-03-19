@@ -1,10 +1,22 @@
 <template>
-  <div class="property-card" :class="{ compact }">
-    <div v-if="property.listingType" class="listing-type" :class="property.listingType.toLowerCase()">
+  <div
+    class="property-card custom-property-card"
+    :class="{ compact }"
+    @click="goToDetail"
+  >
+    <div
+      v-if="property.listingType"
+      class="listing-type"
+      :class="property.listingType.toLowerCase()"
+    >
       {{ property.listingType.toUpperCase() }}
     </div>
 
-    <img :src="property.imageUrl ? getContentUrl(property.imageUrl) : '/placeholder-house.jpg'" alt="Foto immobile" class="property-img"/>
+    <img
+      :src="property.imageUrl ? getContentUrl(property.imageUrl) : '/placeholder-house.jpg'"
+      alt="Foto immobile"
+      class="property-img"
+    />
 
     <div class="property-info">
       <h3>{{ property.title }}</h3>
@@ -22,14 +34,13 @@
         <span v-if="property.nearTransport" class="badge">🚌 Trasporti</span>
       </div>
 
-      <!-- Azioni -->
       <div class="card-actions">
-        <RouterLink :to="`/properties/${property.id}`" class="details-btn">Dettagli</RouterLink>
-        
+        <span class="open-label">Apri dettagli</span>
+
         <button
           class="fav-btn"
           :class="{ active: isFavourite }"
-          @click="$emit('toggle-fav', property.id)"
+          @click.stop="emitToggleFav"
         >
           <i class="fa-solid fa-heart"></i>
         </button>
@@ -39,68 +50,89 @@
 </template>
 
 <script setup lang="ts">
+import { useRouter } from "vue-router"
 import type { PropertySearchDTO } from "@/types/Properties"
 
-const props = defineProps<{ property: PropertySearchDTO; compact?: boolean; isFavourite?: boolean }>()
-defineEmits<{
+const router = useRouter()
+
+const props = defineProps<{
+  property: PropertySearchDTO
+  compact?: boolean
+  isFavourite?: boolean
+}>()
+
+const emit = defineEmits<{
   (e: "toggle-fav", id: number): void
 }>()
 
-
 function getContentUrl(path: string) {
-    const baseUrl = import.meta.env.VITE_API_PROPERTY_URL || ''
-    return `${baseUrl}/uploads/${path}`
+  const baseUrl = import.meta.env.VITE_API_PROPERTY_URL || ""
+  return `${baseUrl}/uploads/${path}`
 }
 
-import { onMounted } from 'vue';
-onMounted(() => {
-  console.log('PropertyCard mounted with property:', props.property);
-});
+function goToDetail() {
+  router.push(`/properties/${props.property.id}`)
+}
 
+function emitToggleFav() {
+  emit("toggle-fav", props.property.id)
+}
 </script>
 
 <style scoped>
-.property-card { 
+.custom-property-card {
   background: #fff;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  transition: transform 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   display: flex;
   flex-direction: column;
+  position: relative;
+  cursor: pointer;
 }
-.property-card:hover {
+
+.custom-property-card:hover {
   transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
 }
+
 .property-img {
   width: 100%;
   height: 180px;
   object-fit: cover;
+  display: block;
 }
+
 .property-info {
   padding: 1rem;
 }
+
 .property-info h3 {
   font-size: 1.2rem;
   margin-bottom: 0.3rem;
   color: #0c5db1;
 }
+
 .price {
   font-weight: bold;
   color: #28a745;
   margin: 0.5rem 0;
 }
+
 .extras {
   font-size: 0.9rem;
   color: #555;
   margin-top: 4px;
 }
+
 .badges {
   margin-top: 8px;
   display: flex;
   gap: 6px;
   flex-wrap: wrap;
 }
+
 .badge {
   font-size: 0.8rem;
   background: #eaf4ff;
@@ -108,49 +140,56 @@ onMounted(() => {
   padding: 2px 6px;
   border-radius: 6px;
 }
+
 .card-actions {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 10px;
+  margin-top: 12px;
 }
-.details-btn {
-  padding: 6px 12px;
-  background: #0c5db1;
-  color: white;
-  border-radius: 6px;
-  text-decoration: none;
-  font-size: 0.85rem;
-  transition: background 0.2s;
+
+.open-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #0c5db1;
+  opacity: 0.85;
 }
-.details-btn:hover {
-  background: #094a88;
-}
+
 .fav-btn {
   background: none;
   border: none;
   cursor: pointer;
   font-size: 1.3rem;
   color: #aaa;
-  transition: color 0.2s;
-}
-.fav-btn.active {
-  color: #e63946; /* rosso acceso quando attivo */
+  transition: color 0.2s ease, transform 0.2s ease;
+  padding: 0.2rem;
+  z-index: 2;
 }
 
-/* Badge tipo annuncio */
+.fav-btn:hover {
+  transform: scale(1.08);
+}
+
+.fav-btn.active {
+  color: #e63946;
+}
+
 .listing-type {
   position: absolute;
-  margin: 10px;
+  top: 10px;
+  left: 10px;
   padding: 4px 10px;
   border-radius: 6px;
   font-size: 0.75rem;
   font-weight: 600;
   color: white;
+  z-index: 1;
 }
+
 .listing-type.vendita {
   background: #28a745;
 }
+
 .listing-type.affitto {
   background: #ff9800;
 }

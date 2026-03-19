@@ -37,9 +37,9 @@ export const usePropertyStore = defineStore("properties", {
       city?: string
       minArea?: number | null
       maxPrice?: number | null
-      listingType?: string       // nuovo filtro: vendita/affitto
-      rooms?: number | null      // nuovo filtro: numero di stanze
-      energyClass?: string       // nuovo filtro: classe energetica
+      listingType?: string 
+        rooms?: number | null     
+      energyClass?: string       
     }) {
       this.loading = true       //  attivo lo stato di caricamento (spinner o messaggio)
       this.error = null         // resetto eventuali errori precedenti
@@ -296,6 +296,9 @@ async toggleFavourite(idProp: number) {
       await deleteProperty(id)
       await this.fetchList()
     },
+    async removePropertyOnly(id: number) {
+  await deleteProperty(id)
+},
 
     async uploadImage(id: number, file: File) {
       await uploadPropertyImage(id, file)
