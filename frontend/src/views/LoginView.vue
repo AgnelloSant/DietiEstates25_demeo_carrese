@@ -81,15 +81,7 @@
           </div>
         </div>
 
-        <!-- Ricordami + Password dimenticata -->
-        <div class="form-footer">
-          <label class="content-label">
-            <input type="checkbox" rememberMe>
-            <span class="forgot-link">Ricordami</span>
-          </label>
-          <a href="/forgot-password" class="forgot-link">Password dimenticata?</a>
-        </div>
-
+  
         <!-- Pulsante Login -->
         <button type="submit" class="btn-primary" :disabled="loading">
           <span v-if="!loading">Accedi</span>
