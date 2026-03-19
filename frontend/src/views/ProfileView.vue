@@ -108,8 +108,8 @@
           </div>
 
           <button type="submit" class="btn-primary" :disabled="changingPassword">
-            <span v-if="!changingPassword">🔑 Cambia Password</span>
-            <span v-else>⏳ Aggiornamento...</span>
+            <span v-if="!changingPassword">Cambia Password</span>
+            <span v-else>Aggiornamento...</span>
           </button>
         </form>
       </div>
@@ -126,49 +126,49 @@
         {{ errorMessage }}
       </div>
 
+      <!--  Creazione Utente admin o agente -->
+      <div v-if="['ADMIN', 'AGENT', 'ROLE_ADMIN', 'ROLE_AGENT'].includes(profile.role?.toUpperCase())" class="basic-card">
+        <div class="card-header">
+          <h2> Crea Utente</h2>
+        </div>
+
+        <form @submit.prevent="createNewUser" class="password-form">
+          <div class="form-group">
+            <label>Nome</label>
+            <input v-model="newUser.name" type="text" placeholder="Nome completo" required />
+          </div>
+
+          <div class="form-group">
+            <label>Email</label>
+            <input v-model="newUser.email" type="email" placeholder="email@example.com" required />
+          </div>
+
+          <div class="form-group">
+            <label>Password</label>
+            <input v-model="newUser.password" type="password" placeholder="Password sicura" required />
+          </div>
+
+           <div class="form-group">
+            <label>Telefono</label>
+            <input v-model="newUser.phone" type="tel" placeholder="+39 ..." required />
+          </div>
+
+          <div class="form-group" v-if="isAdmin">
+            <label>Ruolo</label>
+            <select v-model="newUser.role" class="role-select">
+              <option value="AGENT">Agente</option>
+              <option value="ADMIN">Admin</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn-primary" :disabled="creatingUser">
+            <span v-if="!creatingUser">Crea {{ isAdmin ? newUser.role : 'Agente' }}</span>
+            <span v-else>Creazione...</span>
+          </button>
+        </form>
+      </div>
+
     </div>
-  </div>
-  <!--  Creazione Utente admin o agente -->
-  
-  <div v-if="['ADMIN', 'AGENT', 'ROLE_ADMIN', 'ROLE_AGENT'].includes(profile.role?.toUpperCase())" class="basic-card">
-    <div class="card-header">
-      <h2> Crea Utente</h2>
-    </div>
-
-    <form @submit.prevent="createNewUser" class="password-form">
-      <div class="form-group">
-        <label>Nome</label>
-        <input v-model="newUser.name" type="text" placeholder="Nome completo" required />
-      </div>
-
-      <div class="form-group">
-        <label>Email</label>
-        <input v-model="newUser.email" type="email" placeholder="email@example.com" required />
-      </div>
-
-      <div class="form-group">
-        <label>Password</label>
-        <input v-model="newUser.password" type="password" placeholder="Password sicura" required />
-      </div>
-
-       <div class="form-group">
-        <label>Telefono</label>
-        <input v-model="newUser.phone" type="tel" placeholder="+39 ..." required />
-      </div>
-
-      <div class="form-group" v-if="isAdmin">
-        <label>Ruolo</label>
-        <select v-model="newUser.role" class="role-select">
-          <option value="AGENT">Agente</option>
-          <option value="ADMIN">Admin</option>
-        </select>
-      </div>
-
-      <button type="submit" class="btn-primary" :disabled="creatingUser">
-        <span v-if="!creatingUser">✨ Crea {{ isAdmin ? newUser.role : 'Agente' }}</span>
-        <span v-else>⏳ Creazione...</span>
-      </button>
-    </form>
   </div>
 </template>
 
