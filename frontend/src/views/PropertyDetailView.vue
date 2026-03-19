@@ -1,6 +1,5 @@
 <template>
   <div v-if="property" class="def-container">
-    <!-- Immagine principale -->
     <div class="detail-image">
       <div class="main-image-wrapper">
         <button
@@ -26,7 +25,6 @@
         </button>
       </div>
 
-      <!-- Thumbnails -->
       <div v-if="images.length > 1" class="gallery">
         <img
           v-for="(img, index) in images"
@@ -39,11 +37,14 @@
       </div>
     </div>
 
-    <!-- Info principali -->
     <div class="info-container">
       <div class="detail-header">
         <h1 class="title">{{ property.title }}</h1>
-        <button class="favorite-btn" @click="toggleFavorite(property.id)">
+        <button
+          class="favorite-btn"
+          :class="{ active: isFavourite }"
+          @click="toggleFavorite(property.id)"
+        >
           <i class="fa-solid fa-heart"></i>
         </button>
       </div>
@@ -72,7 +73,6 @@
       </p>
     </div>
 
-    <!-- Bottoni azione -->
     <div class="row-container">
       <button @click="showReservationForm = true" class="btn">
         Effettua una prenotazione
@@ -82,7 +82,6 @@
       </button>
     </div>
 
-    <!-- Popup prenotazione -->
     <div v-if="showReservationForm" class="modal-overlay">
       <div class="modal modal--medium">
         <h2 class="title">Scegli giorno e ora</h2>
@@ -101,7 +100,6 @@
       </div>
     </div>
 
-    <!-- Popup offerta -->
     <div v-if="showBidForm" class="modal-overlay">
       <div class="modal modal--small" style="max-width: 400px;">
         <h2 class="title">Quanto vuoi offrire?</h2>
@@ -118,7 +116,6 @@
       </div>
     </div>
 
-    <!-- Vantaggi zona -->
     <div
       v-if="property.nearSchool || property.nearPark || property.nearTransport"
       class="advantages"
@@ -131,7 +128,6 @@
       </ul>
     </div>
 
-    <!-- Mappa -->
     <div
       v-if="property.latitude && property.longitude"
       id="map"
@@ -142,8 +138,6 @@
 
   <div v-else class="loading">Caricamento...</div>
 </template>
-
-
 
 <script setup lang="ts">
 import { onMounted, ref, nextTick, watch, computed } from "vue"
@@ -175,6 +169,11 @@ const toast = useToast()
 const images = ref<string[]>([])
 const activeIndex = ref(0)
 
+const isFavourite = computed(() => {
+  if (!property.value) return false
+  return propertyStore.favList.some((p) => p.id === property.value!.id)
+})
+
 const mainImageSrc = computed(() => {
   if (images.value.length > 0) {
     return getContentUrl(images.value[activeIndex.value])
@@ -189,6 +188,7 @@ const mainImageSrc = computed(() => {
 
 onMounted(async () => {
   property.value = await propertyStore.fetchDetail(Number(props.id))
+  await propertyStore.fetchFavList()
 
   images.value = await propertyStore.fetchImages(Number(props.id))
   activeIndex.value = 0
@@ -261,13 +261,13 @@ async function confirmBid() {
     } else {
       toast.error("Errore nell'inserimento dell'offerta")
     }
-  } catch (err) {
+  } catch {
     toast.error("Errore nell'inserimento dell'offerta")
   }
 }
 
-function toggleFavorite(idprop: number) {
-  propertyStore.addToFavourites(idprop)
+async function toggleFavorite(idprop: number) {
+  await propertyStore.toggleFavourite(idprop)
 }
 
 function selectImage(index: number) {
@@ -285,7 +285,6 @@ function prevImage() {
 }
 </script>
 
-
 <style scoped>
 .detail-header {
   display: flex;
@@ -299,9 +298,16 @@ function prevImage() {
   cursor: pointer;
   font-size: 1.5rem;
   color: #ccc;
+  border-radius: 10px;
+  padding: 6px 10px;
+  transition: color 0.2s ease, transform 0.2s ease;
 }
 
 .favorite-btn:hover {
+  color: #e63946;
+}
+
+.favorite-btn.active {
   color: #e63946;
 }
 
@@ -325,15 +331,20 @@ function prevImage() {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  border: none;
-  width: 42px;
-  height: 42px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
-  background: rgba(12, 93, 177, 0.9);
+  background: rgba(12, 93, 177, 0.92);
   color: white;
-  font-size: 1.5rem;
+  font-size: 1.6rem;
+  border: none;
   cursor: pointer;
   z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  padding: 0;
 }
 
 .nav-left {
@@ -357,7 +368,7 @@ function prevImage() {
   margin-top: 20px;
   padding: 16px;
   border: 1px solid #ddd;
-  border-radius: 8px;
+  border-radius: 10px;
   background: #f9f9f9;
 }
 
@@ -399,16 +410,21 @@ function prevImage() {
 }
 
 .gallery-thumb {
-  width: 88px;
-  height: 64px;
+  width: 90px;
+  height: 65px;
   object-fit: cover;
   border-radius: 8px;
   cursor: pointer;
   border: 2px solid transparent;
   flex-shrink: 0;
+  transition: all 0.2s ease;
 }
 
-.gallery-thumb:hover,
+.gallery-thumb:hover {
+  border-color: #0c5db1;
+  transform: scale(1.05);
+}
+
 .gallery-thumb.active {
   border-color: #0c5db1;
 }
@@ -425,9 +441,14 @@ function prevImage() {
   }
 
   .nav {
-    width: 36px;
-    height: 36px;
+    width: 38px;
+    height: 38px;
     font-size: 1.2rem;
+  }
+
+  .gallery-thumb {
+    width: 70px;
+    height: 55px;
   }
 }
 </style>

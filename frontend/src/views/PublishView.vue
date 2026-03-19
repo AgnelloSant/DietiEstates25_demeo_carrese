@@ -16,221 +16,236 @@
         </div>
       </div>
 
-    <!-- Step 1 -->
-<div v-if="step === 1" class="step">
-  <h2 class="page-subtitle">Informazioni di base</h2>
+      <!-- Step 1 -->
+      <div v-if="step === 1" class="step">
+        <h2 class="page-subtitle">Informazioni di base</h2>
 
-  <div class="form-grid single">
-    <div class="form-group">
-      <label>Titolo annuncio</label>
-      <input v-model="form.title" placeholder="Es. Trilocale luminoso con terrazzo" required />
-    </div>
+        <div class="form-grid single">
+          <div class="form-group">
+            <label>Titolo annuncio</label>
+            <input
+              v-model="form.title"
+              placeholder="Es. Trilocale luminoso con terrazzo"
+              required
+            />
+          </div>
 
-    <div class="form-group">
-      <label>Città</label>
-      <input v-model="form.city" placeholder="Es. Napoli" required />
-    </div>
+          <div class="form-group">
+            <label>Città</label>
+            <input
+              v-model="form.city"
+              placeholder="Es. Napoli"
+              required
+            />
+          </div>
 
-    <div class="form-group full">
-      <label>Descrizione</label>
-      <textarea
-        v-model="form.description"
-        placeholder="Descrivi le caratteristiche principali dell'immobile"
-        rows="5"
-        class="description-input"
-        required
-      ></textarea>
-    </div>
-  </div>
+          <div class="form-group full">
+            <label>Descrizione</label>
+            <textarea
+              v-model="form.description"
+              placeholder="Descrivi le caratteristiche principali dell'immobile"
+              rows="5"
+              class="description-input"
+              required
+            ></textarea>
+          </div>
+        </div>
 
-  <div class="nav-buttons">
-    <button
-      class="btn-primary"
-      :disabled="!form.title || !form.description || !form.city"
-      @click="nextStep"
-    >
-      Avanti
-    </button>
-  </div>
-</div>
+        <div class="nav-buttons">
+          <button
+            class="btn-primary"
+            :disabled="!form.title || !form.description || !form.city"
+            @click="nextStep"
+          >
+            Avanti
+          </button>
+        </div>
+      </div>
 
-    <!-- Step 2: Indirizzo -->
-<div v-if="step === 2" class="step">
-  <h2 class="page-subtitle">Indirizzo</h2>
+      <!-- Step 2 -->
+      <div v-if="step === 2" class="step">
+        <h2 class="page-subtitle">Indirizzo</h2>
 
-  <div class="form-grid single">
-    <div class="form-group full">
-      <label>Indirizzo completo</label>
-      <input v-model="addressInput" placeholder="Es. Via Roma 10, Napoli" required />
-    </div>
-  </div>
+        <div class="form-grid single">
+          <div class="form-group full">
+            <label>Indirizzo completo</label>
+            <input
+              v-model="addressInput"
+              placeholder="Es. Via Roma 10, Napoli"
+              required
+            />
+          </div>
+        </div>
 
-  <div class="inline-actions">
-    <button class="third-btn" @click="resolveAddress">Trova sulla mappa</button>
-  </div>
+        <div class="inline-actions">
+          <button class="third-btn" @click="resolveAddress">
+            Trova sulla mappa
+          </button>
+        </div>
 
-  <div v-if="coords" id="map" class="map-preview"></div>
+        <div v-if="coords" id="map" class="map-preview"></div>
 
-  <p v-if="coords" class="success">
-    Coordinate trovate: {{ coords.lat }}, {{ coords.lng }}
-  </p>
+        <p v-if="coords" class="success">
+          Coordinate trovate: {{ coords.lat }}, {{ coords.lng }}
+        </p>
 
-  <div class="nav-buttons">
-    <button class="btn-secondary" @click="prevStep">Indietro</button>
-    <button class="btn-primary" :disabled="!coords" @click="nextStep">
-      Avanti
-    </button>
-  </div>
-</div>
+        <div class="nav-buttons">
+          <button class="btn-secondary" @click="prevStep">Indietro</button>
+          <button class="btn-primary" :disabled="!coords" @click="nextStep">
+            Avanti
+          </button>
+        </div>
+      </div>
 
-    <!-- Step 3: Dettagli tecnici -->
-<div v-if="step === 3" class="step">
-  <h2 class="page-subtitle">Dettagli immobile</h2>
+      <!-- Step 3 -->
+      <div v-if="step === 3" class="step">
+        <h2 class="page-subtitle">Dettagli immobile</h2>
 
-  <div class="form-grid">
-    <div class="form-group">
-      <label>Superficie (mq)</label>
-      <input
-        v-model.number="form.area"
-        type="number"
-        placeholder="Es. 120"
-        min="1"
-        required
-      />
-    </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Superficie (mq)</label>
+            <input
+              v-model.number="form.area"
+              type="number"
+              placeholder="Es. 120"
+              min="1"
+              required
+            />
+          </div>
 
-    <div class="form-group">
-      <label>Prezzo (€)</label>
-      <input
-        v-model.number="form.price"
-        type="number"
-        placeholder="Es. 250000"
-        min="1"
-        required
-      />
-    </div>
+          <div class="form-group">
+            <label>Prezzo (€)</label>
+            <input
+              v-model.number="form.price"
+              type="number"
+              placeholder="Es. 250000"
+              min="1"
+              required
+            />
+          </div>
 
-    <div class="form-group">
-      <label>Tipo annuncio</label>
-      <select v-model="form.listingType" required>
-        <option disabled value="">-- Tipo annuncio --</option>
-        <option value="vendita">Vendita</option>
-        <option value="affitto">Affitto</option>
-      </select>
-    </div>
+          <div class="form-group">
+            <label>Tipo annuncio</label>
+            <select v-model="form.listingType" required>
+              <option disabled value="">-- Tipo annuncio --</option>
+              <option value="vendita">Vendita</option>
+              <option value="affitto">Affitto</option>
+            </select>
+          </div>
 
-    <div class="form-group">
-      <label>Numero stanze</label>
-      <input
-        v-model.number="form.rooms"
-        type="number"
-        min="1"
-        placeholder="Es. 4"
-        required
-      />
-    </div>
+          <div class="form-group">
+            <label>Numero stanze</label>
+            <input
+              v-model.number="form.rooms"
+              type="number"
+              min="1"
+              placeholder="Es. 4"
+              required
+            />
+          </div>
 
-    <div class="form-group full">
-      <label>Classe energetica</label>
-      <select v-model="form.energyClass" required>
-        <option disabled value="">-- Classe energetica --</option>
-        <option>A</option><option>B</option><option>C</option>
-        <option>D</option><option>E</option><option>F</option><option>G</option>
-      </select>
-    </div>
-  </div>
+          <div class="form-group full">
+            <label>Classe energetica</label>
+            <select v-model="form.energyClass" required>
+              <option disabled value="">-- Classe energetica --</option>
+              <option>A</option>
+              <option>B</option>
+              <option>C</option>
+              <option>D</option>
+              <option>E</option>
+              <option>F</option>
+              <option>G</option>
+            </select>
+          </div>
+        </div>
 
-  <div class="nav-buttons">
-    <button class="btn-secondary" @click="prevStep">Indietro</button>
-    <button
-      class="btn-primary"
-      :disabled="!form.area || !form.price || !form.rooms || !form.energyClass"
-      @click="nextStep"
-    >
-      Avanti
-    </button>
-  </div>
-</div>
+        <div class="nav-buttons">
+          <button class="btn-secondary" @click="prevStep">Indietro</button>
+          <button
+            class="btn-primary"
+            :disabled="!form.area || !form.price || !form.rooms || !form.energyClass"
+            @click="nextStep"
+          >
+            Avanti
+          </button>
+        </div>
+      </div>
 
+      <!-- Step 4 -->
+      <div v-if="step === 4" class="step">
+        <h2 class="page-subtitle">Foto immobile</h2>
 
+        <div class="form-group full">
+          <label>Carica immagini</label>
+          <input
+            ref="fileInput"
+            type="file"
+            accept=".jpg,.jpeg,image/jpeg"
+            multiple
+            @change="handleFileSelect"
+          />
+          <p class="hint">Carica una o più foto in formato .jpg o .jpeg</p>
+        </div>
 
-    <!-- Step 4: Foto -->
-<!-- Step 4: Foto -->
-<div v-if="step === 4" class="step">
-  <h2 class="page-subtitle">Foto immobile</h2>
+        <div v-if="previewUrls.length" class="image-preview-grid">
+          <div
+            v-for="(url, index) in previewUrls"
+            :key="index"
+            class="preview-item"
+          >
+            <img
+              :src="url"
+              alt="Anteprima"
+              class="preview-thumb"
+            />
+            <button
+              type="button"
+              class="remove-preview-btn"
+              @click="removeSelectedImage(index)"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
 
-  <div class="form-group full">
-    <label>Carica immagini</label>
-    <input
-      ref="fileInput"
-      type="file"
-      accept=".jpg,.jpeg,image/jpeg"
-      multiple
-      @change="handleFileSelect"
-    />
-    <p class="hint">Carica una o più foto in formato .jpg o .jpeg</p>
-  </div>
+        <p v-if="selectedFiles.length" class="hint">
+          Hai selezionato {{ selectedFiles.length }} foto
+        </p>
 
-  <div v-if="previewUrls.length" class="image-preview-grid">
-    <div
-      v-for="(url, index) in previewUrls"
-      :key="index"
-      class="preview-item"
-    >
-      <img
-        :src="url"
-        alt="Anteprima"
-        class="preview-thumb"
-      />
-      <button
-        type="button"
-        class="remove-preview-btn"
-        @click="removeSelectedImage(index)"
-      >
-        ✕
-      </button>
-    </div>
-  </div>
+        <div class="nav-buttons">
+          <button class="btn-secondary" @click="prevStep">Indietro</button>
+          <button class="btn-primary" @click="nextStep">Avanti</button>
+        </div>
+      </div>
 
-  <p v-if="selectedFiles.length" class="hint">
-    Hai selezionato {{ selectedFiles.length }} foto
-  </p>
+      <!-- Step 5 -->
+      <div v-if="step === 5" class="step">
+        <h2 class="page-subtitle">Riepilogo finale</h2>
 
-  <div class="nav-buttons">
-    <button class="btn-secondary" @click="prevStep">Indietro</button>
-    <button class="btn-primary" @click="nextStep">Avanti</button>
-  </div>
-</div>
+        <div class="summary-layout">
+          <ul class="summary">
+            <li><b>Titolo:</b> {{ form.title }}</li>
+            <li><b>Descrizione:</b> {{ form.description }}</li>
+            <li><b>Città:</b> {{ form.city }}</li>
+            <li><b>Indirizzo:</b> {{ form.address }}</li>
+            <li><b>Superficie:</b> {{ form.area }} m²</li>
+            <li><b>Prezzo:</b> € {{ form.price?.toLocaleString() ?? "" }}</li>
+            <li><b>Tipo:</b> {{ form.listingType }}</li>
+            <li><b>Stanze:</b> {{ form.rooms }}</li>
+            <li><b>Classe energetica:</b> {{ form.energyClass }}</li>
+            <li><b>Foto selezionate:</b> {{ selectedFiles.length }}</li>
+          </ul>
 
+          <div v-if="coords" id="map-summary" class="map-summary"></div>
+        </div>
 
-    <!-- Step 5: Riepilogo -->
-  <div v-if="step === 5" class="step">
-  <h2 class="page-subtitle">Riepilogo finale</h2>
-
-  <div class="summary-layout">
-    <ul class="summary">
-      <li><b>Titolo:</b> {{ form.title }}</li>
-      <li><b>Descrizione:</b> {{ form.description }}</li>
-      <li><b>Città:</b> {{ form.city }}</li>
-      <li><b>Indirizzo:</b> {{ form.address }}</li>
-      <li><b>Superficie:</b> {{ form.area }} m²</li>
-      <li><b>Prezzo:</b> € {{ form.price?.toLocaleString() ?? "" }}</li>
-      <li><b>Tipo:</b> {{ form.listingType }}</li>
-      <li><b>Stanze:</b> {{ form.rooms }}</li>
-      <li><b>Classe energetica:</b> {{ form.energyClass }}</li>
-      <li><b>Foto selezionate:</b> {{ selectedFiles.length }}</li>
-    </ul>
-
-    <div v-if="coords" id="map-summary" class="map-summary"></div>
-  </div>
-
-  <div class="nav-buttons">
-    <button class="btn-secondary" @click="prevStep">Indietro</button>
-    <button class="btn-publish" @click="publish" :disabled="isPublishing">
-      {{ isPublishing ? "Pubblicazione..." : "Pubblica" }}
-    </button>
-  </div>
-</div>
+        <div class="nav-buttons">
+          <button class="btn-secondary" @click="prevStep">Indietro</button>
+          <button class="btn-publish" @click="publish" :disabled="isPublishing">
+            {{ isPublishing ? "Pubblicazione..." : "Pubblica" }}
+          </button>
+        </div>
+      </div>
 
       <p v-if="error" class="error-message">{{ error }}</p>
     </div>
@@ -304,7 +319,6 @@ function handleFileSelect(event: Event) {
     return
   }
 
-  // Evita duplicati banali per nome+size
   const newFiles = files.filter((newFile) => {
     return !selectedFiles.value.some(
       (existingFile) =>
@@ -324,8 +338,13 @@ function handleFileSelect(event: Event) {
     ...newFiles.map((file) => URL.createObjectURL(file))
   ]
 
-  // reset del campo input per permettere di riselezionare anche lo stesso file dopo
   target.value = ""
+}
+
+function removeSelectedImage(index: number) {
+  URL.revokeObjectURL(previewUrls.value[index])
+  previewUrls.value.splice(index, 1)
+  selectedFiles.value.splice(index, 1)
 }
 
 function nextStep() {
@@ -502,196 +521,166 @@ onBeforeUnmount(() => {
     mapSummary = null
   }
 })
-
-
-function removeSelectedImage(index: number) {
-  URL.revokeObjectURL(previewUrls.value[index])
-  previewUrls.value.splice(index, 1)
-  selectedFiles.value.splice(index, 1)
-}
-
 </script>
 
-
 <style scoped>
-
-/* HEADER */
-.detail-header {
+.publish-wrapper {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem 3rem;
 }
 
-/* BOTTONE PREFERITI */
-.favorite-btn {
-  background: #0c5db1;
-  border: none;
-  cursor: pointer;
-  font-size: 1.5rem;
-  color: #ccc;
-  border-radius: 10px;
-  padding: 6px 10px;
-}
-
-.favorite-btn:hover {
-  color: #e63946;
-}
-
-/* === IMMAGINE PRINCIPALE === */
-.detail-image {
-  margin-bottom: 1.5rem;
-}
-
-.main-image-wrapper {
-  position: relative;
-}
-
-.main-image {
+.publish-form-card {
   width: 100%;
-  height: 420px;
-  object-fit: cover;
-  border-radius: 12px;
-  display: block;
+  max-width: 900px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
-/* === FRECCE === */
-.nav {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  
-  width: 46px;
-  height: 46px;
+.steps-indicator {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 1.5rem 0 2rem;
+}
+
+.step-dot {
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
-
-  background: rgba(12, 93, 177, 0.9);
-  color: white;
-  font-size: 1.6rem;
-
-  border: none;
-  cursor: pointer;
-  z-index: 2;
-
+  background: #ddd;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-weight: 600;
+}
 
-  /* FIX ALLINEAMENTO */
+.step-dot.active {
+  background: #0c5db1;
+  color: white;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem 1.25rem;
+}
+
+.form-grid.single {
+  grid-template-columns: 1fr;
+}
+
+.form-group.full {
+  grid-column: 1 / -1;
+}
+
+.description-input {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.inline-actions {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.map-preview,
+.map-summary {
+  height: 260px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.summary-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.summary {
+  list-style: none;
+  padding: 1rem;
+  margin: 0;
+  background: #f8fafc;
+  border-radius: 12px;
+  line-height: 1.8;
+  text-align: left;
+}
+
+.hint {
+  color: #64748b;
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}
+
+.image-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 12px;
+  margin-top: 0.5rem;
+  align-items: start;
+}
+
+.preview-item {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  background: #f8fafc;
+}
+
+.preview-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.remove-preview-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  border: none;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 0.9rem;
   line-height: 1;
   padding: 0;
 }
 
-.nav-left {
-  left: 12px;
+.btn-publish {
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+  color: white;
 }
 
-.nav-right {
-  right: 12px;
-}
-
-.nav:hover {
-  background: #094a88;
-}
-
-/* === INFO === */
-.detail-city {
-  font-size: 1.1rem;
-  color: #555;
-}
-
-/* === GALLERY === */
-.gallery {
-  display: flex;
-  gap: 10px;
-  margin-top: 12px;
-  overflow-x: auto;
-  padding-bottom: 4px;
-}
-
-.gallery-thumb {
-  width: 90px;
-  height: 65px;
-  object-fit: cover;
-  border-radius: 8px;
-  cursor: pointer;
-  border: 2px solid transparent;
-  flex-shrink: 0;
-  transition: all 0.2s ease;
-}
-
-.gallery-thumb:hover {
-  border-color: #0c5db1;
-  transform: scale(1.05);
-}
-
-.gallery-thumb.active {
-  border-color: #0c5db1;
-}
-
-/* === VANTAGGI === */
-.advantages {
-  margin-top: 20px;
-  padding: 16px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  background: #f9f9f9;
-}
-
-.advantages h3 {
-  margin-bottom: 10px;
-  color: #0c5db1;
-}
-
-/* === LOADING === */
-.loading {
-  text-align: center;
-  margin-top: 3rem;
-  font-size: 1.2rem;
-}
-
-/* === INPUT MODALI === */
-.input-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 15px;
-}
-
-.input-row input {
-  flex: 1;
-  min-width: 0;
-}
-
-/* === HINT === */
-.hint {
-  color: #6b7280;
+.btn-publish:disabled {
   opacity: 0.7;
-  font-style: italic;
+  cursor: not-allowed;
 }
 
-/* === MAPPA === */
-.detail-map {
-  height: 400px;
-  border-radius: 12px;
-  margin-top: 1.5rem;
-}
-
-/* === RESPONSIVE === */
 @media (max-width: 768px) {
-  .main-image {
-    height: 260px;
+  .publish-form-card {
+    padding: 1.25rem;
   }
 
-  .nav {
-    width: 38px;
-    height: 38px;
-    font-size: 1.2rem;
-  }
-
-  .gallery-thumb {
-    width: 70px;
-    height: 55px;
+  .form-grid,
+  .summary-layout {
+    grid-template-columns: 1fr;
   }
 }
-
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="property-card"
+    class="property-card custom-property-card"
     :class="{ compact }"
     @click="goToDetail"
   >
@@ -80,7 +80,7 @@ function emitToggleFav() {
 </script>
 
 <style scoped>
-.property-card {
+.custom-property-card {
   background: #fff;
   border-radius: 12px;
   overflow: hidden;
@@ -92,7 +92,7 @@ function emitToggleFav() {
   cursor: pointer;
 }
 
-.property-card:hover {
+.custom-property-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
 }
@@ -101,6 +101,7 @@ function emitToggleFav() {
   width: 100%;
   height: 180px;
   object-fit: cover;
+  display: block;
 }
 
 .property-info {
@@ -173,7 +174,6 @@ function emitToggleFav() {
   color: #e63946;
 }
 
-/* Badge tipo annuncio */
 .listing-type {
   position: absolute;
   top: 10px;

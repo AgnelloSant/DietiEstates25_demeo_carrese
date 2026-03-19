@@ -310,8 +310,8 @@ const editForm = ref<PropertyUpdateDTO>({
   listingType: "vendita" as "vendita" | "affitto", // ✅ Tipizzazione corretta
   rooms: 1,
   energyClass: "A",
-  idUser: 1, // ✅ Campo obbligatorio aggiunto
-  views: 0   // ✅ Campo opzionale aggiunto
+  idUser: 1, 
+  views: 0   
 })
 
 // Computed (stesso codice)
