@@ -185,13 +185,15 @@ public class PropertyService {
                 updatedProperty.getAddress());
     }
 
-    public void deleteProperty(Long id) {
-        if (propertyRepository.existsById(id)) {
-            propertyRepository.deleteById(id);
-        } else {
-            throw new RuntimeException("Property not found with id: " + id);
-        }
+
+public void deleteProperty(Long id) {
+    if (!propertyRepository.existsById(id)) {
+        throw new RuntimeException("Property not found with id: " + id);
     }
+
+    fileStorageService.deletePropertyImages(id);
+    propertyRepository.deleteById(id);
+}
 
     public void incrementPropertyViews(Long propertyId) {
         propertyRepository.incrementViews(propertyId);
@@ -204,5 +206,9 @@ public class PropertyService {
     public List<String> getPropertyImages(Long propertyId) {
         return fileStorageService.getImages(propertyId);
     }
+
+
+
+
 
 }
