@@ -26,7 +26,7 @@ EXPOSE 5173
 CMD ["npm", "run", "dev", "--", "--host"]
 
 # --- Stage 2: Production ---
-FROM nginxinc/nginx-unprivileged:stable-alpine
+FROM nginx:stable-alpine
 
 # Rimuoviamo la configurazione di default per evitare conflitti
 RUN rm /etc/nginx/conf.d/default.conf
@@ -41,5 +41,5 @@ COPY --from=build-stage /app/dist /usr/share/nginx/html
 # Permessi: Assicuriamoci che Nginx possa leggere i file
 RUN chmod -R 755 /usr/share/nginx/html
 
-EXPOSE 8080
+EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

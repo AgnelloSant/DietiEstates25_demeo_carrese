@@ -110,7 +110,7 @@ const handleRegister = async () => {
   registering.value = true
 
   // Email Validation
-  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(form.email)) {
     error.value = 'Please enter a valid email address.';
     registering.value = false;
