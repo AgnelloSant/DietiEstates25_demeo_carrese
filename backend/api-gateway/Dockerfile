@@ -7,6 +7,8 @@ RUN mvn clean package -DskipTests
 
 # Run stage
 FROM eclipse-temurin:17-jdk
+RUN useradd -m -s /bin/false appuser
 # VOLUME /tmp
-COPY --from=build /app/target/*.jar app.jar
+COPY --chown=appuser:appuser --from=build /app/target/*.jar app.jar
+USER appuser
 ENTRYPOINT ["java","-jar","/app.jar"]

@@ -12,7 +12,7 @@
         <button style="padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;" @click="downloadBidsExcelFile">Scarica Excel Offerte</button>
     </div>
 
-    <div class="wide-content-container"> 
+    <div class="wide-content-container" style="margin: 0 auto;"> 
       <BidChart v-if="trendChartData.labels.length > 0" :chart-data="trendChartData" />
         <div v-else>caricamento dati..</div>
     </div>
