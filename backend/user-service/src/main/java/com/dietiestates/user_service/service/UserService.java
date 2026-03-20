@@ -6,11 +6,11 @@ import com.dietiestates.user_service.dto.UpdateProfileRequest;
 import com.dietiestates.user_service.dto.UserProfileDTO;
 import com.dietiestates.user_service.model.User;
 import com.dietiestates.user_service.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
+//import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+//import java.util.Optional;
 
 @Service
 public class UserService {

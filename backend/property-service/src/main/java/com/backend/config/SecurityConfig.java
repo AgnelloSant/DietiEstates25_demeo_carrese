@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
+//import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -23,7 +23,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/search", "/search/**", "/getall", "/get/**", "/uploads/**", "/favourites/**").permitAll()
+                        .requestMatchers("/search", "/search/**", "/getall", "/get/**", "/uploads/**", "/favourites/**")
+                        .permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/{id:[0-9]+}").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/{id:[0-9]+}/images").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/{id:[0-9]+}/images").permitAll()
@@ -34,8 +35,8 @@ public class SecurityConfig {
                         .anyRequest().authenticated())
                 .addFilterBefore(headerAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
-    return http.build();
-}
+        return http.build();
+    }
 
     @Bean
     public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {

@@ -1,8 +1,8 @@
 package com.dietiestates.user_service.config;
 
-import com.dietiestates.user_service.repository.UserRepository;
+//import com.dietiestates.user_service.repository.UserRepository;
 import com.dietiestates.user_service.service.CustomOAuth2SuccessHandler;
-import com.dietiestates.user_service.service.CustomUserDetailsService;
+//import com.dietiestates.user_service.service.CustomUserDetailsService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -50,26 +50,24 @@ public class AuthConfig {
         return config.getAuthenticationManager();
     }
 
- @Bean
-public SecurityFilterChain securityFilterChain(HttpSecurity http,
-        HeaderAuthenticationFilter headerAuthenticationFilter,
-        CustomOAuth2SuccessHandler successHandler) throws Exception {
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http,
+            HeaderAuthenticationFilter headerAuthenticationFilter,
+            CustomOAuth2SuccessHandler successHandler) throws Exception {
 
-    return http
-        .csrf(csrf -> csrf.disable())
-        .authorizeHttpRequests(auth -> auth
-            
-            .requestMatchers("/auth/**", "/oauth2/**", "/login/**").permitAll()
-            .anyRequest().authenticated()
-        )
-        .oauth2Login(oauth -> oauth
-            .successHandler(successHandler)
-            
-            .authorizationEndpoint(auth -> auth.baseUri("/oauth2/authorization"))
-            .redirectionEndpoint(red -> red.baseUri("/login/oauth2/code/*"))
-        )
-        .addFilterBefore(headerAuthenticationFilter,
-            UsernamePasswordAuthenticationFilter.class)
-        .build();
-}
+        return http
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
+
+                        .requestMatchers("/auth/**", "/oauth2/**", "/login/**").permitAll()
+                        .anyRequest().authenticated())
+                .oauth2Login(oauth -> oauth
+                        .successHandler(successHandler)
+
+                        .authorizationEndpoint(auth -> auth.baseUri("/oauth2/authorization"))
+                        .redirectionEndpoint(red -> red.baseUri("/login/oauth2/code/*")))
+                .addFilterBefore(headerAuthenticationFilter,
+                        UsernamePasswordAuthenticationFilter.class)
+                .build();
+    }
 }
