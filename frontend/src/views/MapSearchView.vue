@@ -53,6 +53,7 @@ const router = useRouter()
 let map: Map | null = null
 let activeCircle: Circle | null = null
 let markers: Record<number, Marker> = {}
+let drawnItems: L.FeatureGroup | null = null
 
 const INITIAL_CENTER: [number, number] = [41.9, 12.5]
 const INITIAL_ZOOM = 6
@@ -63,7 +64,7 @@ onMounted(() => {
     attribution: "© OpenStreetMap contributors"
   }).addTo(map)
 
-  const drawnItems = new L.FeatureGroup()
+  drawnItems = new L.FeatureGroup()
   map.addLayer(drawnItems)
 
   const drawControl = new (L as any).Control.Draw({
@@ -79,50 +80,56 @@ onMounted(() => {
   })
   map.addControl(drawControl)
 
-  // Evento: cerchio disegnato
-  map.on((L as any).Draw.Event.CREATED, async (e: any) => {
-    if (e.layerType === "circle") {
-      if (activeCircle) map?.removeLayer(activeCircle)
-      activeCircle = e.layer as Circle
-      drawnItems.addLayer(activeCircle)
-
-      const center = activeCircle.getLatLng()
-      const radiusKm = activeCircle.getRadius() / 1000
-      console.log("Cerchio selezionato:", center, radiusKm)
-
-      await store.fetchListByBounds(center.lat, center.lng, radiusKm)
-
-      // pulisco marker
-      Object.values(markers).forEach(m => map?.removeLayer(m))
-      markers = {}
-
-      // aggiungo marker
-      store.list.forEach(p => {
-        if (p.latitude && p.longitude) {
-          const marker = L.marker([p.latitude, p.longitude])
-          marker.bindPopup(`
-            <b>${p.title}</b><br>
-            ${p.city}<br>
-            📍 ${p.address}<br>
-            € ${p.price.toLocaleString()}<br>
-            <button id="goto-${p.id}" class="popup-btn">Dettagli</button>
-          `)
-          marker.addTo(map!)
-          markers[p.id] = marker
-
-          marker.on("popupopen", () => {
-            const btn = document.getElementById(`goto-${p.id}`)
-            if (btn) {
-              btn.addEventListener("click", () => router.push(`/properties/${p.id}`))
-            }
-          })
-        }
-      })
-    }
-  })
+  map.on((L as any).Draw.Event.CREATED, handleDrawCreated)
 })
 
-// Reset ricerca
+async function handleDrawCreated(e: any) {
+  if (e.layerType !== "circle") return
+
+  if (activeCircle) map?.removeLayer(activeCircle)
+  activeCircle = e.layer as Circle
+  if (drawnItems) drawnItems.addLayer(activeCircle)
+
+  const center = activeCircle.getLatLng()
+  const radiusKm = activeCircle.getRadius() / 1000
+  console.log("Cerchio selezionato:", center, radiusKm)
+
+  await store.fetchListByBounds(center.lat, center.lng, radiusKm)
+
+  refreshMarkers()
+}
+
+function refreshMarkers() {
+  Object.values(markers).forEach(m => map?.removeLayer(m))
+  markers = {}
+
+  store.list.forEach(createPropertyMarker)
+}
+
+function createPropertyMarker(p: any) {
+  if (!p.latitude || !p.longitude) return
+
+  const marker = L.marker([p.latitude, p.longitude])
+  marker.bindPopup(`
+    <b>${p.title}</b><br>
+    ${p.city}<br>
+    📍 ${p.address}<br>
+    € ${p.price.toLocaleString()}<br>
+    <button id="goto-${p.id}" class="popup-btn">Dettagli</button>
+  `)
+  marker.addTo(map!)
+  markers[p.id] = marker
+
+  marker.on("popupopen", () => setupPopupClick(p.id))
+}
+
+function setupPopupClick(propertyId: number) {
+  const btn = document.getElementById(`goto-${propertyId}`)
+  if (btn) {
+    btn.addEventListener("click", () => router.push(`/properties/${propertyId}`))
+  }
+}
+
 function resetSearch() {
   if (activeCircle && map) {
     map.removeLayer(activeCircle)
@@ -134,7 +141,6 @@ function resetSearch() {
   map?.setView(INITIAL_CENTER, INITIAL_ZOOM)
 }
 
-// Zoom su proprietà dalla lista
 function focusOnProperty(id: number) {
   const marker = markers[id]
   if (map && marker) {
@@ -150,7 +156,6 @@ function focusOnProperty(id: number) {
   gap: 1rem;
 }
 
-/* Mappa */
 .map {
   flex: 2;
   height: 80vh;
