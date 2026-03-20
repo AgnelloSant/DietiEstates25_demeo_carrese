@@ -148,16 +148,6 @@ const formatPublishedAt = (dateTimeString: string) => {
     return `${formattedDate} ${formattedTime}`;
 };
 
-const acceptBid = async (bidId: number) => { 
-  console.log(`Accetta Offerta ID: ${bidId}`)
-  //TODO: logica per accettare un offerta 
-}
-
-const rejectBid = async (bidId: number) => { 
-  console.log(`Rifiuta Offerta ID: ${bidId}`)
-//TODO: Logica per rifiutare
-}
-
 const closeDetails = () => {
   isDialogVisible.value = false
 }
@@ -166,12 +156,10 @@ const downloadExcel = async () => {
   try {
     const response = await downloadReservationsExcel();
     
-    // Create a Blob from the response data
     const url = window.URL.createObjectURL(new Blob([response.data]));
     const link = document.createElement('a');
     link.href = url;
     
-    // Extract filename from headers if possible, or default
     const contentDisposition = response.headers['content-disposition'];
     let fileName = 'prenotazioni.xlsx';
     if (contentDisposition) {

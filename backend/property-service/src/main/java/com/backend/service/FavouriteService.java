@@ -37,6 +37,7 @@ public class FavouriteService {
         try {
             favouriteRepository.save(new Favourite(id));
         } catch (Exception e) {
+            throw new RuntimeException("Errore nell'aggiunta del preferito", e);
         }
     }
 
