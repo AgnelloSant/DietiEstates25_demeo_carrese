@@ -90,15 +90,15 @@ export const useAuthStore = defineStore("auth", {
     },
 
     // REGISTRAZIONE 
-    async registerUser(payload: RegisterRequest) {
-      try {
-        await register(payload)
-        return true
-      } catch (err) {
-        console.error("Registrazione fallita", err)
-        return false
-      }
-    },
+  async registerUser(payload: RegisterRequest) {
+  try {
+    await register(payload)
+    return true
+  } catch (err) {
+    console.error("Registrazione fallita", err)
+    throw err
+  }
+},
 
     // CAMBIO PASSWORD 
     async updatePassword(payload: PswChangeRequest) {

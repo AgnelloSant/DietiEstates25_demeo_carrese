@@ -951,3 +951,32 @@ button:active,
   align-items: center;
   justify-content: center;
 }
+
+.password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-wrapper input {
+  width: 100%;
+  padding-right: 90px;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 8px;
+  background: transparent;
+  border: none;
+  color: #0c5db1;
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 0.25rem 0.4rem;
+  box-shadow: none;
+}
+
+.toggle-password:hover {
+  transform: none;
+  box-shadow: none;
+  text-decoration: underline;
+}

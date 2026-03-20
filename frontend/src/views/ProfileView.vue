@@ -17,27 +17,26 @@
 
     <!-- Profilo caricato -->
     <div v-else class="multi-content">
-      
       <!-- Card Info Utente -->
       <div class="basic-card">
         <div class="card-header">
           <h2>Informazioni Personali</h2>
-          <button 
-            v-if="!editMode" 
-            @click="enableEdit" 
+          <button
+            v-if="!editMode"
+            @click="enableEdit"
             class="btn-secondary"
           >
-             Modifica
+            Modifica
           </button>
         </div>
 
         <div class="card-content">
           <div class="card-item">
-            <label> Nome</label>
-            <input 
-              v-if="editMode" 
-              v-model="editForm.name" 
-              type="text" 
+            <label>Nome</label>
+            <input
+              v-if="editMode"
+              v-model="editForm.name"
+              type="text"
               placeholder="Inserisci il tuo nome"
               class="edit-input"
             />
@@ -45,17 +44,17 @@
           </div>
 
           <div class="card-item">
-            <label> Email</label>
+            <label>Email</label>
             <p class="card-item">{{ profile.email }}</p>
             <span class="badge" :class="providerClass">{{ providerLabel }}</span>
           </div>
 
           <div class="card-item">
-            <label> Telefono</label>
-            <input 
-              v-if="editMode" 
-              v-model="editForm.phone" 
-              type="tel" 
+            <label>Telefono</label>
+            <input
+              v-if="editMode"
+              v-model="editForm.phone"
+              type="tel"
               placeholder="+39 123 456 7890"
               class="edit-input"
             />
@@ -63,7 +62,7 @@
           </div>
 
           <div class="card-item">
-            <label> Ruolo</label>
+            <label>Ruolo</label>
             <p class="card-item">
               <span class="role-badge">{{ profile.role }}</span>
             </p>
@@ -76,12 +75,12 @@
             <span v-if="!saving">Salva</span>
             <span v-else>⏳ Salvataggio...</span>
           </button>
-          <button @click="cancelEdit" class="btn-secondary">❌Annulla</button>
+          <button @click="cancelEdit" class="btn-secondary">❌ Annulla</button>
         </div>
       </div>
 
-      <!-- Cambio Password  solo se loggati con email e password-->
-      <div v-if="profile.provider === 'local'" class="basic-card">
+      <!-- Cambio Password solo per utenti local -->
+      <div v-if="isLocalUser" class="basic-card">
         <div class="card-header">
           <h2>Sicurezza</h2>
         </div>
@@ -115,42 +114,68 @@
       </div>
 
       <div v-else class="oauth-notice">
-        <p> Accedi tramite <strong>{{ providerLabel }}</strong></p>
-        <p class="notice-text">La tua password è gestita da {{ providerLabel }}. Non puoi cambiarla qui.</p>
+        <p>Accedi tramite <strong>{{ providerLabel }}</strong></p>
+        <p class="notice-text">
+          La tua password è gestita da {{ providerLabel }}. Non puoi cambiarla qui.
+        </p>
       </div>
 
       <div v-if="successMessage" class="success">
-         {{ successMessage }}
+        {{ successMessage }}
       </div>
+
       <div v-if="errorMessage" class="error-message">
         {{ errorMessage }}
       </div>
 
-      <!--  Creazione Utente admin o agente -->
-      <div v-if="['ADMIN', 'AGENT', 'ROLE_ADMIN', 'ROLE_AGENT'].includes(profile.role?.toUpperCase())" class="basic-card">
+      <!-- Creazione Utente admin o agente -->
+      <div
+        v-if="['ADMIN', 'AGENT', 'ROLE_ADMIN', 'ROLE_AGENT'].includes(normalizedRole)"
+        class="basic-card"
+      >
         <div class="card-header">
-          <h2> Crea Utente</h2>
+          <h2>Crea Utente</h2>
         </div>
 
         <form @submit.prevent="createNewUser" class="password-form">
           <div class="form-group">
             <label>Nome</label>
-            <input v-model="newUser.name" type="text" placeholder="Nome completo" required />
+            <input
+              v-model="newUser.name"
+              type="text"
+              placeholder="Nome completo"
+              required
+            />
           </div>
 
           <div class="form-group">
             <label>Email</label>
-            <input v-model="newUser.email" type="email" placeholder="email@example.com" required />
+            <input
+              v-model="newUser.email"
+              type="email"
+              placeholder="email@example.com"
+              required
+            />
           </div>
 
           <div class="form-group">
             <label>Password</label>
-            <input v-model="newUser.password" type="password" placeholder="Password sicura" required />
+            <input
+              v-model="newUser.password"
+              type="password"
+              placeholder="Password sicura"
+              required
+            />
           </div>
 
-           <div class="form-group">
+          <div class="form-group">
             <label>Telefono</label>
-            <input v-model="newUser.phone" type="tel" placeholder="+39 ..." required />
+            <input
+              v-model="newUser.phone"
+              type="tel"
+              placeholder="+39 ..."
+              required
+            />
           </div>
 
           <div class="form-group" v-if="isAdmin">
@@ -167,7 +192,6 @@
           </button>
         </form>
       </div>
-
     </div>
   </div>
 </template>
@@ -176,13 +200,19 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/authenticate'
 import { getProfile, updateProfile, createAdmin, createAgent } from '@/api/auth'
-import type { UserProfile, UpdateProfileRequest, PswChangeRequest, RegisterRequest } from '@/types/user'
-import { useToast } from "vue-toastification"
+import type {
+  UserProfile,
+  UpdateProfileRequest,
+  PswChangeRequest,
+  RegisterRequest
+} from '@/types/user'
+import { useToast } from 'vue-toastification'
 
 const toast = useToast()
 const auth = useAuthStore()
 
 const creatingUser = ref(false)
+
 const newUser = reactive({
   name: '',
   email: '',
@@ -217,12 +247,27 @@ const successMessage = ref('')
 const errorMessage = ref('')
 
 // Computed
+const normalizedProvider = computed(() => {
+  return (profile.value.provider || 'local').toLowerCase()
+})
+
+const normalizedRole = computed(() => {
+  return (profile.value.role || '').toUpperCase()
+})
+
+const isLocalUser = computed(() => {
+  return normalizedProvider.value === 'local'
+})
+
 const initials = computed(() => {
   if (!profile.value.name) return '👤'
-  const names = profile.value.name.split(' ')
+
+  const names = profile.value.name.trim().split(' ').filter(Boolean)
+
   if (names.length >= 2) {
     return (names[0][0] + names[1][0]).toUpperCase()
   }
+
   return profile.value.name.substring(0, 2).toUpperCase()
 })
 
@@ -233,56 +278,68 @@ const providerLabel = computed(() => {
     github: 'GitHub',
     local: 'Email/Password'
   }
-  return providers[profile.value.provider] || 'Email/Password'
+
+  return providers[normalizedProvider.value] || 'Email/Password'
 })
 
 const providerClass = computed(() => {
-  return `badge-${profile.value.provider}`
+  return `badge-${normalizedProvider.value}`
 })
 
 const isAdmin = computed(() => {
-  return profile.value.role?.toUpperCase().includes('ADMIN') || auth.user?.role?.toUpperCase().includes('ADMIN')
+  const profileRole = profile.value.role?.toUpperCase() || ''
+  const storeRole = auth.user?.role?.toUpperCase() || ''
+
+  return profileRole.includes('ADMIN') || storeRole.includes('ADMIN')
 })
 
 const createNewUser = async () => {
-    creatingUser.value = true;
-    try{
-        const payload: RegisterRequest = {
-            name: newUser.name,
-            email: newUser.email,
-            password: newUser.password,
-            phone: newUser.phone,
-            role: newUser.role
-        }
+  creatingUser.value = true
 
-        if(isAdmin.value && newUser.role === 'ADMIN'){
-             await createAdmin(payload)
-             toast.success("Nuovo Admin creato con successo!")
-        } else {
-             await createAgent(payload)
-             toast.success("Nuovo Agente creato con successo!")
-        }
-
-        // Reset form
-        newUser.name = ''
-        newUser.email = ''
-        newUser.password = ''
-        newUser.phone = ''
-        newUser.role = 'AGENT'
-
-    }catch(e){
-        console.error(e)
-        toast.error("Errore nella creazione dell'utente")
-    }finally{
-        creatingUser.value = false
+  try {
+    const payload: RegisterRequest = {
+      name: newUser.name,
+      email: newUser.email,
+      password: newUser.password,
+      phone: newUser.phone,
+      role: newUser.role
     }
+
+    if (isAdmin.value && newUser.role === 'ADMIN') {
+      await createAdmin(payload)
+      toast.success('Nuovo Admin creato con successo!')
+    } else {
+      await createAgent(payload)
+      toast.success('Nuovo Agente creato con successo!')
+    }
+
+    // Reset form
+    newUser.name = ''
+    newUser.email = ''
+    newUser.password = ''
+    newUser.phone = ''
+    newUser.role = 'AGENT'
+  } catch (e) {
+    console.error(e)
+    toast.error("Errore nella creazione dell'utente")
+  } finally {
+    creatingUser.value = false
+  }
 }
 
 const loadProfile = async () => {
   loading.value = true
+
   try {
     const response = await getProfile()
-    profile.value = response.data
+    profile.value = {
+      ...profile.value,
+      ...response.data
+    }
+
+    console.log('PROFILE:', profile.value)
+    console.log('PROVIDER:', profile.value.provider)
+    console.log('ROLE:', profile.value.role)
   } catch (error) {
     console.error('Errore caricamento profilo:', error)
     errorMessage.value = 'Impossibile caricare il profilo'
@@ -316,12 +373,10 @@ const saveProfile = async () => {
     }
 
     await updateProfile(payload)
-    
-    // Aggiorna profilo locale
+
     profile.value.name = editForm.name
     profile.value.phone = editForm.phone
-    
-    // Aggiorna anche lo store
+
     if (auth.user) {
       auth.user.name = editForm.name
       auth.user.phone = editForm.phone
@@ -331,14 +386,12 @@ const saveProfile = async () => {
     successMessage.value = 'Profilo aggiornato con successo!'
     editMode.value = false
 
-    // Nascondi messaggio dopo 3 secondi
     setTimeout(() => {
       successMessage.value = ''
     }, 3000)
-
   } catch (error) {
     console.error('Errore aggiornamento profilo:', error)
-    errorMessage.value = 'Errore durante l\'aggiornamento del profilo'
+    errorMessage.value = "Errore durante l'aggiornamento del profilo"
   } finally {
     saving.value = false
   }
@@ -372,6 +425,7 @@ const handleChangePassword = async () => {
       errorMessage.value = 'Password vecchia non corretta'
     }
   } catch (error) {
+    console.error('Errore cambio password:', error)
     errorMessage.value = 'Errore durante il cambio password'
   } finally {
     changingPassword.value = false
@@ -385,7 +439,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-
 .avatar-circle {
   width: 100px;
   height: 100px;
@@ -420,7 +473,9 @@ onMounted(() => {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .badge {
