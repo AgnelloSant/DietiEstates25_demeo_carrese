@@ -18,84 +18,89 @@
 
       <!-- Step 1 -->
       <div v-if="step === 1" class="step">
-        <h2 class="page-subtitle">Informazioni di base</h2>
+  <h2 class="page-subtitle">Informazioni di base</h2>
 
-        <div class="form-grid single">
-          <div class="form-group">
-            <label>Titolo annuncio</label>
-            <input
-              v-model="form.title"
-              placeholder="Es. Trilocale luminoso con terrazzo"
-              required
-            />
-          </div>
+  <div class="form-grid single">
+    <div class="form-group">
+      <label>Titolo annuncio</label>
+      <input
+        v-model="form.title"
+        placeholder="Es. Trilocale luminoso con terrazzo"
+        required
+      />
+    </div>
 
-          <div class="form-group">
-            <label>Città</label>
-            <input
-              v-model="form.city"
-              placeholder="Es. Napoli"
-              required
-            />
-          </div>
+    <div class="form-group full">
+      <label>Descrizione</label>
+      <textarea
+        v-model="form.description"
+        placeholder="Descrivi le caratteristiche principali dell'immobile"
+        rows="5"
+        class="description-input"
+        required
+      ></textarea>
+    </div>
+  </div>
 
-          <div class="form-group full">
-            <label>Descrizione</label>
-            <textarea
-              v-model="form.description"
-              placeholder="Descrivi le caratteristiche principali dell'immobile"
-              rows="5"
-              class="description-input"
-              required
-            ></textarea>
-          </div>
-        </div>
-
-        <div class="nav-buttons">
-          <button
-            class="btn-primary"
-            :disabled="!form.title || !form.description || !form.city"
-            @click="nextStep"
-          >
-            Avanti
-          </button>
-        </div>
-      </div>
+  <div class="nav-buttons">
+    <button
+      class="btn-primary"
+      :disabled="!form.title || !form.description"
+      @click="nextStep"
+    >
+      Avanti
+    </button>
+  </div>
+</div>
 
       <!-- Step 2 -->
-      <div v-if="step === 2" class="step">
-        <h2 class="page-subtitle">Indirizzo</h2>
+   <div v-if="step === 2" class="step">
+  <h2 class="page-subtitle">Indirizzo</h2>
 
-        <div class="form-grid single">
-          <div class="form-group full">
-            <label>Indirizzo completo</label>
-            <input
-              v-model="addressInput"
-              placeholder="Es. Via Roma 10, Napoli"
-              required
-            />
-          </div>
-        </div>
+  <div class="form-grid">
+    <div class="form-group">
+      <label>Città</label>
+      <input
+        v-model="form.city"
+        placeholder="Es. Napoli"
+        required
+      />
+    </div>
 
-        <div class="inline-actions">
-          <button class="third-btn" @click="resolveAddress">
-            Trova sulla mappa
-          </button>
-        </div>
+    <div class="form-group">
+      <label>Via / indirizzo</label>
+      <input
+        v-model="addressInput"
+        placeholder="Es. Via Marina 12"
+        required
+      />
+    </div>
+    <p class="hint">Puoi inserire anche solo la via, ma con il civico la ricerca è più precisa</p>
+  </div>
 
-        <div v-if="coords" id="map" class="map-preview"></div>
+  <div class="inline-actions">
+    <button
+      class="third-btn"
+      :disabled="!form.city || !addressInput"
+      @click="resolveAddress"
+    >
+      Trova sulla mappa
+    </button>
+  </div>
 
-        <p v-if="coords" class="success">
-          Coordinate trovate: {{ coords.lat }}, {{ coords.lng }}
-        </p>
+  <div v-if="coords" id="map" class="map-preview"></div>
 
-        <div class="nav-buttons">
-          <button class="btn-secondary" @click="prevStep">Indietro</button>
-          <button class="btn-primary" :disabled="!coords" @click="nextStep">
-            Avanti
-          </button>
-        </div>
-      </div>
+  <p v-if="coords" class="success">
+    Coordinate trovate: {{ coords.lat }}, {{ coords.lng }}
+  </p>
+
+  <div class="nav-buttons">
+    <button class="btn-secondary" @click="prevStep">Indietro</button>
+    <button class="btn-primary" :disabled="!coords" @click="nextStep">
+      Avanti
+    </button>
+  </div>
+</div>
 
       <!-- Step 3 -->
       <div v-if="step === 3" class="step">
@@ -359,19 +364,42 @@ function prevStep() {
   }
 }
 
+//per la query di ricerca allo step 2 
 async function resolveAddress() {
   try {
     error.value = ""
 
-    const res = await fetch(
-      `https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(
-        addressInput.value
-      )}&apiKey=c4dc78950f8f486cbf36cb126f4efda1`
-    )
+    const city = form.city.trim()
+    const street = addressInput.value.trim()
 
-    const data = await res.json()
+    if (!city || !street) {
+      throw new Error("Inserisci città e indirizzo")
+    }
 
-    if (!data.features || data.features.length === 0) {
+    const attempts = [
+      `${street}, ${city}`,
+      `${street} ${city}`,
+      street
+    ]
+
+    let data: any = null
+
+    for (const query of attempts) {
+      const res = await fetch(
+        `https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(
+          query
+        )}&apiKey=c4dc78950f8f486cbf36cb126f4efda1`
+      )
+
+      const currentData = await res.json()
+
+      if (currentData?.features && currentData.features.length > 0) {
+        data = currentData
+        break
+      }
+    }
+
+    if (!data || !data.features || data.features.length === 0) {
       throw new Error("Indirizzo non trovato")
     }
 
@@ -380,7 +408,9 @@ async function resolveAddress() {
     coords.value = { lat, lng }
     form.latitude = lat
     form.longitude = lng
-    form.address = addressInput.value
+    form.address = street
+
+    const popupAddress = `${street}, ${city}`
 
     await nextTick()
 
@@ -395,7 +425,7 @@ async function resolveAddress() {
       map.removeLayer(mapMarker)
     }
 
-    mapMarker = L.marker([lat, lng]).addTo(map).bindPopup(addressInput.value)
+    mapMarker = L.marker([lat, lng]).addTo(map).bindPopup(popupAddress)
     mapMarker.openPopup()
     map.setView([lat, lng], 15)
 
@@ -405,31 +435,6 @@ async function resolveAddress() {
     toast.error(error.value)
   }
 }
-
-watch(step, async (newStep) => {
-  if (newStep === 5 && coords.value) {
-    await nextTick()
-
-    if (!mapSummary) {
-      mapSummary = L.map("map-summary", {
-        zoomControl: false,
-        attributionControl: false
-      }).setView([coords.value.lat, coords.value.lng], 14)
-
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(mapSummary)
-    }
-
-    if (summaryMarker) {
-      mapSummary.removeLayer(summaryMarker)
-    }
-
-    summaryMarker = L.marker([coords.value.lat, coords.value.lng])
-      .addTo(mapSummary)
-      .bindPopup(form.address)
-
-    mapSummary.setView([coords.value.lat, coords.value.lng], 14)
-  }
-})
 
 function resetForm() {
   step.value = 1

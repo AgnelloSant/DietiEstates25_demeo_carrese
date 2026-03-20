@@ -66,4 +66,4 @@ Thumbs.db
 
 .DS_Store
 
-backend/user-service/.env
+backend/user-service/.env.DS_Store

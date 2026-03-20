@@ -5,6 +5,7 @@
       <!--  HEADER  -->
       <div class="login-header">
         <div class="logo-circle">
+           <i class="fa-solid fa-house logo-icon"></i>
         </div>
         <h1 class="page-title">Benvenuto</h1>
         <p class="page-subtitle">Accedi a Dieti Estates</p>

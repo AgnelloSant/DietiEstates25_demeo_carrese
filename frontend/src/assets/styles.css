@@ -938,3 +938,16 @@ button:active,
   display: inline-block;
   transition: transform 0.3s ease;
 }
+
+.social-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  display: inline-block;
+}
+
+.logo-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
