@@ -98,18 +98,16 @@ export async function createReservation(payload: CreateReservationDTO) {
 }
 
 export async function getStats(idProp: number) {
-  var propertyBookings = await httpProperty.get(`reservations/countbyproperty/${idProp}`);
-  // var propertyBids = await httpProperty.get(`/bids/countByProperty/${id}`);
+  const propertyBookings = await httpProperty.get(`reservations/countbyproperty/${idProp}`);
   const data = {
     bookings: propertyBookings.data,
-    // bids: propertyBids.data
   };
 
   return data;
 }
 
 /*
-  * 💸 Recupera offerte per una proprietà o un utente
+  * Recupera offerte per una proprietà o un utente
   * GET → /bids/getbyproperty/{id}
   * GET → /bids/getbyuser/{id}
   */
@@ -173,7 +171,7 @@ export async function downloadReservationsExcel() {
   const token = localStorage.getItem("token");
   const response = await httpProperty.get('reservations/getexcel', {
     headers: { Authorization: `Bearer ${token}` },
-    responseType: 'blob', // Important for binary data
+    responseType: 'blob',
   });
   return response;
 }

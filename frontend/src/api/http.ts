@@ -29,7 +29,7 @@ const buildBaseURL = (envUrl: string | undefined, serviceSuffix: string) => {
 // property-service (Gateway)
 export const httpProperty = axios.create({
   baseURL: buildBaseURL(import.meta.env.VITE_API_PROPERTY_URL, '/properties'),
-    withCredentials: true,
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json'
   }
@@ -38,7 +38,7 @@ export const httpProperty = axios.create({
 // user-service (Gateway)
 export const httpUS = axios.create({
   baseURL: buildBaseURL(import.meta.env.VITE_API_USER_URL, '/user'),
-    withCredentials: true,
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json'
   }
@@ -80,7 +80,7 @@ httpUS.interceptors.response.use(
     const originalRequest = error.config
 
     if (!originalRequest) {
-      return Promise.reject(error)
+      throw error
     }
 
     // Non ritentare su login o refresh
@@ -88,7 +88,7 @@ httpUS.interceptors.response.use(
       originalRequest.url?.includes('auth/login') ||
       originalRequest.url?.includes('auth/refresh')
     ) {
-      return Promise.reject(error)
+      throw error
     }
 
     if (error.response?.status === 401 && !originalRequest._retry) {
@@ -105,22 +105,18 @@ httpUS.interceptors.response.use(
       } catch (refreshError) {
         localStorage.clear()
         window.location.href = '/login?session_expired=true'
-        return Promise.reject(refreshError)
+        throw refreshError
       }
     }
 
-    return Promise.reject(error)
+    throw error
   }
 )
 
 
-
-// Property service: stesso handler 401
 httpProperty.interceptors.response.use(
   (response) => response,
   async (error) => {
-    // Stessa logica di httpUS (puoi estrarre in funzione shared)
-    // ... (copia codice sopra)
-    return Promise.reject(error)
+    throw error
   }
 )

@@ -37,7 +37,7 @@ public class FavouriteService {
         try {
             favouriteRepository.save(new Favourite(id));
         } catch (Exception e) {
-            // Already exists or other error, ignore for idempotency
+            throw new RuntimeException("Errore nell'aggiunta del preferito", e);
         }
     }
 

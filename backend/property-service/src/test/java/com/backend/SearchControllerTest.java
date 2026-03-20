@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
+//import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -31,7 +31,6 @@ class SearchControllerTest {
     @MockBean
     private SearchService searchService;
 
-    
     @MockBean
     private JwtUtil jwtUtil;
 
@@ -48,9 +47,9 @@ class SearchControllerTest {
         System.out.println("\nTC1 - LAT INVALIDA");
 
         mockMvc.perform(get("/search/bybounds")
-                        .param("lat", "-100")
-                        .param("lon", "10")
-                        .param("radiusKm", "10"))
+                .param("lat", "-100")
+                .param("lon", "10")
+                .param("radiusKm", "10"))
                 .andExpect(status().isBadRequest());
 
         System.out.println("✔ TC1 PASS");
@@ -66,9 +65,9 @@ class SearchControllerTest {
         System.out.println("\nTC2 - LON INVALIDA");
 
         mockMvc.perform(get("/search/bybounds")
-                        .param("lat", "45")
-                        .param("lon", "200")
-                        .param("radiusKm", "10"))
+                .param("lat", "45")
+                .param("lon", "200")
+                .param("radiusKm", "10"))
                 .andExpect(status().isBadRequest());
 
         System.out.println("✔ TC2 PASS");
@@ -87,9 +86,9 @@ class SearchControllerTest {
                 .thenReturn(List.of());
 
         mockMvc.perform(get("/search/bybounds")
-                        .param("lat", "45")
-                        .param("lon", "10")
-                        .param("radiusKm", "10"))
+                .param("lat", "45")
+                .param("lon", "10")
+                .param("radiusKm", "10"))
                 .andExpect(status().isOk());
 
         System.out.println("✔ TC3 PASS");

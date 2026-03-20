@@ -1,11 +1,11 @@
 package com.dietiestates.user_service.controller;
 
-import com.dietiestates.user_service.dto.PswChangeRequest;
+//import com.dietiestates.user_service.dto.PswChangeRequest;
 import com.dietiestates.user_service.dto.PublicUserDTO;
 import com.dietiestates.user_service.dto.UpdateProfileRequest;
 import com.dietiestates.user_service.service.UserService;
 import com.dietiestates.user_service.dto.UserProfileDTO;
-import lombok.RequiredArgsConstructor;
+//import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.dietiestates.user_service.model.User;
